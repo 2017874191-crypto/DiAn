@@ -1,0 +1,11 @@
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.vue text eol=lf
+*.yml text eol=lf
+*.jsonl text eol=lf
+
+# Preserve frozen dataset and fixture byte hashes across Windows/Linux.
+EchoMind/evaluation/datasets/dian_logistics_v1/** -text
+EchoMind/config/logistics/*.json -text

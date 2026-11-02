@@ -1,0 +1,39 @@
+{
+  "bitext_retail": {
+    "source_id": "bitext_retail",
+    "homepage": "https://huggingface.co/datasets/bitext/Bitext-retail-ecommerce-llm-chatbot-training-dataset",
+    "license_id": "CDLA-Sharing-1.0",
+    "local_cache_name": "bitext-retail.csv",
+    "sha256": "13a988266fed4e2b2c1ff947a89ef220ce09b5b13ac83c4a1496c0d7b81e8127",
+    "retrieved_date": "2026-11-02",
+    "revision": "12dd624ddcd3057382b2faad661bcda1fa869491",
+    "source_path": "bitext-retail-ecommerce-llm-chatbot-training-dataset.csv",
+    "row_count": 44884
+  },
+  "abcd": {
+    "source_id": "abcd",
+    "homepage": "https://github.com/asappresearch/abcd",
+    "license_id": "MIT",
+    "local_cache_name": "abcd-raw.json.gz",
+    "sha256": "2bdf53ac359543dcdc38d55bc6513e78df120363f8f44870716e909f4606de15",
+    "retrieved_date": "2026-11-02",
+    "source_path": "data/abcd_v1.1.json.gz",
+    "git_blob_sha1": "c6fecb3aed30309ca3456ed93a0a19c98cade1a4",
+    "splits": {
+      "train": 8034,
+      "dev": 1004,
+      "test": 1004
+    }
+  },
+  "bitext_general": {
+    "source_id": "bitext_general",
+    "homepage": "https://github.com/bitext/customer-support-llm-chatbot-training-dataset",
+    "license_id": "CDLA-Sharing-1.0",
+    "local_cache_name": "bitext-raw.csv",
+    "sha256": "6f81102b0100b97b8468eb04368033a23206bf1fde9d53500d5806ec1001a434",
+    "retrieved_date": "2026-11-02",
+    "source_path": "data/Bitext_Sample_Customer_Support_Training_Dataset_27K_responses-v11.csv",
+    "git_blob_sha1": "404649b80bb5ec57463d7ce7e17bc48e63b01fbc",
+    "row_count": 26872
+  }
+}

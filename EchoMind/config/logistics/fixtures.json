@@ -1,0 +1,8 @@
+{
+  "orders": [
+    {"order_id":"DEMO1001","tracking_no":"MOCK1001","user_id":"demo-user","status":"in_transit","updated_at":"2026-10-20T08:00:00+08:00","events":[{"at":"2026-10-20T08:00:00+08:00","description":"模拟转运中心发出"}]},
+    {"order_id":"DEMO1002","tracking_no":"MOCK1002","user_id":"demo-user","status":"delivered","updated_at":"2026-10-30T14:00:00+08:00","events":[{"at":"2026-10-30T14:00:00+08:00","description":"模拟轨迹显示签收，不能证明收件人实际收到"}]},
+    {"order_id":"DEMO1003","tracking_no":"MOCK1003","user_id":"demo-user","status":"delivered","updated_at":"2026-10-30T14:00:00+08:00","events":[{"at":"2026-10-30T14:00:00+08:00","description":"模拟已送达"}]},
+    {"order_id":"DEMO1004","tracking_no":"MOCK1004","user_id":"demo-user","status":"in_transit","updated_at":"2026-10-20T08:00:00+08:00","events":[],"fault":"query_timeout"}
+  ]
+}

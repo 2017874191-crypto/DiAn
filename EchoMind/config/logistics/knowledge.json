@@ -1,0 +1,17 @@
+[
+  {
+    "title": "疑似丢件核查演示规则",
+    "document_id": "logistics-logistics_lost",
+    "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。轨迹停滞仅作为疑似异常，不直接认定丢件；可提交人工核查。材料："
+  },
+  {
+    "title": "签收争议演示规则",
+    "document_id": "logistics-logistics_dispute",
+    "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。签收记录不能证明实际收件；可提交签收争议核查。材料："
+  },
+  {
+    "title": "破损错发举证演示规则",
+    "document_id": "logistics-logistics_damaged",
+    "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片"
+  }
+]

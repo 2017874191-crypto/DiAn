@@ -1,0 +1,41 @@
+{
+  "total": 50,
+  "split": {
+    "dev": 30,
+    "test": 20
+  },
+  "origin": {
+    "open_source_adapted": 40,
+    "project_engineering_synthetic": 10
+  },
+  "datasets": {
+    "bitext_retail": 24,
+    "abcd": 12,
+    "bitext_general": 4,
+    "project_engineering": 10
+  },
+  "turns": 73,
+  "families": 24,
+  "status": "curated_not_model_evaluated",
+  "artifact_sha256": {
+    "all.jsonl": "891cd320ef3677157c6e7fb215b7c9f5d0017bc689bdb53a75cf8068502b8edc",
+    "dev.jsonl": "bfe297d2044b343f4ce5d3961eaed5b37883710bc42fc2a604f951322602bbf4",
+    "fixtures.json": "992230bbcc7899aaee056aba49eb37d6c0f8e2e1f9f448ed91df3870220a8495",
+    "policies.json": "dec1b29716e739e43234b4341ab07d11d64ae4e6f64852d0322097333ed88a80",
+    "README.md": "274be34ea335d6150301a3998b356459849edafdab803d5afabd37540f060a03",
+    "schema.json": "31f885ee15796232cd6df19470860a6c80f5096e9750e37dc87c02d3d03a04fc",
+    "sources.json": "0bd7f1c68f291908511bde9ee5fbcb7d66de109121b5225e6b223eb307f4c944",
+    "source_records.jsonl": "12e3b1fa438babb7a889bb1a5431c533ce8670643b7338c92bb270f63e8109de",
+    "test.jsonl": "74644e23b36bd8aeb45bd3b00ab89c2b241fd116c564a7f0472a5a079930fcaa",
+    "validate_dataset.py": "af846cd7ea79915b13cf783fbcd6c30bed7f1dd902717f49725c5d236d8e37d9",
+    "用例清单.md": "54e4df404aab06c3e6cbb4df5f69d78b0bbc39320791a6740e762adb977c277f",
+    "LICENSES/ABCD-LICENSE.txt": "3ab7e179a7f13027b7bc64293541f0e9beacca3701cade67fb8fce78c2d9317b",
+    "LICENSES/BITEXT-LICENSE.txt": "f6054388eae4947a769ca2020c54e6d394eb01c41d58db55bb6cfd24ce71cdd8"
+  },
+  "validation": {
+    "json_schema_cases": 50,
+    "source_records_checked": 40,
+    "family_overlap": 0,
+    "model_evaluation_run": false
+  }
+}

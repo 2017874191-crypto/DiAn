@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DiAn Logistics Case Evaluation v1",
+  "type": "object",
+  "required": [
+    "case_id",
+    "version",
+    "family_id",
+    "split",
+    "origin_kind",
+    "provenance",
+    "adaptation",
+    "setup",
+    "requirements",
+    "turns",
+    "gold_status"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^DIAN-[0-9]{3}$"
+    },
+    "version": {
+      "const": "1.0.0"
+    },
+    "split": {
+      "enum": [
+        "dev",
+        "test"
+      ]
+    },
+    "family_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "origin_kind": {
+      "enum": [
+        "open_source_adapted",
+        "project_engineering_synthetic"
+      ]
+    },
+    "provenance": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "setup": {
+      "type": "object",
+      "required": [
+        "user_id",
+        "new_conversation",
+        "fixtures_sha256",
+        "policy_sha256"
+      ]
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "turns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "message",
+          "expected"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected": {
+            "type": "object",
+            "required": [
+              "case_state",
+              "case_issue",
+              "agent_any_of",
+              "ticket_count",
+              "required_tools",
+              "forbidden_tools",
+              "semantic_checks"
+            ],
+            "properties": {
+              "case_state": {
+                "enum": [
+                  null,
+                  "awaiting_info",
+                  "awaiting_evidence",
+                  "awaiting_confirmation",
+                  "manual_review",
+                  "ticket_created"
+                ]
+              },
+              "case_issue": {
+                "enum": [
+                  null,
+                  "logistics_lost",
+                  "logistics_dispute",
+                  "logistics_damaged"
+                ]
+              },
+              "ticket_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "agent_any_of": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "enum": [
+                    "general",
+                    "technical",
+                    "billing",
+                    "escalation",
+                    "logistics"
+                  ]
+                }
+              },
+              "required_tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "forbidden_tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "semantic_checks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "replay_of_turn": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "before_event": {
+            "enum": [
+              "restart_services"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,9 +1,0 @@
-# Local startup fallback when Docker Hub cannot be reached.
-# ChromaDB runs from the application's pinned chromadb==0.5.23 dependency.
-services:
-  chromadb:
-    image: echomind-echomind:latest
-    user: "0:0"
-    command: ["chroma", "run", "--host", "0.0.0.0", "--port", "8000", "--path", "/chroma/chroma"]
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/heartbeat', timeout=5).read()"]

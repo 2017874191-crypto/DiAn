@@ -7,5 +7,5 @@
 *.jsonl text eol=lf
 
 # Preserve frozen dataset and fixture byte hashes across Windows/Linux.
-EchoMind/evaluation/datasets/dian_logistics_v1/** -text
-EchoMind/config/logistics/*.json -text
+backend/evaluation/datasets/dian_logistics_v1/** -text
+backend/config/logistics/*.json -text

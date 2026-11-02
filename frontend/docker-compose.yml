@@ -1,0 +1,132 @@
+services:
+  dian-python:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: dian-python
+    ports:
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - ../backend/.env
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-dian123}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-dian123}@redis:6379/0
+      CHROMA_PERSIST_DIRECTORY: /app/data/chroma
+      EVAL_BASELINE_PATH: /app/data/eval/baseline.json
+      DIAN_SKILLS_DIR: /app/skills
+    volumes:
+      - dian-python-data:/app/data
+      - ../backend/skills:/app/skills
+      - ../backend/config/mcp_servers.json:/app/config/mcp_servers.json:ro
+    depends_on:
+      redis:
+        condition: service_started
+      chromadb:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - dian-network
+
+  dian-java:
+    build:
+      context: ../dian-java
+      dockerfile: Dockerfile
+    container_name: dian-java
+    ports:
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - ../dian-java/.env
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-dian123}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8000
+      DIAN_DATA_DIR: /app/data/java
+      KNOWLEDGE_STORE_PATH: /app/data/java/knowledge-store.json
+      MEMORY_STORE_PATH: /app/data/java/memory-store.json
+      DIAN_SKILLS_DIR: /app/skills
+    volumes:
+      - dian-java-data:/app/data
+      - ../dian-java/skills:/app/skills
+    depends_on:
+      redis:
+        condition: service_started
+      chromadb:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - dian-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dian-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-dian123}
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - dian-network
+
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    container_name: dian-chromadb
+    ports:
+      - "127.0.0.1:8001:8000"
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+      ANONYMIZED_TELEMETRY: "FALSE"
+    volumes:
+      - chromadb-data:/chroma/chroma
+    restart: unless-stopped
+    networks:
+      - dian-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dian-frontend
+    environment:
+      PYTHON_API_URL: /api/python
+      JAVA_API_URL: /api/java
+    ports:
+      - "${FRONTEND_PORT:-5174}:80"
+    depends_on:
+      dian-python:
+        condition: service_started
+      dian-java:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - dian-network
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: dian-gateway
+    ports:
+      - "127.0.0.1:80:80"
+    volumes:
+      - ./docker/nginx-gateway.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      frontend:
+        condition: service_started
+      dian-python:
+        condition: service_started
+      dian-java:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - dian-network
+
+networks:
+  dian-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  chromadb-data:
+  dian-python-data:
+  dian-java-data:

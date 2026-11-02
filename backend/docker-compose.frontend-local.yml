@@ -1,0 +1,16 @@
+# Add to docker-compose.yml and docker-compose.local-check.yml after npm run build.
+services:
+  frontend:
+    image: nginx:alpine
+    container_name: dian-web
+    ports:
+      - "127.0.0.1:5174:80"
+    volumes:
+      - ../frontend/dist:/usr/share/nginx/html:ro
+      - ../frontend/docker/nginx.python-local.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      dian:
+        condition: service_healthy
+    networks:
+      - dian-network
+    restart: unless-stopped

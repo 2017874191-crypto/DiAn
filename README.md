@@ -7,7 +7,7 @@ DiAn 是面向疑似丢件、签收争议、破损错发的客服 Agent 项目�
 ## 目录
 
 ```text
-EchoMind/                 Python / FastAPI 后端，保留原目录名以兼容部署路径
+backend/                 Python / FastAPI 后端（发行包 dian-backend）
   agents/                 客服角色与路由
   core/logistics.py       物流案件、事务与幂等工单
   config/logistics/       模拟订单、物流、规则和知识文档
@@ -15,7 +15,7 @@ EchoMind/                 Python / FastAPI 后端，保留原目录名以兼容�
   skills/                 角色处理规范
   tests/                  回归与接口测试
   wiki/                   架构、实现与验收文档
-EchoMindFrontend/         Vue 3 / Vite 前端
+frontend/                Vue 3 / Vite 前端（npm 包 dian-frontend）
 ```
 
 ## 快速启动
@@ -25,10 +25,10 @@ EchoMindFrontend/         Vue 3 / Vite 前端
 先构建前端：
 
 ```shell
-cd EchoMindFrontend
+cd frontend
 npm ci
 npm run build
-cd ../EchoMind
+cd ../backend
 ```
 
 复制 `.env.example` 为 `.env`，填写模型配置。PowerShell 使用 `Copy-Item .env.example .env`；Linux/macOS 使用 `cp .env.example .env`。
@@ -37,7 +37,7 @@ cd ../EchoMind
 ANTHROPIC_BASE_URL=https://api.deepseek.com/anthropic
 ANTHROPIC_API_KEY=填写你自己的API密钥
 ANTHROPIC_MODEL=填写账号支持的模型ID
-ECHOMIND_ENV=development
+DIAN_ENV=development
 ```
 
 Linux 宿主机需预建并授权持久化目录给容器用户 UID 1000，例如：
@@ -47,7 +47,7 @@ mkdir -p data/chroma data/eval data/logistics logs
 sudo chown -R 1000:1000 data logs
 ```
 
-从 EchoMind 目录启动：
+从 backend 目录启动：
 
 ```shell
 docker compose -f docker-compose.yml -f docker-compose.frontend-local.yml up -d --build
@@ -71,15 +71,15 @@ docker compose -f docker-compose.yml -f docker-compose.frontend-local.yml up -d 
 
 ## 评测与验证
 
-案件级数据集位于 [dian_logistics_v1](EchoMind/evaluation/datasets/dian_logistics_v1/README.md)：50 个中文案件、73 个用户轮次，40 条由三份开源数据中的真实记录改写，10 条为自建工程用例。包含来源定位、许可、工具世界、业务预期、开发/测试划分和离线验证器。
+案件级数据集位于 [dian_logistics_v1](backend/evaluation/datasets/dian_logistics_v1/README.md)：50 个中文案件、73 个用户轮次，40 条由三份开源数据中的真实记录改写，10 条为自建工程用例。包含来源定位、许可、工具世界、业务预期、开发/测试划分和离线验证器。
 
 ```shell
-python EchoMind/evaluation/datasets/dian_logistics_v1/validate_dataset.py
-cd EchoMindFrontend
+python backend/evaluation/datasets/dian_logistics_v1/validate_dataset.py
+cd frontend
 npm test
 ```
 
-后端测试需要安装 `EchoMind/requirements.txt` 和 `EchoMind/requirements-dev.txt`。案件级数据尚未接入原有 `/eval/run`，尚未运行批量模型评分，金标待人工复核。已有测试数量和本地联调结果见 wiki 中的实施与验收记录，不代表生产 SLA。
+后端测试需要安装 `backend/requirements.txt` 和 `backend/requirements-dev.txt`。案件级数据尚未接入原有 `/eval/run`，尚未运行批量模型评分，金标待人工复核。已有测试数量和本地联调结果见 wiki 中的实施与验收记录，不代表生产 SLA。
 
 ## 边界与部署
 
@@ -87,4 +87,4 @@ npm test
 
 ## 来源与许可
 
-项目在 EchoMind 后端与前端基础上扩展，来源及基线版本见 [NOTICE.md](NOTICE.md)。评测数据的上游许可和改写说明位于数据集目录；未将上游数据统一重标为 MIT。本仓库没有新增一份覆盖所有代码的统一许可证。
+项目在 DiAn 后端与前端基础上扩展，来源及基线版本见 [NOTICE.md](NOTICE.md)。评测数据的上游许可和改写说明位于数据集目录；未将上游数据统一重标为 MIT。本仓库没有新增一份覆盖所有代码的统一许可证。

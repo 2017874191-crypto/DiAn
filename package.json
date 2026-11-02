@@ -1,0 +1,9 @@
+{
+  "name": "dian",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "test:frontend": "npm --prefix frontend test"
+  }
+}

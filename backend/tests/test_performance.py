@@ -179,6 +179,7 @@ async def test_unreported_usage_and_failed_calls_are_visible():
         snapshot = performance_snapshot()
     assert snapshot["llm"]["calls"] == 2 and snapshot["llm"]["errors"] == 1
     assert snapshot["llm"]["usage_reported_calls"] == 0
+    assert snapshot["llm_calls"][1]["error_type"] == "RuntimeError"
     assert "private error" not in json.dumps(snapshot)
 
 
@@ -204,8 +205,6 @@ async def test_background_profile_is_throttled_but_preferences_and_force_are_imm
         assert memory._update_profile.await_count == 4
     finally:
         await memory._redis.aclose()
-
-
 @pytest.mark.asyncio
 async def test_profile_failure_does_not_suppress_retry():
     memory = MemoryManager.__new__(MemoryManager)

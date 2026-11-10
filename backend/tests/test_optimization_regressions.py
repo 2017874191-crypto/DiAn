@@ -115,12 +115,12 @@ async def test_route_regression_does_not_replace_baseline_even_after_repeated_ru
                                judge=AsyncMock(return_value=QualityScores(1, 1, 1, 1)))
     cases = [{"question": "退款", "expected_agent": "billing"}]
     assert (await ev.run(dialog_cases=cases)).pass_rate == 1
-    baseline = ev._baseline_path.read_text()
+    baseline = ev._baseline_path.read_text(encoding="utf-8")
     answer.agent_type = AgentType.TECHNICAL
     for _ in range(2):
         failed = await ev.run(dialog_cases=cases)
         assert failed.pass_rate == 0 and any("pass_rate" in item for item in failed.regressions)
-        assert ev._baseline_path.read_text() == baseline
+        assert ev._baseline_path.read_text(encoding="utf-8") == baseline
         assert not any("所有指标均达标" in item for item in failed.recommendations)
 
 

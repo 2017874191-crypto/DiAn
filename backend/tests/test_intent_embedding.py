@@ -36,8 +36,6 @@ def test_online_batches_caches_templates_and_preserves_space(monkeypatch):
         assert len(calls)==4 and calls[-1]==['second']
         assert all(len(v)==3 for v in groups['a'])
     asyncio.run(run())
-
-
 def test_query_failure_falls_back_with_local_templates_and_cooldown(monkeypatch):
     async def run():
         client=provider(monkeypatch)
@@ -101,6 +99,48 @@ def test_disabled_embedding_skips_requests_and_uses_two_way_weights(monkeypatch)
         finally:
             await rec.client.close()
     asyncio.run(run())
+
+
+def test_logistics_embedding_switch_preserves_other_domains(monkeypatch):
+    from core.intent_recognizer import IntentCategory
+    from unittest.mock import AsyncMock
+    async def run():
+        monkeypatch.setenv('INTENT_RECOGNITION_MODE', 'full')
+        monkeypatch.setenv('INTENT_EMBEDDING_ENABLED', 'true')
+        monkeypatch.setenv('INTENT_LOGISTICS_EMBEDDING_ENABLED', 'false')
+        rec = IntentRecognizer('test')
+        async def classify(message, history):
+            intent = IntentCategory.LOGISTICS_DAMAGED if '压坏' in message else IntentCategory.REFUND
+            return {'intent': intent, 'confidence': .95}
+        rec._llm_recognize = AsyncMock(side_effect=classify)
+        rec._embedding_recognize = AsyncMock(return_value={
+            'intent': IntentCategory.REFUND, 'confidence': .8, 'source': 'local-ngram'})
+        try:
+            logistics = await rec.recognize('运输时把商品压坏了，订单号 DEMO1003')
+            assert logistics.intent == IntentCategory.LOGISTICS_DAMAGED
+            assert logistics.embedding_source == 'disabled-logistics'
+            assert logistics.source_scores['embedding'] == 0
+            rec._embedding_recognize.assert_not_awaited()
+            billing = await rec.recognize('我要退款')
+            assert billing.intent == IntentCategory.REFUND
+            assert billing.embedding_source == 'local-ngram'
+            rec._embedding_recognize.assert_awaited_once()
+        finally:
+            await rec.client.close()
+    asyncio.run(run())
+
+
+def test_model_failure_cannot_start_logistics_issue_from_embedding_alone(monkeypatch):
+    from core.intent_recognizer import IntentCategory
+    rec = IntentRecognizer('test')
+    llm = {'intent': IntentCategory.OTHER, 'confidence': 0.0, 'failed': True}
+    emb = {'intent': IntentCategory.LOGISTICS_DAMAGED, 'confidence': .99}
+    pat = rec._pattern_recognize('寄送一件商品的运费怎么算？')
+    intent, _, _ = rec._vote(llm, emb, pat)
+    assert intent == pat['intent']
+    explicit = rec._pattern_recognize('收到的包裹破损了')
+    intent, _, _ = rec._vote(llm, emb, explicit)
+    assert intent == IntentCategory.LOGISTICS_DAMAGED
 
 
 def test_online_failure_diagnostics_do_not_expose_key(monkeypatch, caplog):

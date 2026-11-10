@@ -1,0 +1,75 @@
+# Isolated DiAn acceptance stack. Use only with -p dian-p0-acceptance.
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - acceptance-redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+      ANONYMIZED_TELEMETRY: "FALSE"
+    volumes:
+      - acceptance-chroma:/chroma/chroma
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/api/v1/heartbeat || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 10s
+
+  dian:
+    image: dian-ablation:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    env_file:
+      - .env
+    environment:
+      DIAN_ENV: development
+      DIAN_API_TOKENS: ""
+      REDIS_URL: redis://redis:6379/0
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: "8000"
+      CHROMA_PERSIST_DIRECTORY: /app/data/chroma
+      EVAL_BASELINE_PATH: /app/data/eval/baseline.json
+      DIAN_LOGISTICS_DB: /app/data/logistics/cases.sqlite3
+      DIAN_SKILLS_DIR: /app/skills
+      MCP_EXTERNAL_ENABLED: "false"
+      INTENT_EMBEDDING_PROVIDER: local
+      INTENT_RECOGNITION_MODE: ${DIAN_INTENT_MODE:-full}
+      INTENT_LOGISTICS_EMBEDDING_ENABLED: ${DIAN_LOGISTICS_EMBEDDING_ENABLED:-true}
+      DIAN_LLM_TIMEOUT_S: "25"
+      DIAN_INTENT_TIMEOUT_S: "15"
+    ports:
+      - "127.0.0.1:${DIAN_ACCEPTANCE_PORT:-18000}:8000"
+    volumes:
+      - ${DIAN_ACCEPTANCE_DATA_DIR:-./data/acceptance}/chroma-fallback:/app/data/chroma
+      - ${DIAN_ACCEPTANCE_DATA_DIR:-./data/acceptance}/eval:/app/data/eval
+      - ${DIAN_ACCEPTANCE_DATA_DIR:-./data/acceptance}/logistics:/app/data/logistics
+      - ${DIAN_ACCEPTANCE_DATA_DIR:-./data/acceptance}/logs:/app/logs
+      - ./skills:/app/skills:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 60s
+
+volumes:
+  acceptance-redis:
+  acceptance-chroma:

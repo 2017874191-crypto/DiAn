@@ -1,5 +1,4 @@
 """物流案件领域服务。SQLite 原子事务保存案件和模拟工单；不执行真实赔付。"""
-import copy
 import hashlib
 import json
 import os
@@ -9,11 +8,17 @@ from datetime import datetime, timezone
 from contextlib import contextmanager
 from pathlib import Path
 
+from core.logistics_providers import (DeclarationEvidenceProvider, MockOrderProvider,
+    MockTrackingProvider, SQLiteTicketProvider)
+
 ISSUES = {"logistics_lost", "logistics_dispute", "logistics_damaged"}
 RULE_VERSION = "demo-2026-11-v1"
 STATES = {"awaiting_info", "verifying", "awaiting_evidence", "awaiting_confirmation", "manual_review", "ticket_created"}
 
 def detect_issue(message):
+    # 用户明确否认的异常不能作为建案依据；保留同句中其他肯定异常。
+    message = re.sub(r"(?:不是|并非|没有|没发生)(?:要查询|包裹|快递|物流|发生|出现|的)?(?:丢件|丢失)", "", message)
+    message = re.sub(r"(?:不是|并非|没有|没发生)(?:包裹|快递|商品|发生|出现|的)?(?:破损|损坏|错发|发错货)", "", message)
     if re.search(r"签收.{0,10}(没收到|未收到|没拿到)|没收到.{0,10}签收|被代签", message):
         return "logistics_dispute"
     if any(x in message for x in ("破损", "错发", "发错货", "包裹损坏")):
@@ -26,11 +31,18 @@ def is_confirmed(message):
     return bool(re.fullmatch(r"\s*确认(?:建单|创建工单|提交工单)[。！!]?\s*", message))
 
 class LogisticsService:
-    def __init__(self, db_path=None, fixtures=None):
+    def __init__(self, db_path=None, fixtures=None, *, order_provider=None,
+                 tracking_provider=None, ticket_provider=None, evidence_provider=None):
         self.path = Path(db_path or os.getenv("DIAN_LOGISTICS_DB", "data/logistics/cases.sqlite3"))
         self.path.parent.mkdir(parents=True, exist_ok=True)
         source = Path(fixtures or os.getenv("DIAN_LOGISTICS_FIXTURES", str(Path(__file__).resolve().parents[1] / "config/logistics/fixtures.json")))
         self.orders = json.loads(source.read_text(encoding="utf-8"))["orders"]
+        if order_provider is not None and tracking_provider is None:
+            raise ValueError("自定义订单提供者必须同时指定物流提供者")
+        self.order_provider = order_provider or MockOrderProvider(self.orders)
+        self.tracking_provider = tracking_provider or MockTrackingProvider(self.orders, self.order_provider)
+        self.ticket_provider = ticket_provider or SQLiteTicketProvider()
+        self.evidence_provider = evidence_provider or DeclarationEvidenceProvider()
         self.rules = json.loads((Path(__file__).resolve().parents[1] / "config/logistics/policies.json").read_text(encoding="utf-8"))
         with self.connect() as db:
             db.execute("CREATE TABLE IF NOT EXISTS cases (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, payload TEXT NOT NULL)")
@@ -47,22 +59,10 @@ class LogisticsService:
             db.close()
 
     def query_order(self, user_id, order_id=None, tracking_no=None):
-        matches = [o for o in self.orders if (o["order_id"] == order_id if order_id else o["tracking_no"] == tracking_no)]
-        if not matches or matches[0]["user_id"] != user_id:
-            return {"success": False, "error": "订单不存在或当前用户无权查询", "source": "mock"}
-        order = matches[0]
-        if tracking_no and order["tracking_no"] != tracking_no:
-            return {"success": False, "error": "订单与运单不匹配，请重新核对", "source": "mock"}
-        return {"success": True, "source": "mock", "order": {k:v for k,v in order.items() if k not in ("user_id", "fault")}}
+        return self.order_provider.query_order(user_id, order_id, tracking_no)
 
     def query_logistics(self, user_id, order_id):
-        found = self.query_order(user_id, order_id)
-        if not found["success"]:
-            return found
-        order = next(o for o in self.orders if o["order_id"] == order_id)
-        if order.get("fault") == "query_timeout":
-            return {"success": False, "error": "模拟物流查询超时", "source": "mock", "retryable": True}
-        return {"success": True, "source": "mock", "tracking": copy.deepcopy(found["order"])}
+        return self.tracking_provider.query_logistics(user_id, order_id)
 
     def get_case(self, user_id, case_id, conv_id=None):
         with self.connect() as db:
@@ -109,13 +109,14 @@ class LogisticsService:
         case_id = old["case_id"] if old else "LC-" + hashlib.sha256(identity.encode()).hexdigest()[:20]
         calls = []
         def call(name, args, result):
-            calls.append({"agent_type": "logistics", "tool_name": name, "input": args, "source": "mock", "success": True, "result_success": result.get("success", True), "error": result.get("error", ""), "result": result})
+            calls.append({"agent_type": "logistics", "tool_name": name, "input": args, "source": result.get("source", "mock"), "success": True, "result_success": result.get("success", True), "error": result.get("error", ""), "result": result})
             return result
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("SELECT payload FROM cases WHERE id=? AND user_id=?", (case_id, req.user_id)).fetchone()
             case = json.loads(row[0]) if row else {"case_id": case_id, "issue": issue, "order_id": None, "tracking_no": None, "identity": order_id or tracking_no or "pending", "state": "awaiting_info", "events": []}
             before = case["state"]
+            previously_confirmable = before == "awaiting_confirmation" and case.get("policy_version") == RULE_VERSION
             case["order_id"] = order_id or case.get("order_id")
             case["tracking_no"] = tracking_no or case.get("tracking_no")
             policy = self.rules[issue]
@@ -148,22 +149,22 @@ class LogisticsService:
                     else:
                         tracking = facts["tracking"]
                         conflict = issue == "logistics_dispute" and tracking["status"] != "delivered"
-                        evidence = bool(re.search(r"(?:已上传|已提供|已提交).{0,12}(?:照片|图片|视频)", req.message)) and not bool(re.search(r"未|没有|没上传|没提供", req.message))
-                        case["evidence_declared"] = case.get("evidence_declared", False) or evidence
+                        case["evidence_declared"] = self.evidence_provider.declared(req.message, case.get("evidence_declared", False))
                         if conflict:
                             case["state"] = "manual_review"
                             reply = "模拟轨迹尚未签收，与签收争议描述存在冲突，需要人工核查；未认定任何一方责任。"
                         elif issue == "logistics_damaged" and not case["evidence_declared"]:
                             case["state"] = "awaiting_evidence"
                             reply = "请提供外包装、面单和商品破损或错发情况的照片。演示版仅记录您声明已提交材料，不验证图片。"
-                        elif not is_confirmed(req.message):
+                        elif not is_confirmed(req.message) or not previously_confirmable:
                             case["state"] = "awaiting_confirmation"
                             reply = "已按模拟轨迹核验。" + policy["action"] + "如同意创建模拟核查工单，请回复“确认建单”。"
                         else:
-                            ticket_id = "MOCK-" + hashlib.sha256(case_id.encode()).hexdigest()[:16]
-                            db.execute("INSERT OR IGNORE INTO tickets VALUES (?, ?)", (case_id, ticket_id))
-                            case["ticket_id"] = db.execute("SELECT ticket_id FROM tickets WHERE case_id=?", (case_id,)).fetchone()[0]
-                            call("create_logistics_case", {"case_id": case_id, "idempotency_key": case_id}, {"success": True, "ticket_id": case["ticket_id"]})
+                            created = self.ticket_provider.create_ticket(db, case_id, case_id)
+                            if not created.get("success") or not created.get("ticket_id"):
+                                raise RuntimeError("工单提供者未确认建单结果")
+                            case["ticket_id"] = created["ticket_id"]
+                            call("create_logistics_case", {"case_id": case_id, "idempotency_key": case_id}, created)
                             case["state"] = "ticket_created"
                             reply = "已创建模拟核查工单：" + case["ticket_id"] + "。未联系真实承运商，未执行退款或赔偿。"
             if case["state"] not in STATES:

@@ -304,7 +304,8 @@ class BaseAgent:
             ms = (time.monotonic() - t0) * 1000
             self.stats.record(False, ms, req.request_id)
             self.stats.total_ms += ms
-            logger.error(f"{self.agent_type.value} 处理失败: {ex}")
+            logger.exception("Agent 处理失败 agent=%s request_id=%s exception_type=%s",
+                             self.agent_type.value, req.request_id, type(ex).__name__)
             tools_used = ex.tools_used if isinstance(ex, AgentCallError) else []
             tool_traces = ex.tool_traces if isinstance(ex, AgentCallError) else []
             return AgentResponse(
@@ -927,6 +928,8 @@ class AgentOrchestrator:
         issue = detect_issue(req.message)
         previous = req.conversation_state or {}
         continuation = bool(re.fullmatch(r"\s*(?:确认建单|确认创建工单|确认提交工单|重试|继续|(?:订单号?|运单号?|快递单号)\s*[:：#]?\s*[A-Za-z0-9_-]{4,32}|已(?:上传|提供|提交).{0,30}(?:照片|图片|视频)[。！!]?)\s*", req.message))
+        if previous.get("logistics_case_id") and re.search(r"确认建单|创建工单|提交工单", req.message):
+            continuation = True  # 疑问和否定仍由原案件解释，但不会通过 is_confirmed 授权写操作。
         # 明确的人工请求不能被模型的物流分类覆盖；先移除常见否定表达。
         handoff_text = re.sub(r"(?:不想|不需要|不用|不要|无需|暂不)(?:转|找)?人工(?:客服)?", "", req.message)
         wants_handoff = any(k in handoff_text for k in ("转人工", "人工客服", "找人工"))
@@ -935,6 +938,11 @@ class AgentOrchestrator:
             req.intent_group = "escalation"
             req.intent_confidence = max(req.intent_confidence, 0.9)
         explicit_handoff = req.intent in (IntentCategory.ESCALATION, IntentCategory.HUMAN_HANDOFF)
+        negated_issue = re.search(r"(?:不是|并非|没有|没发生)(?:要查询|包裹|快递|物流|商品|发生|出现|的)?(?:丢件|丢失|破损|损坏|错发|发错货)", req.message)
+        if not explicit_handoff and not issue and negated_issue and not previous.get("logistics_case_id"):
+            req.intent = IntentCategory.BILLING if re.search(r"运费|配送费用|费用|退款|退费", req.message) else IntentCategory.LOGISTICS
+            req.intent_group = "billing" if req.intent == IntentCategory.BILLING else "query"
+            req.intent_confidence = max(req.intent_confidence, 0.9)
         if not explicit_handoff and (issue or (continuation and previous.get("logistics_case_id"))):
             req.intent = IntentCategory(issue or previous["logistics_issue"])
             req.intent_group = "logistics"
@@ -948,7 +956,10 @@ class AgentOrchestrator:
         if req.intent == IntentCategory.HUMAN_HANDOFF and (req.conversation_state or {}).get("logistics_case_id"):
             self._pool[AgentType.LOGISTICS][0].service.request_manual_review(req)
 
-        if self._needs_clarification(req):
+        rules_only_fallback = (os.getenv("INTENT_RECOGNITION_MODE", "full").strip().lower() == "rules_only"
+                               and req.intent not in (IntentCategory.LOGISTICS_LOST, IntentCategory.LOGISTICS_DISPUTE,
+                                                      IntentCategory.LOGISTICS_DAMAGED, IntentCategory.HUMAN_HANDOFF))
+        if self._needs_clarification(req) or rules_only_fallback:
             result = OrchestratorResult(
                 request_id=req.request_id,
                 response="我还不能确定您要处理的是哪类问题。请补充一下是订单物流、退款账单、账户资料，还是技术故障？",
@@ -958,7 +969,7 @@ class AgentOrchestrator:
                 latency_ms=(time.monotonic() - t0) * 1000,
                 agent_types=[AgentType.GENERAL],
                 primary_agent=AgentType.GENERAL,
-                routing_reason="低置信度 OTHER 意图，先澄清用户需求",
+                routing_reason="规则未识别到可处理意图，先澄清用户需求" if rules_only_fallback else "低置信度 OTHER 意图，先澄清用户需求",
                 routing_confidence=req.intent_confidence,
             )
             self._record_tool_trace(result)

@@ -179,6 +179,13 @@ class IntentRecognizer:
         if embedding_enabled not in {'true', 'false', '1', '0', 'yes', 'no', 'on', 'off'}:
             raise ValueError('INTENT_EMBEDDING_ENABLED 必须为 true/false')
         self._embedding_enabled = embedding_enabled in {'true', '1', 'yes', 'on'}
+        self._recognition_mode = os.getenv('INTENT_RECOGNITION_MODE', 'full').strip().lower()
+        if self._recognition_mode not in {'rules_only', 'llm_rules', 'full'}:
+            raise ValueError('INTENT_RECOGNITION_MODE 必须为 rules_only/llm_rules/full')
+        logistics_embedding = os.getenv('INTENT_LOGISTICS_EMBEDDING_ENABLED', 'true').strip().lower()
+        if logistics_embedding not in {'true', 'false', '1', '0', 'yes', 'no', 'on', 'off'}:
+            raise ValueError('INTENT_LOGISTICS_EMBEDDING_ENABLED 必须为 true/false')
+        self._logistics_embedding_enabled = logistics_embedding in {'true', '1', 'yes', 'on'}
         self._cache: Dict[str, IntentResult] = {}
         self._cache_expiries: Dict[str, float] = {}
         self.cache_hits   = 0
@@ -204,18 +211,31 @@ class IntentRecognizer:
 
         t0 = time.monotonic()
 
-        # LLM 和向量分支并行；provider=local 仍参与向量投票。
-        llm_task = asyncio.create_task(self._llm_recognize(message, history))
-        emb_task = asyncio.create_task(self._embedding_recognize(message)) if self._embedding_enabled else None
         pat      = self._pattern_recognize(message)
-
-        if emb_task:
-            llm, emb = await asyncio.gather(llm_task, emb_task)
+        if self._recognition_mode == 'rules_only':
+            llm = {'intent': IntentCategory.OTHER, 'confidence': 0.0, 'source': 'disabled'}
+            emb = {'intent': IntentCategory.OTHER, 'confidence': 0.0, 'source': 'disabled'}
+            intent, confidence = pat['intent'], pat['confidence']
+            source_scores = {'llm': 0.0, 'embedding': 0.0, 'pattern': float(confidence)}
         else:
-            llm = await llm_task
-            emb = {"intent": IntentCategory.OTHER, "confidence": 0.0, "source": "disabled"}
-
-        intent, confidence, source_scores = self._vote(llm, emb, pat)
+            llm_task = asyncio.create_task(self._llm_recognize(message, history))
+            emb_task = (asyncio.create_task(self._embedding_recognize(message))
+                        if self._recognition_mode == 'full' and self._embedding_enabled and self._logistics_embedding_enabled else None)
+            if emb_task:
+                llm, emb = await asyncio.gather(llm_task, emb_task)
+            else:
+                llm = await llm_task
+                logistic_intents = {IntentCategory.LOGISTICS, IntentCategory.LOGISTICS_LOST,
+                                    IntentCategory.LOGISTICS_DISPUTE, IntentCategory.LOGISTICS_DAMAGED}
+                logistics_candidate = (llm.get('intent') in logistic_intents or pat.get('intent') in logistic_intents)
+                if (self._recognition_mode == 'full' and self._embedding_enabled
+                        and not self._logistics_embedding_enabled and not logistics_candidate):
+                    emb = await self._embedding_recognize(message)
+                else:
+                    emb = {'intent': IntentCategory.OTHER, 'confidence': 0.0,
+                           'source': 'disabled-logistics' if self._recognition_mode == 'full' and logistics_candidate and not self._logistics_embedding_enabled else 'disabled'}
+            use_embedding = emb.get('source') not in {'disabled', 'disabled-logistics'}
+            intent, confidence, source_scores = self._vote(llm, emb, pat, use_embedding=use_embedding)
         entities = self._extract_entities(message)
         urgency  = self._urgency(message, intent)
 
@@ -255,7 +275,6 @@ class IntentRecognizer:
             'elapsed_ms': round((time.monotonic() - started) * 1000, 1),
             'status': self._embedding.status(),
         }
-
     def learn(self, message: str, correct: IntentCategory) -> None:
         """在线学习：将纠正样本加入模板，清除对应 Embedding 缓存。"""
         tpls = _TEMPLATES.setdefault(correct, [])
@@ -377,7 +396,6 @@ class IntentRecognizer:
             IntentCategory.TECHNICAL:  ["崩溃", "报错", "error", "crash"],
             IntentCategory.ACCOUNT:    ["密码", "邮箱", "账户", "password"],
         }
-
         best_cat, best_score = self._best_pattern_match(msg, specific_patterns)
         if best_cat != IntentCategory.OTHER:
             return {"intent": best_cat, "confidence": best_score}
@@ -387,7 +405,7 @@ class IntentRecognizer:
 
     # ── 投票合并 ──────────────────────────────────────────────────────────────
 
-    def _vote(self, llm: Dict, emb: Dict, pat: Dict) -> tuple[IntentCategory, float, Dict[str, float]]:
+    def _vote(self, llm: Dict, emb: Dict, pat: Dict, *, use_embedding: Optional[bool] = None) -> tuple[IntentCategory, float, Dict[str, float]]:
         """加权投票。返回最终意图、融合置信度和各路来源得分。"""
         cleaned = []
         for source in (llm, emb, pat):
@@ -402,13 +420,20 @@ class IntentRecognizer:
             "pattern": float(pat.get("confidence", 0.0) or 0.0),
         }
         if llm.get("failed"):
-            if emb.get("intent") != IntentCategory.OTHER and emb.get("confidence", 0.0) > 0:
+            logistics_issues = {IntentCategory.LOGISTICS_LOST, IntentCategory.LOGISTICS_DISPUTE,
+                                IntentCategory.LOGISTICS_DAMAGED}
+            embedding_issue_without_rule = (emb.get("intent") in logistics_issues
+                                            and pat.get("intent") not in logistics_issues)
+            if (not embedding_issue_without_rule and emb.get("intent") != IntentCategory.OTHER
+                    and emb.get("confidence", 0.0) > 0):
                 return emb["intent"], source_scores["embedding"], source_scores
             if pat.get("intent") != IntentCategory.OTHER and pat.get("confidence", 0.0) > 0:
                 return pat["intent"], source_scores["pattern"], source_scores
             return IntentCategory.OTHER, 0.0, source_scores
 
-        if self._embedding_enabled:
+        recognition_mode = getattr(self, "_recognition_mode", "full")
+        embedding_vote = (self._embedding_enabled and recognition_mode == 'full') if use_embedding is None else use_embedding
+        if embedding_vote:
             weights = [(llm, 0.7), (emb, 0.2), (pat, 0.1)]
         else:
             weights = [(llm, 0.85), (pat, 0.15)]

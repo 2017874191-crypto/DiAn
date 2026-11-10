@@ -45,9 +45,11 @@ def record_event(name):
         trace["events"][name] = trace["events"].get(name, 0) + 1
 
 
-def record_llm_call(stage, model, started, status, response=None):
+def record_llm_call(stage, model, started, status, response=None, *, error_type=None):
     row = {"stage": stage, "model": model, "status": status,
            "latency_ms": round((time.monotonic() - started) * 1000, 1)}
+    if error_type:
+        row["error_type"] = error_type
     usage = getattr(response, "usage", None)
     for field in _token_fields:
         value = usage.get(field) if isinstance(usage, dict) else getattr(usage, field, None)

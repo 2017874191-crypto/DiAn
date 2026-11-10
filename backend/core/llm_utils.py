@@ -19,13 +19,16 @@ async def create_message(client: Any, *, stage: str = "unspecified", **kwargs: A
         if "thinking" not in kwargs and "thinking" not in extra_body:
             extra_body["thinking"] = {"type": "disabled"}
             kwargs["extra_body"] = extra_body
-    started, response, status = time.monotonic(), None, "error"
+    started, response, status, error_type = time.monotonic(), None, "error", None
     try:
         response = await client.messages.create(**kwargs)
         status = "success"
         return response
+    except BaseException as exc:
+        error_type = type(exc).__name__
+        raise
     finally:
-        record_llm_call(stage, kwargs.get("model", "unknown"), started, status, response)
+        record_llm_call(stage, kwargs.get("model", "unknown"), started, status, response, error_type=error_type)
 
 
 def extract_text_content(content: Iterable[Any], separator: str = "\n") -> str:

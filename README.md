@@ -96,6 +96,7 @@ npm test
 面试版的开发基线、消融实验与故障追踪证据见：
 
 - [v0.1.0 面试版说明与冻结验收](backend/wiki/DiAn-v0.1.0面试版说明.md)
+- [Agent Infra 工程能力审查与优化方案](backend/wiki/DiAn-AgentInfra工程能力审查与优化方案.md)（2026-11-11，含能力分级、代码证据、故障复现、消融设计与分阶段验收）
 - [DiAn 开发文档](backend/wiki/DiAn开发文档.md)
 - [规则与消融验收记录](backend/wiki/DiAn-P2规则与消融验收记录.md)
 - [故障追踪与物流向量开关验收记录](backend/wiki/DiAn-P3故障追踪与物流向量开关验收记录.md)

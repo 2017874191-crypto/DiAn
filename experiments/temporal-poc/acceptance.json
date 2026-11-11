@@ -1,0 +1,54 @@
+{
+  "timestamp": 1794403534.714089,
+  "results": [
+    {
+      "mode": "engine",
+      "fault": "after",
+      "actual_tickets": 2,
+      "worker_crash": true,
+      "replay": "passed",
+      "seconds": 20.203
+    },
+    {
+      "mode": "full",
+      "fault": "none",
+      "actual_tickets": 1,
+      "worker_crash": false,
+      "replay": "passed",
+      "seconds": 5.093
+    },
+    {
+      "mode": "full",
+      "fault": "before",
+      "actual_tickets": 1,
+      "worker_crash": true,
+      "replay": "passed",
+      "seconds": 20.11
+    },
+    {
+      "mode": "full",
+      "fault": "after",
+      "actual_tickets": 1,
+      "worker_crash": true,
+      "replay": "passed",
+      "seconds": 19.656
+    },
+    {
+      "mode": "full",
+      "fault": "committed",
+      "actual_tickets": 1,
+      "worker_crash": true,
+      "replay": "passed",
+      "seconds": 18.969
+    },
+    {
+      "mode": "full",
+      "fault": "drop",
+      "actual_tickets": 1,
+      "worker_crash": false,
+      "replay": "passed",
+      "seconds": 6.641
+    }
+  ],
+  "passed": true
+}

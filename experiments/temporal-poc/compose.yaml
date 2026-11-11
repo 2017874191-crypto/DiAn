@@ -1,0 +1,19 @@
+name: dian-temporal-poc
+services:
+  temporal:
+    image: temporalio/temporal:1.5.1
+    user: "0:0"
+    command: server start-dev --ip 0.0.0.0 --db-filename /state/temporal.db
+    ports: ["127.0.0.1:17233:7233"]
+    volumes: ["temporal-state:/state"]
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: poc
+      POSTGRES_PASSWORD: local-poc-only
+      POSTGRES_DB: poc
+    ports: ["127.0.0.1:15439:5432"]
+    volumes: ["business-state:/var/lib/postgresql/data"]
+volumes:
+  temporal-state:
+  business-state:

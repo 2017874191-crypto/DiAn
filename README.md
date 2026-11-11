@@ -28,7 +28,10 @@ backend/                 Python / FastAPI 后端（发行包 dian-backend）
   tests/                  回归与接口测试
   wiki/                   架构、实现与验收文档
 frontend/                Vue 3 / Vite 前端（npm 包 dian-frontend）
+experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验证
 ```
+
+[Temporal 最小接入验证与验收记录](experiments/temporal-poc/README.md)：使用真实 Temporal 开发服务、独立模拟 HTTP 工单服务及进程崩溃实验。该实验尚未接入当前 API 主链路。
 
 ## 快速启动
 

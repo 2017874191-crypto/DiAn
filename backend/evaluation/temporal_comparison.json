@@ -1,0 +1,412 @@
+{
+  "run_at_utc": "2026-11-11T14:08:08.478868+00:00",
+  "python": "3.11.9",
+  "platform": "Windows-10-10.0.26300-SP0",
+  "temporalio": "1.36.0",
+  "dataset_sha256": "74644e23b36bd8aeb45bd3b00ab89c2b241fd116c564a7f0472a5a079930fcaa",
+  "suite": [
+    "DIAN-007",
+    "DIAN-008",
+    "DIAN-013",
+    "DIAN-014",
+    "DIAN-033",
+    "DIAN-034",
+    "DIAN-049",
+    "DIAN-050"
+  ],
+  "variants": {
+    "baseline": [
+      {
+        "case": "DIAN-007",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 38.17
+      },
+      {
+        "case": "DIAN-008",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 18.76
+      },
+      {
+        "case": "DIAN-013",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_lost",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 15.51
+      },
+      {
+        "case": "DIAN-013",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_lost",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 17.51
+      },
+      {
+        "case": "DIAN-014",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_lost",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 16.82
+      },
+      {
+        "case": "DIAN-014",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_lost",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 21.47
+      },
+      {
+        "case": "DIAN-033",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 18.29
+      },
+      {
+        "case": "DIAN-033",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 22.4
+      },
+      {
+        "case": "DIAN-033",
+        "turn": 2,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_damaged",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 21.58
+      },
+      {
+        "case": "DIAN-034",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 20.37
+      },
+      {
+        "case": "DIAN-034",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 20.9
+      },
+      {
+        "case": "DIAN-034",
+        "turn": 2,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_damaged",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 16.09
+      },
+      {
+        "case": "DIAN-049",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "manual_review",
+        "issue": "logistics_dispute",
+        "ticket_count": 0,
+        "expected_state": "manual_review",
+        "expected_tickets": 0,
+        "latency_ms": 13.49
+      },
+      {
+        "case": "DIAN-050",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 14.3
+      }
+    ],
+    "temporal": [
+      {
+        "case": "DIAN-007",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 5639.52
+      },
+      {
+        "case": "DIAN-008",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 665.41
+      },
+      {
+        "case": "DIAN-013",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_lost",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 454.15
+      },
+      {
+        "case": "DIAN-013",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_lost",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 445.59
+      },
+      {
+        "case": "DIAN-014",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_lost",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 658.63
+      },
+      {
+        "case": "DIAN-014",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_lost",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 451.97
+      },
+      {
+        "case": "DIAN-033",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 654.97
+      },
+      {
+        "case": "DIAN-033",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 479.44
+      },
+      {
+        "case": "DIAN-033",
+        "turn": 2,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_damaged",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 449.55
+      },
+      {
+        "case": "DIAN-034",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 650.18
+      },
+      {
+        "case": "DIAN-034",
+        "turn": 1,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_confirmation",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_confirmation",
+        "expected_tickets": 0,
+        "latency_ms": 488.76
+      },
+      {
+        "case": "DIAN-034",
+        "turn": 2,
+        "http": 200,
+        "status": "success",
+        "state": "ticket_created",
+        "issue": "logistics_damaged",
+        "ticket_count": 1,
+        "expected_state": "ticket_created",
+        "expected_tickets": 1,
+        "latency_ms": 452.9
+      },
+      {
+        "case": "DIAN-049",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "manual_review",
+        "issue": "logistics_dispute",
+        "ticket_count": 0,
+        "expected_state": "manual_review",
+        "expected_tickets": 0,
+        "latency_ms": 660.62
+      },
+      {
+        "case": "DIAN-050",
+        "turn": 0,
+        "http": 200,
+        "status": "success",
+        "state": "awaiting_evidence",
+        "issue": "logistics_damaged",
+        "ticket_count": 0,
+        "expected_state": "awaiting_evidence",
+        "expected_tickets": 0,
+        "latency_ms": 435.6
+      }
+    ],
+    "baseline_summary": {
+      "turns": 14,
+      "passed": 14,
+      "p50_ms": 18.76,
+      "p95_ms": 38.17,
+      "warm_p50_ms": 18.29,
+      "max_ms": 38.17
+    },
+    "temporal_summary": {
+      "turns": 14,
+      "passed": 14,
+      "p50_ms": 488.76,
+      "p95_ms": 5639.52,
+      "warm_p50_ms": 479.44,
+      "max_ms": 5639.52
+    }
+  },
+  "fault": {
+    "pointer_loss_baseline": {
+      "http": 200,
+      "case_visible_after_pointer_loss": false,
+      "ticket_count_in_db": 1
+    },
+    "pointer_loss_temporal": {
+      "http": 200,
+      "case_visible_after_pointer_loss": false,
+      "ticket_count_in_db": 1
+    },
+    "receipt_baseline": {
+      "retry_http": 503,
+      "retry_state": null,
+      "retry_error": "tool_outcome_unknown",
+      "ticket_count": 1
+    },
+    "receipt_temporal": {
+      "retry_http": 200,
+      "retry_state": "ticket_created",
+      "retry_error": null,
+      "ticket_count": 1
+    },
+    "worker_crash_temporal": {
+      "worker_exit": 86,
+      "http": 200,
+      "state": "ticket_created",
+      "ticket_count": 1,
+      "recovery_ms": 16549.06
+    },
+    "cancel_before_dispatch": {
+      "http": 200,
+      "state": "awaiting_confirmation",
+      "ticket_count": 0
+    }
+  },
+  "equivalent": true
+}

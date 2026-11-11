@@ -1,11 +1,8 @@
-"""Business-system ports and the current deterministic demo adapters.
-
-The ports are synchronous because LogisticsAgent calls the domain service in a
-worker thread. Real network adapters must add bounded timeouts and result lookup.
-"""
+"""Business-system ports and demo adapters; the HTTP path has bounded I/O and lookup."""
 import copy
 import hashlib
 import re
+import httpx
 from typing import Protocol
 
 
@@ -62,6 +59,29 @@ class SQLiteTicketProvider:
         db.execute("INSERT OR IGNORE INTO tickets VALUES (?, ?)", (case_id, ticket_id))
         ticket_id = db.execute("SELECT ticket_id FROM tickets WHERE case_id=?", (case_id,)).fetchone()[0]
         return {"success": True, "source": "mock", "ticket_id": ticket_id}
+
+
+class HttpTicketProvider:
+    """Separate mock service contract; lookup precedes any uncertain retry."""
+
+    def __init__(self, url):
+        self.url = url.rstrip("/")
+        self.timeout = httpx.Timeout(3.0, connect=1.0)
+
+    def lookup(self, key):
+        with httpx.Client(timeout=self.timeout, trust_env=False) as client:
+            response = client.get(f"{self.url}/tickets/{key}")
+        if response.status_code == 404:
+            return None
+        response.raise_for_status()
+        return response.json()
+
+    def create(self, key, params, params_hash):
+        with httpx.Client(timeout=self.timeout, trust_env=False) as client:
+            response = client.post(f"{self.url}/tickets", json={"key": key, "params": params,
+                                                             "params_hash": params_hash})
+        response.raise_for_status()
+        return response.json()
 
 
 class DeclarationEvidenceProvider:

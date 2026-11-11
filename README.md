@@ -21,7 +21,7 @@ DiAn 是独立维护的物流异常领域项目。项目复用通用客服 Agent
 ```text
 backend/                 Python / FastAPI 后端（发行包 dian-backend）
   agents/                 客服角色与路由
-  core/logistics.py       物流案件、事务与幂等工单
+  core/logistics.py       物流案件、持久 Operation 与模拟工单
   config/logistics/       模拟订单、物流、规则和知识文档
   evaluation/datasets/    带来源的案件级评测集
   skills/                 角色处理规范
@@ -31,13 +31,15 @@ frontend/                Vue 3 / Vite 前端（npm 包 dian-frontend）
 experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验证
 ```
 
-[Temporal 最小接入验证与验收记录](experiments/temporal-poc/README.md)：使用真实 Temporal 开发服务、独立模拟 HTTP 工单服务及进程崩溃实验。该实验尚未接入当前 API 主链路。
+[Temporal 最小接入验证与验收记录](experiments/temporal-poc/README.md)：早期隔离实验，使用真实 Temporal 开发服务、独立模拟 HTTP 工单服务及进程崩溃实验。后续已完成可选主链路接入。
 
-[Temporal 物流主链路可选接入与验收](backend/wiki/DiAn-Temporal主链路接入验收.md)：`/chat` 的物流执行可切换为持久化待投递与独立 Worker，默认仍使用原路径；文档列出对照结果及尚待完成的故障验收。
+[Temporal 物流主链路可选接入与验收](backend/wiki/DiAn-Temporal主链路接入验收.md)：`/chat` 的物流执行可切换为持久化待投递与独立 Worker，默认仍使用原路径。
 
 [Temporal 主链路对照实验](backend/wiki/DiAn-Temporal主链路对照实验报告.md)：相同物流案件比较原路径与 Temporal 路径的结果、延迟和故障恢复。
 
 [案件关联持久化验收](backend/wiki/DiAn-案件关联持久化验收.md)：Redis 案件指针丢失后，从业务库恢复当前案件与后续确认，并验证用户和会话隔离。
+
+[独立 HTTP 工单与 Operation 验收](backend/wiki/DiAn-HTTP工单Operation验收.md)：可选的跨进程模拟工单服务、持久 Operation、断线及进程崩溃后的结果核对；默认仍为同库模拟工单。
 
 ## 快速启动
 

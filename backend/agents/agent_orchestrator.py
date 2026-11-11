@@ -650,16 +650,19 @@ class LogisticsAgent(BaseAgent):
         from core.logistics import is_confirmed
         confirmation = is_confirmed(req.message)
         temporal_enabled = os.getenv("DIAN_TEMPORAL_LOGISTICS", "false").lower() == "true"
+        durable_operation = temporal_enabled or self.service.http_ticket_provider is not None
         if confirmation:
-            # A repeated request retrieves the same Workflow result; the legacy path remains non-retryable.
-            req.tool_attempts.append({"tool_name": "create_logistics_case", "retry_safe": temporal_enabled})
-            if req.before_unsafe_tool is not None and not temporal_enabled:
+            # The HTTP mode records an Operation before calling the external service.
+            req.tool_attempts.append({"tool_name": "create_logistics_case", "retry_safe": durable_operation})
+            if req.before_unsafe_tool is not None and not durable_operation:
                 await req.before_unsafe_tool("create_logistics_case")
         if temporal_enabled:
             from core.temporal_logistics import execute
             output = await execute(req)
             result = output["result"]
             req.conversation_state = output["conversation_state"]
+        elif self.service.http_ticket_provider is not None:
+            result = await asyncio.to_thread(self.service.process, req)
         else:
             result = self.service.process(req)
         traces = result["calls"] + [{"event": "logistics_case_transition", "case_id": result["case"]["case_id"],

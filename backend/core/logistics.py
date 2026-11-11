@@ -1,4 +1,4 @@
-"""物流案件领域服务。SQLite 原子事务保存案件和模拟工单；不执行真实赔付。"""
+"""物流案件领域服务；默认同库建单，可选独立 HTTP 模拟工单。"""
 import hashlib
 import json
 import os
@@ -9,11 +9,11 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from core.logistics_providers import (DeclarationEvidenceProvider, MockOrderProvider,
-    MockTrackingProvider, SQLiteTicketProvider)
+    MockTrackingProvider, SQLiteTicketProvider, HttpTicketProvider)
 
 ISSUES = {"logistics_lost", "logistics_dispute", "logistics_damaged"}
 RULE_VERSION = "demo-2026-11-v1"
-STATES = {"awaiting_info", "verifying", "awaiting_evidence", "awaiting_confirmation", "manual_review", "ticket_created"}
+STATES = {"awaiting_info", "verifying", "awaiting_evidence", "awaiting_confirmation", "manual_review", "ticket_pending", "ticket_unknown", "ticket_created"}
 
 def detect_issue(message):
     # 用户明确否认的异常不能作为建案依据；保留同句中其他肯定异常。
@@ -42,11 +42,14 @@ class LogisticsService:
         self.order_provider = order_provider or MockOrderProvider(self.orders)
         self.tracking_provider = tracking_provider or MockTrackingProvider(self.orders, self.order_provider)
         self.ticket_provider = ticket_provider or SQLiteTicketProvider()
+        self.http_ticket_provider = (HttpTicketProvider(os.environ["DIAN_TICKET_URL"])
+            if ticket_provider is None and os.getenv("DIAN_TICKET_PROVIDER") == "http_mock" else None)
         self.evidence_provider = evidence_provider or DeclarationEvidenceProvider()
         self.rules = json.loads((Path(__file__).resolve().parents[1] / "config/logistics/policies.json").read_text(encoding="utf-8"))
         with self.connect() as db:
             db.execute("CREATE TABLE IF NOT EXISTS cases (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, payload TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS tickets (case_id TEXT PRIMARY KEY, ticket_id TEXT UNIQUE NOT NULL)")
+            db.execute("CREATE TABLE IF NOT EXISTS ticket_operations (op_key TEXT PRIMARY KEY, case_id TEXT NOT NULL UNIQUE, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, params_hash TEXT NOT NULL, params_json TEXT NOT NULL, confirmation_id TEXT NOT NULL, case_version TEXT NOT NULL, state TEXT NOT NULL, external_id TEXT, updated_at TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS active_cases (user_id TEXT NOT NULL, conv_id TEXT NOT NULL, case_id TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY (user_id, conv_id))")
             # Older databases have cases but no active pointer. Choose the last
             # updated case per owned conversation once; all future writes are explicit.
@@ -107,6 +110,90 @@ class LogisticsService:
                              "WHERE a.user_id=? AND a.conv_id=?", (user_id, conv_id)).fetchone()
         return json.loads(row[0]) if row else None
 
+    @staticmethod
+    def _ticket_params(case):
+        return {"case_id": case["case_id"], "issue": case["issue"],
+                "order_id": case["order_id"], "tracking_no": case["tracking_no"],
+                "policy_version": case["policy_version"]}
+
+    def _prepare_ticket_operation(self, db, req, case):
+        params = self._ticket_params(case)
+        encoded = json.dumps(params, sort_keys=True, ensure_ascii=True)
+        params_hash = hashlib.sha256(encoded.encode()).hexdigest()
+        key = hashlib.sha256(json.dumps([req.user_id, case["case_id"], "create_ticket"],
+                                         ensure_ascii=True).encode()).hexdigest()
+        now = datetime.now(timezone.utc).isoformat()
+        confirmation_version = case.get("updated_at") or now
+        db.execute("INSERT OR IGNORE INTO ticket_operations VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                   (key, case["case_id"], req.user_id, req.conv_id, params_hash, encoded,
+                    req.request_id, confirmation_version, "prepared", None, now))
+        row = db.execute("SELECT user_id,conv_id,case_id,params_hash FROM ticket_operations WHERE op_key=?", (key,)).fetchone()
+        if row != (req.user_id, req.conv_id, case["case_id"], params_hash):
+            raise ValueError("工单操作键与已确认的案件参数冲突")
+        case["ticket_confirmation_version"] = confirmation_version
+        case["ticket_confirmation_id"] = req.request_id
+        return key
+
+    def _complete_ticket_operation(self, req, case_id):
+        with self.connect() as db:
+            row = db.execute("SELECT op_key,params_hash,params_json,state,external_id,case_version,confirmation_id FROM ticket_operations "
+                             "WHERE case_id=? AND user_id=? AND conv_id=?", (case_id, req.user_id, req.conv_id)).fetchone()
+        if not row:
+            raise RuntimeError("工单操作记录缺失，不能执行外部调用")
+        key, params_hash, params_json, state, external_id, case_version, confirmation_id = row
+        if state == "succeeded":
+            return self.get_case(req.user_id, case_id, req.conv_id), external_id
+        current = self.get_case(req.user_id, case_id, req.conv_id)
+        if (not current or current.get("ticket_confirmation_version") != case_version
+                or current.get("ticket_confirmation_id") != confirmation_id
+                or hashlib.sha256(json.dumps(self._ticket_params(current), sort_keys=True,
+                                             ensure_ascii=True).encode()).hexdigest() != params_hash):
+            return self._finish_ticket_operation(req, case_id, key, None), None
+        try:
+            found = self.http_ticket_provider.lookup(key)
+            if found is None:
+                found = self.http_ticket_provider.create(key, json.loads(params_json), params_hash)
+            if found.get("params_hash") != params_hash or not found.get("ticket_id"):
+                raise RuntimeError("外部工单结果与已确认参数不一致")
+        except Exception:
+            # Timeout, disconnect and provider errors are ambiguous. Never blind-retry here.
+            return self._finish_ticket_operation(req, case_id, key, None), None
+        finished = self._finish_ticket_operation(req, case_id, key, found["ticket_id"])
+        return finished, finished.get("ticket_id") if finished["state"] == "ticket_created" else None
+
+    def _finish_ticket_operation(self, req, case_id, key, ticket_id):
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT payload FROM cases WHERE id=? AND user_id=? AND conv_id=?",
+                             (case_id, req.user_id, req.conv_id)).fetchone()
+            op = db.execute("SELECT state,external_id,params_hash,case_version,confirmation_id FROM ticket_operations WHERE op_key=? AND user_id=? AND conv_id=?",
+                            (key, req.user_id, req.conv_id)).fetchone()
+            if not row or not op:
+                raise RuntimeError("案件或操作归属已变化")
+            case = json.loads(row[0])
+            if op[0] == "succeeded":
+                return case
+            now = datetime.now(timezone.utc).isoformat()
+            observed_ticket_id = ticket_id or op[1]
+            if ticket_id and (case.get("ticket_confirmation_version") != op[3]
+                    or case.get("ticket_confirmation_id") != op[4]
+                    or hashlib.sha256(json.dumps(self._ticket_params(case), sort_keys=True,
+                                                 ensure_ascii=True).encode()).hexdigest() != op[2]):
+                ticket_id = None
+            target = "ticket_created" if ticket_id else "ticket_unknown"
+            if ticket_id:
+                case["ticket_id"] = ticket_id
+            before = case["state"]
+            case["state"] = target
+            case["updated_at"] = now
+            case["events"].append({"request_id": req.request_id, "from": before, "to": target,
+                                   "at": now, "reason": "http_ticket_result"})
+            case["events"] = case["events"][-100:]
+            db.execute("UPDATE ticket_operations SET state=?,external_id=?,updated_at=? WHERE op_key=?",
+                       ("succeeded" if ticket_id else "unknown", observed_ticket_id, now, key))
+            db.execute("UPDATE cases SET payload=? WHERE id=?", (json.dumps(case, ensure_ascii=False), case_id))
+        return case
+
     def request_manual_review(self, req):
         case_id = (req.conversation_state or {}).get("logistics_case_id")
         if not case_id:
@@ -149,6 +236,7 @@ class LogisticsService:
         identity = json.dumps([req.user_id, req.conv_id, order_id or tracking_no or (old or {}).get("identity", "pending"), issue, req.request_id if new_task else ""], ensure_ascii=True)
         case_id = old["case_id"] if old else "LC-" + hashlib.sha256(identity.encode()).hexdigest()[:20]
         calls = []
+        needs_http_ticket = False
         def call(name, args, result):
             calls.append({"agent_type": "logistics", "tool_name": name, "input": args, "source": result.get("source", "mock"), "success": True, "result_success": result.get("success", True), "error": result.get("error", ""), "result": result})
             return result
@@ -161,11 +249,15 @@ class LogisticsService:
             case["order_id"] = order_id or case.get("order_id")
             case["tracking_no"] = tracking_no or case.get("tracking_no")
             policy = self.rules[issue]
-            case["policy_version"] = RULE_VERSION
+            if case["state"] not in ("ticket_pending", "ticket_unknown"):
+                case["policy_version"] = RULE_VERSION
             case["source"] = "mock"
             # 已建单保留终态。每次返回相同工单，不重复操作。
             if case["state"] == "ticket_created":
                 reply = "模拟工单已创建，编号：" + case["ticket_id"] + "。这不是承运商真实工单，未执行退款或赔偿。"
+            elif case["state"] in ("ticket_pending", "ticket_unknown"):
+                needs_http_ticket = self.http_ticket_provider is not None
+                reply = "模拟工单结果待核对，请稍后查询；不要重复提交新的建单操作。"
             elif case["state"] == "manual_review" and is_confirmed(req.message):
                 reply = "案件待人工核查，不能直接确认建单。当前尚未通知真实客服。"
             elif not case["order_id"] and not case["tracking_no"]:
@@ -201,13 +293,19 @@ class LogisticsService:
                             case["state"] = "awaiting_confirmation"
                             reply = "已按模拟轨迹核验。" + policy["action"] + "如同意创建模拟核查工单，请回复“确认建单”。"
                         else:
-                            created = self.ticket_provider.create_ticket(db, case_id, case_id)
-                            if not created.get("success") or not created.get("ticket_id"):
-                                raise RuntimeError("工单提供者未确认建单结果")
-                            case["ticket_id"] = created["ticket_id"]
-                            call("create_logistics_case", {"case_id": case_id, "idempotency_key": case_id}, created)
-                            case["state"] = "ticket_created"
-                            reply = "已创建模拟核查工单：" + case["ticket_id"] + "。未联系真实承运商，未执行退款或赔偿。"
+                            if self.http_ticket_provider is not None:
+                                self._prepare_ticket_operation(db, req, case)
+                                case["state"] = "ticket_pending"
+                                needs_http_ticket = True
+                                reply = "模拟工单正在创建；结果尚待外部服务核对。"
+                            else:
+                                created = self.ticket_provider.create_ticket(db, case_id, case_id)
+                                if not created.get("success") or not created.get("ticket_id"):
+                                    raise RuntimeError("工单提供者未确认建单结果")
+                                case["ticket_id"] = created["ticket_id"]
+                                call("create_logistics_case", {"case_id": case_id, "idempotency_key": case_id}, created)
+                                case["state"] = "ticket_created"
+                                reply = "已创建模拟核查工单：" + case["ticket_id"] + "。未联系真实承运商，未执行退款或赔偿。"
             if case["state"] not in STATES:
                 raise ValueError("非法案件状态")
             case["updated_at"] = datetime.now(timezone.utc).isoformat()
@@ -216,6 +314,14 @@ class LogisticsService:
             db.execute("INSERT OR REPLACE INTO cases VALUES (?, ?, ?, ?)", (case_id, req.user_id, req.conv_id, json.dumps(case, ensure_ascii=False)))
             db.execute("INSERT INTO active_cases VALUES (?,?,?,?) ON CONFLICT(user_id,conv_id) DO UPDATE SET case_id=excluded.case_id, updated_at=excluded.updated_at",
                        (req.user_id, req.conv_id, case_id, case["updated_at"]))
+        if needs_http_ticket:
+            case, ticket_id = self._complete_ticket_operation(req, case_id)
+            if ticket_id:
+                call("create_logistics_case", {"case_id": case_id},
+                     {"success": True, "source": "http_mock", "ticket_id": ticket_id})
+                reply = "已创建模拟核查工单：" + ticket_id + "。未联系真实承运商，未执行退款或赔偿。"
+            else:
+                reply = "模拟工单结果暂未确定，已记录待核对；请稍后查询，不要另建工单。"
         req.conversation_state = dict(state, logistics_case_id=case_id, logistics_case_state=case["state"], logistics_issue=issue)
         return {"success": True, "source": "mock", "case": case, "reply": reply, "calls": calls, "escalate": case["state"] == "manual_review"}
 
@@ -231,6 +337,8 @@ def case_view(case):
         "awaiting_evidence": "请提供外包装、面单和商品问题照片；当前仅记录提交声明。",
         "awaiting_confirmation": "资料已记录，可确认创建模拟核查工单。",
         "manual_review": "需要人工进一步核查，尚未通知真实客服。",
+        "ticket_pending": "模拟工单处理中；尚未确认外部结果。",
+        "ticket_unknown": "模拟工单结果待核对；不要重复提交新建单操作。",
         "ticket_created": "模拟工单已创建；未联系承运商，未执行赔偿或退款。",
     }
     return {"case_id": case["case_id"], "issue": case["issue"], "state": state,

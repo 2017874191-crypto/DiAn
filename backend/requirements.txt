@@ -18,6 +18,7 @@ prometheus-client==0.21.1
 
 # ── HTTP 客户端 ───────────────────────────────────────────────────────────────
 httpx==0.28.1              # monitor/performance_monitor.py webhook 告警
+temporalio==1.36.0         # opt-in logistics durable execution
 
 # ── 工具 ──────────────────────────────────────────────────────────────────────
 python-dotenv==1.0.1

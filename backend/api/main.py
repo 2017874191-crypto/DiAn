@@ -413,6 +413,7 @@ async def chat(req: ChatRequest, http_request: HTTPRequest):
                 intent_confidence=intent_result.confidence,
                 conversation_state=getattr(mem_ctx, "state", {}),
             )
+            orch_req.client_request_id = client_id
 
             async def before_unsafe_tool(name):
                 # 在产生副作用之前持久化；超时/崩溃后同一 ID 不会重放未知结果。

@@ -33,6 +33,8 @@ experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验�
 
 [Temporal 最小接入验证与验收记录](experiments/temporal-poc/README.md)：使用真实 Temporal 开发服务、独立模拟 HTTP 工单服务及进程崩溃实验。该实验尚未接入当前 API 主链路。
 
+[Temporal 物流主链路可选接入与验收](backend/wiki/DiAn-Temporal主链路接入验收.md)：`/chat` 的物流执行可切换为持久化待投递与独立 Worker，默认仍使用原路径；文档列出对照结果及尚待完成的故障验收。
+
 ## 快速启动
 
 需要 Docker 与 Docker Compose v2。前端构建需要 Node.js 22 或更高的兼容版本；宿主机运行后端需要 Python 3.12。模型通过服务端 API 调用，无需 GPU。

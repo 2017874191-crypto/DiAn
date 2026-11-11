@@ -194,6 +194,7 @@ class Request:
     urgency:     Optional[UrgencyLevel]   = None
     intent_confidence: float = 1.0
     request_id:  str = field(default_factory=lambda: str(uuid.uuid4()))
+    client_request_id: Optional[str] = None
     tool_attempts: List[Dict[str, Any]] = field(default_factory=list)
     before_unsafe_tool: Any = field(default=None, repr=False)
     unsafe_tool_calls: set = field(default_factory=set, repr=False)
@@ -648,11 +649,19 @@ class LogisticsAgent(BaseAgent):
         # 模拟事务同步短路径：不把可写事务交给取消后仍继续运行的线程。
         from core.logistics import is_confirmed
         confirmation = is_confirmed(req.message)
+        temporal_enabled = os.getenv("DIAN_TEMPORAL_LOGISTICS", "false").lower() == "true"
         if confirmation:
-            req.tool_attempts.append({"tool_name": "create_logistics_case", "retry_safe": False})
-            if req.before_unsafe_tool is not None:
+            # A repeated request retrieves the same Workflow result; the legacy path remains non-retryable.
+            req.tool_attempts.append({"tool_name": "create_logistics_case", "retry_safe": temporal_enabled})
+            if req.before_unsafe_tool is not None and not temporal_enabled:
                 await req.before_unsafe_tool("create_logistics_case")
-        result = self.service.process(req)
+        if temporal_enabled:
+            from core.temporal_logistics import execute
+            output = await execute(req)
+            result = output["result"]
+            req.conversation_state = output["conversation_state"]
+        else:
+            result = self.service.process(req)
         traces = result["calls"] + [{"event": "logistics_case_transition", "case_id": result["case"]["case_id"],
             "state": result["case"]["state"], "request_id": req.request_id, "source": "mock"}]
         return AgentCallResult(result["reply"], [c["tool_name"] for c in result["calls"]], traces)

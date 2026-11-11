@@ -1,0 +1,42 @@
+# Development validation only: Temporal start-dev is not a production deployment.
+services:
+  temporal:
+    image: temporalio/temporal:1.5.1
+    user: "0:0"
+    command: server start-dev --ip 0.0.0.0 --db-filename /state/temporal.db
+    volumes:
+      - temporal-dev-state:/state
+    networks:
+      - dian-network
+
+  dian:
+    environment:
+      DIAN_TEMPORAL_LOGISTICS: "true"
+      DIAN_TEMPORAL_ADDRESS: temporal:7233
+    depends_on:
+      temporal:
+        condition: service_started
+
+  logistics-worker:
+    image: dian-backend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    command: ["python", "-m", "core.temporal_logistics"]
+    env_file:
+      - .env
+    environment:
+      DIAN_LOGISTICS_DB: /app/data/logistics/cases.sqlite3
+      DIAN_TEMPORAL_ADDRESS: temporal:7233
+    volumes:
+      - ./data/logistics:/app/data/logistics
+    depends_on:
+      temporal:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - dian-network
+
+volumes:
+  temporal-dev-state:

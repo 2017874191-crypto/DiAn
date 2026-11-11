@@ -19,7 +19,10 @@ class CaseAPIContract(unittest.IsolatedAsyncioTestCase):
             req = Request(message="包裹疑似丢件", user_id="demo-user", conv_id="owned", intent=IntentCategory.LOGISTICS_LOST,
                 entities={"order_id":["DEMO1001"]}, conversation_state={})
             service.process(req)
+            pointer_missing = False
             async def state(user, conv):
+                if pointer_missing:
+                    return {}
                 return req.conversation_state if conv in ("owned", "wrong-pointer") else {}
             token = "test-token-" + "a" * 32
             env = {"DIAN_ENV":"production", "DIAN_API_TOKENS":json.dumps({token:{"user_id":"demo-user","role":"user"}})}
@@ -32,6 +35,9 @@ class CaseAPIContract(unittest.IsolatedAsyncioTestCase):
                     snapshot=response.json()["logistics_case"]
                     self.assertTrue(snapshot["can_confirm"])
                     self.assertNotIn("events",snapshot)
+                    pointer_missing = True  # Redis state expired; ownership remains in SQLite.
+                    recovered=await client.get("/logistics/case",params={"user_id":"demo-user","conv_id":"owned"},headers=headers)
+                    self.assertEqual(recovered.json()["logistics_case"],snapshot)
                     denied=await client.get("/logistics/case",params={"user_id":"another-user","conv_id":"owned"},headers=headers)
                     self.assertEqual(denied.status_code,403)
                     for conv in ("missing","wrong-pointer"):

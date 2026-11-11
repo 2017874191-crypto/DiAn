@@ -6,7 +6,7 @@
 
 客户端应在重试时复用同一个 `client_request_id`；未提供时 API 只为本次请求生成新 ID。物流 Agent 将用户、会话、消息和当轮案件状态写入与物流案件相同的 SQLite 文件中的 `temporal_dispatch` 表。单独的 Worker 扫描 `pending`，使用由用户、会话、请求 ID 派生的稳定 Workflow ID 启动 `LogisticsTurn`。API 等待该执行完成，并把领域返回的案件状态写回原有会话回执。开始执行与标记已投递之间若崩溃，下一次扫描仍使用同一 ID，并拒绝重复启动。
 
-Activity 调用原有 `LogisticsService.process()`。其 SQLite 事务仍保证**模拟**案件与**模拟**工单同事务落库；Temporal 管理 Worker 重试、历史与跨进程执行恢复。`temporal_dispatch` 不保存长期 HTTP 响应，原会话回执仍由 Redis 管理。因而 Redis 回执过期后，请求可以取回 Temporal 结果，但案件查询接口仍依赖 Redis 指针；这属于后续案件关联持久化工作。
+Activity 调用原有 `LogisticsService.process()`。其 SQLite 事务仍保证**模拟**案件与**模拟**工单同事务落库；Temporal 管理 Worker 重试、历史与跨进程执行恢复。`temporal_dispatch` 不保存长期 HTTP 响应，原会话回执仍由 Redis 管理。案件关联现已在业务库的 `active_cases` 表中持久化：Redis 状态缺失时，案件查询与后续确认可从业务库恢复；这不等于 Redis 历史消息或回执本身已持久化。
 
 本次没有把实验中的 HTTP Provider 和 PostgreSQL Operation 账本接入生产路径。对真实工单系统不可声称恰好一次；接真实 Provider 前必须拆分短事务准备、外部调用和结果核对，并把确认绑定案件版本、动作和参数。
 
@@ -29,8 +29,8 @@ Docker 验证环境可使用 `docker compose -f docker-compose.yml -f docker-com
 | 请求先落入待投递表，Worker 后启动仍完成执行 | 通过 |
 | 案件和工单仍在原 SQLite 领域库持久化 | 通过 |
 
-此前[隔离故障实验](../../experiments/temporal-poc/README.md)的 6 组场景证明 Temporal 恢复与业务结果核对的边界，但**不等同于 `/chat` 主链路的进程崩溃验收**。本轮测试覆盖真实服务和 API 行为对照，尚未针对 `/chat` 的双进程 Worker、超时、取消、Redis 过期和多请求同案并发重复故障注入；这些必须在宣称生产可用之前完成。
+此前[隔离故障实验](../../experiments/temporal-poc/README.md)的 6 组场景证明 Temporal 恢复与业务结果核对的边界。后续[主链路对照实验](DiAn-Temporal主链路对照实验报告.md)已覆盖 `/chat` 独立 Worker 崩溃、API 等待取消和受控会话指针丢失；真实 Redis TTL、Temporal 服务重启、真实外部 Provider 与资源成本仍未验收。
 
 ## 下一道门槛
 
-已完成第一轮[主链路对照实验](DiAn-Temporal主链路对照实验报告.md)：8 案件、14 轮两组业务结果一致；已验证回执写入失败、Worker 在事务提交后崩溃、待投递后 API 取消，并确认会话案件指针丢失后查询仍为空。仍需验证真实 Redis、外部工单 Provider、同案并发、Temporal 服务重启和资源成本。只有这些对照显示收益且风险可控，才将 Temporal 作为默认路径。
+修复案件关联后已重跑[主链路对照实验](DiAn-Temporal主链路对照实验报告.md)：8 案件、14 轮两组业务结果一致；受控会话指针丢失后，两组均可读取数据库中的当前案件。下一阶段应优先验证独立 HTTP 工单 Provider 的稳定业务键、未知结果核对和确认版本绑定。真实 Redis、同案并发、Temporal 服务重启和资源成本仍是默认启用前的门槛。

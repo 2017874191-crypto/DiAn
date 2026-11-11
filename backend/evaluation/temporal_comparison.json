@@ -1,5 +1,5 @@
 {
-  "run_at_utc": "2026-11-11T14:08:08.478868+00:00",
+  "run_at_utc": "2026-11-11T14:19:45.458341+00:00",
   "python": "3.11.9",
   "platform": "Windows-10-10.0.26300-SP0",
   "temporalio": "1.36.0",
@@ -26,7 +26,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 38.17
+        "latency_ms": 37.7
       },
       {
         "case": "DIAN-008",
@@ -38,7 +38,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 18.76
+        "latency_ms": 19.21
       },
       {
         "case": "DIAN-013",
@@ -50,7 +50,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 15.51
+        "latency_ms": 16.56
       },
       {
         "case": "DIAN-013",
@@ -62,7 +62,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 17.51
+        "latency_ms": 18.7
       },
       {
         "case": "DIAN-014",
@@ -74,7 +74,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 16.82
+        "latency_ms": 17.61
       },
       {
         "case": "DIAN-014",
@@ -86,7 +86,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 21.47
+        "latency_ms": 17.46
       },
       {
         "case": "DIAN-033",
@@ -98,7 +98,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 18.29
+        "latency_ms": 15.73
       },
       {
         "case": "DIAN-033",
@@ -110,7 +110,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 22.4
+        "latency_ms": 16.23
       },
       {
         "case": "DIAN-033",
@@ -122,7 +122,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 21.58
+        "latency_ms": 15.14
       },
       {
         "case": "DIAN-034",
@@ -134,7 +134,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 20.37
+        "latency_ms": 20.79
       },
       {
         "case": "DIAN-034",
@@ -146,7 +146,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 20.9
+        "latency_ms": 15.85
       },
       {
         "case": "DIAN-034",
@@ -158,7 +158,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 16.09
+        "latency_ms": 17.4
       },
       {
         "case": "DIAN-049",
@@ -170,7 +170,7 @@
         "ticket_count": 0,
         "expected_state": "manual_review",
         "expected_tickets": 0,
-        "latency_ms": 13.49
+        "latency_ms": 16.93
       },
       {
         "case": "DIAN-050",
@@ -182,7 +182,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 14.3
+        "latency_ms": 17.27
       }
     ],
     "temporal": [
@@ -196,7 +196,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 5639.52
+        "latency_ms": 5706.67
       },
       {
         "case": "DIAN-008",
@@ -208,7 +208,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 665.41
+        "latency_ms": 445.76
       },
       {
         "case": "DIAN-013",
@@ -220,7 +220,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 454.15
+        "latency_ms": 647.05
       },
       {
         "case": "DIAN-013",
@@ -232,7 +232,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 445.59
+        "latency_ms": 449.71
       },
       {
         "case": "DIAN-014",
@@ -244,7 +244,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 658.63
+        "latency_ms": 444.26
       },
       {
         "case": "DIAN-014",
@@ -256,7 +256,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 451.97
+        "latency_ms": 654.88
       },
       {
         "case": "DIAN-033",
@@ -268,7 +268,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 654.97
+        "latency_ms": 449.98
       },
       {
         "case": "DIAN-033",
@@ -280,7 +280,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 479.44
+        "latency_ms": 491.92
       },
       {
         "case": "DIAN-033",
@@ -292,7 +292,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 449.55
+        "latency_ms": 663.21
       },
       {
         "case": "DIAN-034",
@@ -304,7 +304,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 650.18
+        "latency_ms": 437.54
       },
       {
         "case": "DIAN-034",
@@ -316,7 +316,7 @@
         "ticket_count": 0,
         "expected_state": "awaiting_confirmation",
         "expected_tickets": 0,
-        "latency_ms": 488.76
+        "latency_ms": 650.83
       },
       {
         "case": "DIAN-034",
@@ -328,7 +328,7 @@
         "ticket_count": 1,
         "expected_state": "ticket_created",
         "expected_tickets": 1,
-        "latency_ms": 452.9
+        "latency_ms": 454.04
       },
       {
         "case": "DIAN-049",
@@ -340,7 +340,7 @@
         "ticket_count": 0,
         "expected_state": "manual_review",
         "expected_tickets": 0,
-        "latency_ms": 660.62
+        "latency_ms": 448.92
       },
       {
         "case": "DIAN-050",
@@ -352,35 +352,35 @@
         "ticket_count": 0,
         "expected_state": "awaiting_evidence",
         "expected_tickets": 0,
-        "latency_ms": 435.6
+        "latency_ms": 645.76
       }
     ],
     "baseline_summary": {
       "turns": 14,
       "passed": 14,
-      "p50_ms": 18.76,
-      "p95_ms": 38.17,
-      "warm_p50_ms": 18.29,
-      "max_ms": 38.17
+      "p50_ms": 17.4,
+      "p95_ms": 37.7,
+      "warm_p50_ms": 17.27,
+      "max_ms": 37.7
     },
     "temporal_summary": {
       "turns": 14,
       "passed": 14,
-      "p50_ms": 488.76,
-      "p95_ms": 5639.52,
-      "warm_p50_ms": 479.44,
-      "max_ms": 5639.52
+      "p50_ms": 491.92,
+      "p95_ms": 5706.67,
+      "warm_p50_ms": 454.04,
+      "max_ms": 5706.67
     }
   },
   "fault": {
     "pointer_loss_baseline": {
       "http": 200,
-      "case_visible_after_pointer_loss": false,
+      "case_visible_after_pointer_loss": true,
       "ticket_count_in_db": 1
     },
     "pointer_loss_temporal": {
       "http": 200,
-      "case_visible_after_pointer_loss": false,
+      "case_visible_after_pointer_loss": true,
       "ticket_count_in_db": 1
     },
     "receipt_baseline": {
@@ -400,7 +400,7 @@
       "http": 200,
       "state": "ticket_created",
       "ticket_count": 1,
-      "recovery_ms": 16549.06
+      "recovery_ms": 16515.25
     },
     "cancel_before_dispatch": {
       "http": 200,

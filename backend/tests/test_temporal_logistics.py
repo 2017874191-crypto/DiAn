@@ -55,6 +55,9 @@ class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
             async def get_context(self, *_args, **_kwargs):
                 return SimpleNamespace(state=self.state.copy(), recent_messages=[], to_prompt_text=lambda: "")
 
+            async def get_conversation_state(self, *_):
+                return self.state.copy()
+
             async def commit_turn(self, user, conv, client, message, response, *_args, state=None):
                 self.receipts[client] = {"message": message, "response": response}
                 if state is not None:
@@ -72,6 +75,8 @@ class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
                                        source_scores={}, embedding_source="rules")
 
             async def run(self, req):
+                if req.message == "确认建单":
+                    assert req.conversation_state.get("logistics_case_id"), "durable case link was not restored"
                 output = await LogisticsAgent._call_llm(self.agent, req)
                 return OrchestratorResult(request_id=req.request_id, response=output.content,
                                           agent_type=AgentType.LOGISTICS, intent=req.intent,
@@ -95,6 +100,8 @@ class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
                                     response = await client.post("/chat", json={"message": message, "user_id": "demo-user", "conv_id": "chat-c1", "client_request_id": request_id})
                                     self.assertEqual(response.status_code, 200, response.text)
                                     results.append(response.json()["logistics_case"])
+                                    if request_id == "first":
+                                        memory.state = {}  # Simulate Redis expiry before confirmation.
                                 return results
                     if enabled:
                         async with await WorkflowEnvironment.start_local() as env:

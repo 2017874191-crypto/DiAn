@@ -314,7 +314,8 @@ async def compare():
         assert result["fault"]["receipt_baseline"]["retry_http"] == 503
         assert result["fault"]["receipt_temporal"]["retry_http"] == 200
         assert result["fault"]["worker_crash_temporal"]["ticket_count"] == 1
-        assert not result["fault"]["pointer_loss_temporal"]["case_visible_after_pointer_loss"]
+        assert result["fault"]["pointer_loss_baseline"]["case_visible_after_pointer_loss"]
+        assert result["fault"]["pointer_loss_temporal"]["case_visible_after_pointer_loss"]
         print(json.dumps(result["fault"], ensure_ascii=False), flush=True)
     (ROOT / "evaluation/temporal_comparison.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     return result

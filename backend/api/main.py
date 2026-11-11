@@ -389,6 +389,7 @@ async def chat(req: ChatRequest, http_request: HTTPRequest):
             # 1. 读取记忆上下文
             with measure_stage("memory_read"):
                 mem_ctx = await _memory.get_context(req.user_id, conv_id, query=req.message)
+                mem_ctx.state = await _restore_logistics_state(req.user_id, conv_id, getattr(mem_ctx, "state", {}))
 
             # 2. 构建编排请求（含对话历史，用于意图识别上下文）
             history = [
@@ -469,12 +470,37 @@ async def chat(req: ChatRequest, http_request: HTTPRequest):
 async def _case_snapshot(user_id, conv_id, state):
     from core.logistics import case_view
     from agents.agent_orchestrator import AgentType
-    case_id = (state or {}).get("logistics_case_id")
-    if not case_id:
+    agents = getattr(_orchestrator, "_pool", {}).get(AgentType.LOGISTICS)
+    if not agents or not hasattr(agents[0], "service"):
         return None
-    service = _orchestrator._pool[AgentType.LOGISTICS][0].service
-    case = await asyncio.to_thread(service.get_case, user_id, case_id, conv_id)
+    service = agents[0].service
+    case = await asyncio.to_thread(service.get_active_case, user_id, conv_id)
     return case_view(case) if case and case.get("case_id") else None
+
+
+async def _restore_logistics_state(user_id, conv_id, state):
+    """Use the owned business pointer when Redis state is absent or stale."""
+    from agents.agent_orchestrator import AgentType
+
+    agents = getattr(_orchestrator, "_pool", {}).get(AgentType.LOGISTICS)
+    if not agents or not hasattr(agents[0], "service"):
+        return state or {}
+    service = agents[0].service
+    case = await asyncio.to_thread(service.get_active_case, user_id, conv_id)
+    if not case:
+        return state or {}
+    restored = dict(state or {})
+    if (restored.get("logistics_case_id") == case["case_id"]
+            and restored.get("logistics_issue") == case["issue"]):
+        restored["logistics_case_state"] = case["state"]
+        return restored
+    entities = dict(restored.get("entities") or {})
+    for key in ("order_id", "tracking_no"):
+        entities[key] = [case[key]] if case.get(key) else []
+    restored.update(domain="commerce", entities=entities,
+                    logistics_case_id=case["case_id"], logistics_case_state=case["state"],
+                    logistics_issue=case["issue"])
+    return restored
 
 
 @app.get("/logistics/case", tags=["物流案件"])

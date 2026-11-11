@@ -1,4 +1,7 @@
 import asyncio
+import json
+import sqlite3
+from contextlib import closing
 
 import pytest
 
@@ -104,6 +107,41 @@ def test_case_switch_does_not_reuse_ticket(service):
     assert result["case"]["case_id"] != first["case"]["case_id"]
     assert "ticket_id" not in result["case"]
 
+
+def test_active_case_switch_and_conversation_boundary(service):
+    first_req = request()
+    first = service.process(first_req)["case"]
+    second_req = Request(message="换个订单查询丢件", user_id="demo-user", conv_id=first_req.conv_id,
+        intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1002"]},
+        conversation_state=first_req.conversation_state)
+    second = service.process(second_req)["case"]
+    assert second["case_id"] != first["case_id"]
+    assert service.get_active_case("demo-user", first_req.conv_id)["case_id"] == second["case_id"]
+    assert service.get_case("demo-user", first["case_id"], first_req.conv_id)
+    assert service.get_active_case("demo-user", "other-conversation") is None
+    assert service.get_active_case("another-user", first_req.conv_id) is None
+    # A stale pointer from another conversation must not move its case.
+    forged = Request(message="确认建单", user_id="demo-user", conv_id="other-conversation",
+        intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1001"]},
+        conversation_state={"logistics_case_id": first["case_id"]})
+    service.process(forged)
+    assert service.get_case("demo-user", first["case_id"], first_req.conv_id)
+    assert service.get_case("demo-user", first["case_id"], "other-conversation") is None
+
+
+def test_legacy_cases_backfill_latest_owned_case(tmp_path):
+    path = tmp_path / "legacy.sqlite3"
+    with closing(sqlite3.connect(path)) as db:
+        with db:
+            db.execute("CREATE TABLE cases (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, payload TEXT NOT NULL)")
+            for case_id, updated in (("old", "2026-11-10T23:00:00+08:00"), ("new", "2026-11-10T18:00:00+00:00")):
+                db.execute("INSERT INTO cases VALUES (?,?,?,?)", (case_id, "demo-user", "owned",
+                    json.dumps({"case_id": case_id, "issue": "logistics_lost", "updated_at": updated})))
+    service = LogisticsService(path)
+    assert service.get_active_case("demo-user", "owned")["case_id"] == "new"
+    assert service.get_active_case("demo-user", "another") is None
+    assert LogisticsService(path).get_active_case("demo-user", "owned")["case_id"] == "new"
+
 def test_merge_preserves_pointer_and_resets_on_new_order():
     previous = {"domain":"commerce", "entities":{"order_id":["DEMO1001"]}, "logistics_case_id":"old"}
     merged = merge_state(previous, {}, "logistics", "确认建单", "r2")
@@ -125,7 +163,12 @@ def test_full_orchestrator_continuation_without_llm(monkeypatch, tmp_path):
         first = await orch.run(req)
         assert first.agent_type == AgentType.LOGISTICS
         assert not first.supporting_agents
-        follow = request("确认建单", issue="other", order=None, state=req.conversation_state)
+        from unittest.mock import patch
+        import api.main as api
+        with patch.object(api, "_orchestrator", orch):
+            recovered = await api._restore_logistics_state(req.user_id, req.conv_id, {})
+        assert recovered["logistics_case_id"] == req.conversation_state["logistics_case_id"]
+        follow = request("确认建单", issue="other", order=None, state=recovered)
         follow.intent_group = "other"
         second = await orch.run(follow)
         assert second.agent_type == AgentType.LOGISTICS

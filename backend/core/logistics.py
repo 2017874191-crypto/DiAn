@@ -47,6 +47,35 @@ class LogisticsService:
         with self.connect() as db:
             db.execute("CREATE TABLE IF NOT EXISTS cases (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, payload TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS tickets (case_id TEXT PRIMARY KEY, ticket_id TEXT UNIQUE NOT NULL)")
+            db.execute("CREATE TABLE IF NOT EXISTS active_cases (user_id TEXT NOT NULL, conv_id TEXT NOT NULL, case_id TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY (user_id, conv_id))")
+            # Older databases have cases but no active pointer. Choose the last
+            # updated case per owned conversation once; all future writes are explicit.
+            latest = {}
+            for rowid, case_id, user_id, conv_id, payload in db.execute(
+                    "SELECT c.rowid,c.id,c.user_id,c.conv_id,c.payload FROM cases c "
+                    "LEFT JOIN active_cases a ON a.user_id=c.user_id AND a.conv_id=c.conv_id "
+                    "WHERE a.case_id IS NULL"):
+                try:
+                    case = json.loads(payload)
+                except (TypeError, json.JSONDecodeError):
+                    continue
+                if not isinstance(case, dict):
+                    continue
+                timestamp = case.get("updated_at") or ""
+                try:
+                    parsed = datetime.fromisoformat(timestamp)
+                    if parsed.tzinfo is None:
+                        parsed = parsed.replace(tzinfo=timezone.utc)
+                    parsed = parsed.astimezone(timezone.utc)
+                except (TypeError, ValueError):
+                    parsed = datetime.min.replace(tzinfo=timezone.utc)
+                rank = (parsed, rowid)
+                key = (user_id, conv_id)
+                if key not in latest or rank > latest[key][0]:
+                    latest[key] = (rank, case_id, timestamp)
+            for (user_id, conv_id), (_, case_id, timestamp) in latest.items():
+                db.execute("INSERT OR IGNORE INTO active_cases VALUES (?,?,?,?)",
+                           (user_id, conv_id, case_id, timestamp))
 
     @contextmanager
     def connect(self):
@@ -70,6 +99,14 @@ class LogisticsService:
                 (case_id, user_id, conv_id) if conv_id is not None else (case_id, user_id)).fetchone()
         return json.loads(row[0]) if row else None
 
+    def get_active_case(self, user_id, conv_id):
+        """Read the authoritative conversation pointer and recheck case ownership."""
+        with self.connect() as db:
+            row = db.execute("SELECT c.payload FROM active_cases a JOIN cases c "
+                             "ON c.id=a.case_id AND c.user_id=a.user_id AND c.conv_id=a.conv_id "
+                             "WHERE a.user_id=? AND a.conv_id=?", (user_id, conv_id)).fetchone()
+        return json.loads(row[0]) if row else None
+
     def request_manual_review(self, req):
         case_id = (req.conversation_state or {}).get("logistics_case_id")
         if not case_id:
@@ -88,13 +125,17 @@ class LogisticsService:
             case["events"].append({"request_id": req.request_id, "from": before, "to": "manual_review", "at": case["updated_at"], "reason": "user_requested_handoff"})
             case["events"] = case["events"][-100:]
             db.execute("UPDATE cases SET payload=? WHERE id=?", (json.dumps(case, ensure_ascii=False), case_id))
+            db.execute("INSERT INTO active_cases VALUES (?,?,?,?) ON CONFLICT(user_id,conv_id) DO UPDATE SET case_id=excluded.case_id, updated_at=excluded.updated_at",
+                       (req.user_id, req.conv_id, case_id, case["updated_at"]))
         req.conversation_state["logistics_case_state"] = "manual_review"
 
     def process(self, req):
         """协调层每轮执行一次，LLM 不能指定案件状态或伪造核验结果。"""
         state = req.conversation_state or {}
         old_id = state.get("logistics_case_id")
-        old = self.get_case(req.user_id, old_id) if old_id else None
+        old = self.get_active_case(req.user_id, req.conv_id)
+        if old is None and old_id:
+            old = self.get_case(req.user_id, old_id, req.conv_id)
         issue = req.intent.value if req.intent and req.intent.value in ISSUES else (old or {}).get("issue")
         if issue not in ISSUES:
             raise ValueError("不支持的物流案件类型")
@@ -173,6 +214,8 @@ class LogisticsService:
             case["events"].append({"request_id": req.request_id, "from": before, "to": case["state"], "at": case["updated_at"], "tools": [c["tool_name"] for c in calls]})
             case["events"] = case["events"][-100:]
             db.execute("INSERT OR REPLACE INTO cases VALUES (?, ?, ?, ?)", (case_id, req.user_id, req.conv_id, json.dumps(case, ensure_ascii=False)))
+            db.execute("INSERT INTO active_cases VALUES (?,?,?,?) ON CONFLICT(user_id,conv_id) DO UPDATE SET case_id=excluded.case_id, updated_at=excluded.updated_at",
+                       (req.user_id, req.conv_id, case_id, case["updated_at"]))
         req.conversation_state = dict(state, logistics_case_id=case_id, logistics_case_state=case["state"], logistics_issue=issue)
         return {"success": True, "source": "mock", "case": case, "reply": reply, "calls": calls, "escalate": case["state"] == "manual_review"}
 

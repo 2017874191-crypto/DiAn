@@ -37,6 +37,8 @@ experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验�
 
 [Temporal 主链路对照实验](backend/wiki/DiAn-Temporal主链路对照实验报告.md)：相同物流案件比较原路径与 Temporal 路径的结果、延迟和故障恢复。
 
+[案件关联持久化验收](backend/wiki/DiAn-案件关联持久化验收.md)：Redis 案件指针丢失后，从业务库恢复当前案件与后续确认，并验证用户和会话隔离。
+
 ## 快速启动
 
 需要 Docker 与 Docker Compose v2。前端构建需要 Node.js 22 或更高的兼容版本；宿主机运行后端需要 Python 3.12。模型通过服务端 API 调用，无需 GPU。

@@ -1,0 +1,728 @@
+{
+  "run_at_utc": "2026-11-12T10:46:07.914958+00:00",
+  "python": "3.11.9",
+  "platform": "Windows-10-10.0.26300-SP0",
+  "temporalio": "1.36.0",
+  "psutil": "7.2.2",
+  "dataset_sha256": "74644e23b36bd8aeb45bd3b00ab89c2b241fd116c564a7f0472a5a079930fcaa",
+  "cases": [
+    "DIAN-007",
+    "DIAN-008",
+    "DIAN-013",
+    "DIAN-014",
+    "DIAN-033",
+    "DIAN-034",
+    "DIAN-049",
+    "DIAN-050"
+  ],
+  "repeats": 3,
+  "scope": "local ASGI, controlled memory, SQLite mock ticket, no paid model or real Redis",
+  "variants": {
+    "baseline": [
+      {
+        "summary": {
+          "turns": 14,
+          "passed": 14,
+          "p50_ms": 55.16,
+          "p95_ms": 83.8,
+          "warm_p50_ms": 55.08,
+          "max_ms": 83.8
+        },
+        "resources": {
+          "peak_rss_mb": 102.02,
+          "observed_cpu_seconds": 0.672,
+          "samples": 12
+        },
+        "records": [
+          {
+            "case": "DIAN-007",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 83.8
+          },
+          {
+            "case": "DIAN-008",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 55.16
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 52.31
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 34.46
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 55.08
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 58.17
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 38.46
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 56.0
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 56.15
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 33.75
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 52.72
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 58.63
+          },
+          {
+            "case": "DIAN-049",
+            "turn": 0,
+            "state": "manual_review",
+            "ticket_count": 0,
+            "latency_ms": 33.39
+          },
+          {
+            "case": "DIAN-050",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 58.34
+          }
+        ]
+      },
+      {
+        "summary": {
+          "turns": 14,
+          "passed": 14,
+          "p50_ms": 36.77,
+          "p95_ms": 52.05,
+          "warm_p50_ms": 34.9,
+          "max_ms": 52.05
+        },
+        "resources": {
+          "peak_rss_mb": 108.5,
+          "observed_cpu_seconds": 0.5,
+          "samples": 10
+        },
+        "records": [
+          {
+            "case": "DIAN-007",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 42.58
+          },
+          {
+            "case": "DIAN-008",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 36.77
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 24.35
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 52.05
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 44.51
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 34.17
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 51.17
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 19.42
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 23.43
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 34.9
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 25.48
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 49.46
+          },
+          {
+            "case": "DIAN-049",
+            "turn": 0,
+            "state": "manual_review",
+            "ticket_count": 0,
+            "latency_ms": 23.9
+          },
+          {
+            "case": "DIAN-050",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 43.5
+          }
+        ]
+      },
+      {
+        "summary": {
+          "turns": 14,
+          "passed": 14,
+          "p50_ms": 44.73,
+          "p95_ms": 65.38,
+          "warm_p50_ms": 44.73,
+          "max_ms": 65.38
+        },
+        "resources": {
+          "peak_rss_mb": 108.5,
+          "observed_cpu_seconds": 0.562,
+          "samples": 10
+        },
+        "records": [
+          {
+            "case": "DIAN-007",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 23.53
+          },
+          {
+            "case": "DIAN-008",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 31.65
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 52.62
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 65.38
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 32.48
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 51.86
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 23.33
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 44.73
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 22.1
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 51.07
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 20.41
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 20.02
+          },
+          {
+            "case": "DIAN-049",
+            "turn": 0,
+            "state": "manual_review",
+            "ticket_count": 0,
+            "latency_ms": 54.89
+          },
+          {
+            "case": "DIAN-050",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 56.49
+          }
+        ]
+      }
+    ],
+    "temporal": [
+      {
+        "summary": {
+          "turns": 14,
+          "passed": 14,
+          "p50_ms": 541.84,
+          "p95_ms": 9180.62,
+          "warm_p50_ms": 533.79,
+          "max_ms": 9180.62
+        },
+        "resources": {
+          "peak_rss_mb": 403.23,
+          "observed_cpu_seconds": 12.984,
+          "samples": 214
+        },
+        "records": [
+          {
+            "case": "DIAN-007",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 9180.62
+          },
+          {
+            "case": "DIAN-008",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 555.5
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 527.69
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 551.28
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 496.26
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 529.8
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 692.98
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 473.55
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 523.15
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 554.91
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 518.06
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 541.84
+          },
+          {
+            "case": "DIAN-049",
+            "turn": 0,
+            "state": "manual_review",
+            "ticket_count": 0,
+            "latency_ms": 533.79
+          },
+          {
+            "case": "DIAN-050",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 563.42
+          }
+        ]
+      },
+      {
+        "summary": {
+          "turns": 14,
+          "passed": 14,
+          "p50_ms": 529.9,
+          "p95_ms": 8928.56,
+          "warm_p50_ms": 529.21,
+          "max_ms": 8928.56
+        },
+        "resources": {
+          "peak_rss_mb": 404.17,
+          "observed_cpu_seconds": 13.531,
+          "samples": 215
+        },
+        "records": [
+          {
+            "case": "DIAN-007",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 8928.56
+          },
+          {
+            "case": "DIAN-008",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 520.45
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 510.76
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 672.52
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 505.94
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 531.15
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 521.56
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 554.03
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 529.11
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 548.71
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 517.54
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 560.91
+          },
+          {
+            "case": "DIAN-049",
+            "turn": 0,
+            "state": "manual_review",
+            "ticket_count": 0,
+            "latency_ms": 529.9
+          },
+          {
+            "case": "DIAN-050",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 529.21
+          }
+        ]
+      },
+      {
+        "summary": {
+          "turns": 14,
+          "passed": 14,
+          "p50_ms": 539.17,
+          "p95_ms": 8224.68,
+          "warm_p50_ms": 538.78,
+          "max_ms": 8224.68
+        },
+        "resources": {
+          "peak_rss_mb": 397.37,
+          "observed_cpu_seconds": 12.703,
+          "samples": 203
+        },
+        "records": [
+          {
+            "case": "DIAN-007",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 8224.68
+          },
+          {
+            "case": "DIAN-008",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 466.92
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 579.77
+          },
+          {
+            "case": "DIAN-013",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 666.63
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 0,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 527.35
+          },
+          {
+            "case": "DIAN-014",
+            "turn": 1,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 502.71
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 500.16
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 538.23
+          },
+          {
+            "case": "DIAN-033",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 548.22
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 556.98
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 1,
+            "state": "awaiting_confirmation",
+            "ticket_count": 0,
+            "latency_ms": 512.53
+          },
+          {
+            "case": "DIAN-034",
+            "turn": 2,
+            "state": "ticket_created",
+            "ticket_count": 1,
+            "latency_ms": 539.17
+          },
+          {
+            "case": "DIAN-049",
+            "turn": 0,
+            "state": "manual_review",
+            "ticket_count": 0,
+            "latency_ms": 553.22
+          },
+          {
+            "case": "DIAN-050",
+            "turn": 0,
+            "state": "awaiting_evidence",
+            "ticket_count": 0,
+            "latency_ms": 538.78
+          }
+        ]
+      }
+    ]
+  },
+  "medians": {
+    "baseline": {
+      "p50_ms": 44.73,
+      "peak_rss_mb": 108.5,
+      "observed_cpu_seconds": 0.56
+    },
+    "temporal": {
+      "p50_ms": 539.17,
+      "peak_rss_mb": 403.23,
+      "observed_cpu_seconds": 12.98
+    }
+  }
+}

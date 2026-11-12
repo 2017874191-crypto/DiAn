@@ -26,6 +26,7 @@ from fastapi import FastAPI, HTTPException, Response, UploadFile, File, Query, R
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from pydantic import BaseModel, Field
+from redis.exceptions import RedisError
 from core.performance import collect_performance, measure_stage, performance_snapshot
 
 load_dotenv(pathlib.Path(_ROOT) / '.env')
@@ -463,6 +464,8 @@ async def chat(req: ChatRequest, http_request: HTTPRequest):
             return render(response)
     except TimeoutError as ex:
         raise HTTPException(504, "本轮处理超过 50 秒，请使用相同 client_request_id 重试") from ex
+    except RedisError as ex:
+        raise HTTPException(503, "会话存储暂不可用；请先核对执行结果，再使用相同 client_request_id 重试") from ex
     except (ConversationBusyError, LeaseLostError) as ex:
         raise HTTPException(503, str(ex)) from ex
 

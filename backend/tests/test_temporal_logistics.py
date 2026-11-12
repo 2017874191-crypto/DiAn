@@ -19,6 +19,7 @@ import api.main as api
 from core.intent_recognizer import IntentCategory
 from core.logistics import LogisticsService
 from core.temporal_logistics import QUEUE, LogisticsTurn, _db, _key, accept, dispatch, execute, process_logistics_turn
+from evaluation.compare_temporal_logistics import worker_process
 
 
 def accept_then_exit(db_path):
@@ -31,6 +32,58 @@ def accept_then_exit(db_path):
 
 
 class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
+    async def test_persistent_server_and_worker_restart_after_business_commit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = tmp + "/cases.sqlite3"
+            temporal_db = tmp + "/temporal-dev.sqlite3"
+            marker = tmp + "/committed.marker"
+            with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": db_path, "DIAN_TICKET_PROVIDER": "sqlite"}):
+                first = Request(message="包裹疑似丢件，订单号 DEMO1001", user_id="demo-user", conv_id="joint-restart",
+                                intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1001"]},
+                                conversation_state={}, client_request_id="first")
+                async with await WorkflowEnvironment.start_local(dev_server_database_filename=temporal_db) as env:
+                    with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": env.client.service_client.config.target_host}):
+                        stop = mp.Event()
+                        child = mp.Process(target=worker_process, args=(stop, marker))
+                        child.start()
+                        try:
+                            initial = await execute(first)
+                            second = Request(message="确认建单", user_id="demo-user", conv_id="joint-restart",
+                                             intent=IntentCategory.LOGISTICS_LOST, entities={},
+                                             conversation_state=initial["conversation_state"], client_request_id="confirm")
+                            pending = asyncio.create_task(execute(second))
+                            for _ in range(250):
+                                if os.path.exists(marker):
+                                    break
+                                await asyncio.sleep(.1)
+                            self.assertTrue(os.path.exists(marker), "worker did not reach post-commit crash")
+                            child.join(5)
+                            self.assertEqual(child.exitcode, 86)
+                            pending.cancel()
+                            with self.assertRaises(asyncio.CancelledError):
+                                await pending
+                        finally:
+                            stop.set(); child.join(5)
+                            if child.is_alive():
+                                child.terminate(); child.join(5)
+                # The original server and worker are gone. Recover both from disk.
+                async with await WorkflowEnvironment.start_local(dev_server_database_filename=temporal_db) as restored:
+                    with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": restored.client.service_client.config.target_host}):
+                        stop = mp.Event()
+                        replacement = mp.Process(target=worker_process, args=(stop,))
+                        replacement.start()
+                        try:
+                            result = await execute(second)
+                            self.assertEqual(result["result"]["case"]["state"], "ticket_created")
+                            with LogisticsService().connect() as db:
+                                self.assertEqual(db.execute("SELECT COUNT(*) FROM tickets").fetchone()[0], 1)
+                            self.assertEqual(LogisticsService().get_run("demo-user", "joint-restart",
+                                                                         LogisticsService.run_id(second))["state"], "completed")
+                        finally:
+                            stop.set(); replacement.join(15)
+                            if replacement.is_alive():
+                                replacement.terminate(); replacement.join(5)
+
     async def test_in_memory_server_restart_loses_pending_workflow_control(self):
         key = "dian-in-memory-control-" + os.urandom(8).hex()
         async with await WorkflowEnvironment.start_local() as first:

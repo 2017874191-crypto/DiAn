@@ -3,16 +3,33 @@ import json
 import os
 import tempfile
 import unittest
+from contextlib import asynccontextmanager
 from types import SimpleNamespace
 from unittest.mock import patch
 
 import httpx
+from redis.exceptions import ConnectionError as RedisConnectionError
 import api.main as api
 from agents.agent_orchestrator import AgentType, Request
 from core.intent_recognizer import IntentCategory
 from core.logistics import LogisticsService
 
 class CaseAPIContract(unittest.IsolatedAsyncioTestCase):
+    async def test_redis_disconnect_returns_retryable_service_error(self):
+        class DisconnectedMemory:
+            @asynccontextmanager
+            async def conversation(self, *_):
+                raise RedisConnectionError("redis unavailable")
+                yield
+
+        with patch.dict(os.environ, {"DIAN_ENV": "development", "DIAN_API_TOKENS": ""}), \
+             patch.object(api, "_orchestrator", object()), patch.object(api, "_memory", DisconnectedMemory()):
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as client:
+                response = await client.post("/chat", json={"message": "确认建单", "user_id": "demo-user",
+                                                           "conv_id": "redis-outage", "client_request_id": "same-id"})
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("会话存储暂不可用", response.json()["detail"])
+
     async def test_case_snapshot_respects_identity_and_conversation(self):
         with tempfile.TemporaryDirectory() as tmp:
             service = LogisticsService(tmp + "/cases.sqlite3")

@@ -320,10 +320,17 @@ def test_background_lookup_resolves_existing_ticket_and_run(tmp_path):
         try:
             service = LogisticsService()
             service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            second = request("包裹疑似丢件，订单号 DEMO1001")
+            second.conv_id = "other-session"
+            assert service.process(second)["case"]["state"] == "awaiting_confirmation"
             result = service.process(request("确认建单"))
             run_id = result["run_id"]
             assert service.get_run("demo-user", "http-case", run_id)["state"] == "outcome_unknown"
             assert service.get_run("other", "http-case", run_id) is None
+            confirmation = request("确认建单", second.conversation_state)
+            confirmation.conv_id = second.conv_id
+            assert service.process(confirmation)["case"]["state"] == "ticket_already_open"
+            assert remote_count(remote_db) == 1
             assert scan_once(LogisticsService(), min_age_seconds=0)["resolved"] == 1
             assert service.get_run("demo-user", "http-case", run_id)["state"] == "completed"
             assert service.get_run("demo-user", "http-case", run_id)["steps"][-1]["state"] == "succeeded"
@@ -371,6 +378,7 @@ def test_admin_hold_blocks_user_retry_and_background_scan(tmp_path):
                 unknown = service.process(request("确认建单"))
             with service.connect() as db:
                 key = db.execute("SELECT op_key FROM ticket_operations").fetchone()[0]
+                db.execute("UPDATE ticket_operations SET created_at='2020-01-01T00:00:00+00:00'")
 
             async def hold():
                 async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as client:
@@ -383,6 +391,16 @@ def test_admin_hold_blocks_user_retry_and_background_scan(tmp_path):
                     queue = await client.get("/logistics/operations/pending", headers={"Authorization": f"Bearer {admin_token}"})
                     assert queue.json()["items"][0]["review_reason"] == body["reason"]
                     assert queue.json()["items"][0]["review_actor"] == "admin"
+                    assert queue.json()["items"][0]["age_seconds"] > 300
+                    metrics = await client.get("/metrics", headers={"Authorization": f"Bearer {admin_token}"})
+                    assert "dian_ticket_reconcile_overdue 1.0" in metrics.text
+                    assert "dian_ticket_reconcile_held 1.0" in metrics.text
+                    close_path = f"/logistics/cases/{unknown['case']['case_id']}/close"
+                    closure = {"reason": body["reason"], "user_id": "demo-user", "conv_id": "http-case"}
+                    denied = await client.post(close_path, json=closure, headers={"Authorization": f"Bearer {user_token}"})
+                    assert denied.status_code == 403
+                    unresolved = await client.post(close_path, json=closure, headers={"Authorization": f"Bearer {admin_token}"})
+                    assert unresolved.status_code == 409
 
             asyncio.run(hold())
             held_run = service.get_run("demo-user", "http-case", unknown["run_id"])

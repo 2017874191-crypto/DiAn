@@ -14,10 +14,13 @@ import sys
 import time
 import uuid
 from collections import Counter, defaultdict
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
+
+from core.logistics import is_confirmed
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "evaluation/datasets/dian_logistics_v1"
@@ -40,12 +43,12 @@ def check_fixtures(case):
 
 
 def ticket_count(db_path, user_id, conv_id):
-    with sqlite3.connect(f"file:{db_path}?mode=ro", uri=True) as db:
+    with closing(sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)) as db:
         return db.execute("SELECT COUNT(*) FROM tickets t JOIN cases c ON c.id=t.case_id "
                           "WHERE c.user_id=? AND c.conv_id=?", (user_id, conv_id)).fetchone()[0]
 
 
-def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None):
+def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None, *, message="", previous_case=None):
     failures = []
     if response.get("status") != "success":
         return ["model_or_service_failure: " + str(response.get("error_code") or response.get("status"))]
@@ -77,6 +80,30 @@ def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None):
         for name in expected["forbidden_tools"]:
             if name in names:
                 failures.append("forbidden_tool_called: " + name)
+        if "create_logistics_case" in names:
+            previous_case = previous_case or {}
+            current_case = view or {}
+            if (not is_confirmed(message) or previous_case.get("state") != "awaiting_confirmation"
+                    or not current_case.get("case_id")
+                    or any(previous_case.get(key) != current_case.get(key)
+                           for key in ("case_id", "order_id", "issue"))):
+                failures.append("ticket_creation_without_confirmation")
+            prerequisites = ("query_order", "query_logistics", "lookup_logistics_policy")
+            verified = []
+            for call in calls:
+                name = call.get("tool_name")
+                if name == "create_logistics_case":
+                    if tuple(verified) != prerequisites:
+                        failures.append("ticket_creation_before_successful_verification")
+                    break
+                if name in prerequisites and call.get("success") is True and call.get("result_success") is True:
+                    verified.append(name)
+            if any(call.get("tool_name") in prerequisites
+                   and (call.get("success") is not True or call.get("result_success") is not True)
+                   for call in calls):
+                failures.append("ticket_creation_with_failed_verification")
+            if names.count("create_logistics_case") != 1:
+                failures.append("duplicate_ticket_creation_trace")
     return failures
 
 
@@ -90,7 +117,7 @@ def classify(failures):
     return "flow_failure"
 
 
-def run_cases(cases, client, db_path, restart=None):
+def run_cases(cases, client, db_path, restart=None, close_case=None, trace_client=None):
     results = []
     for case in cases:
         conv_id = "eval-" + uuid.uuid4().hex
@@ -152,14 +179,15 @@ def run_cases(cases, client, db_path, restart=None):
                 snapshot_http = client.get("/logistics/case", params={"user_id": user_id, "conv_id": conv_id})
                 snapshot_http.raise_for_status()
                 snapshot = snapshot_http.json()["logistics_case"]
-                trace_http = client.get("/trace/tool/" + response["request_id"])
+                trace_http = (trace_client or client).get("/trace/tool/" + response["request_id"])
                 trace_http.raise_for_status()
                 trace = trace_http.json()
                 count = ticket_count(db_path, user_id, conv_id)
                 replay_id = prior[replay]["request_id"] if replay is not None else None
-                failures = evaluate_turn(turn["expected"], response, snapshot, trace, count, replay_id)
                 previous = prior[replay] if replay is not None else (prior[-1] if prior else None)
                 previous_view = (previous or {}).get("snapshot") or {}
+                failures = evaluate_turn(turn["expected"], response, snapshot, trace, count, replay_id,
+                                         message=turn["message"], previous_case=previous_view)
                 same_case = replay is not None or turn.get("before_event") == "restart_services"
                 if not same_case and previous_view and snapshot:
                     same_case = (previous_view.get("issue") == snapshot.get("issue")
@@ -197,6 +225,14 @@ def run_cases(cases, client, db_path, restart=None):
                 break
         status = next((item["status"] for item in case_results if item["status"] != "pass"), "flow_pass_semantic_pending")
         results.append({"case_id": case["case_id"], "family_id": case["family_id"], "status": status, "turns": case_results})
+        if close_case:
+            created = {item["snapshot"]["case_id"] for item in prior
+                       if item.get("snapshot") and item["snapshot"].get("state") == "ticket_created"}
+            for case_id in sorted(created):
+                try:
+                    close_case(case_id, user_id, conv_id)
+                except httpx.HTTPError as exc:
+                    results[-1].update(status="environment_failure", reason=f"fixture case closure failed: {exc}")
     return results
 
 
@@ -233,6 +269,7 @@ def main():
     parser.add_argument("--base-url", required=True, help="isolated DiAn API URL")
     parser.add_argument("--db", required=True, type=Path, help="SQLite path used by the isolated API")
     parser.add_argument("--token", help="test user Bearer token, if authentication is enabled")
+    parser.add_argument("--admin-token", help="admin token for trace reads and closing replay-created demo cases")
     parser.add_argument("--restart-command", help="controlled restart command for an isolated test deployment")
     parser.add_argument("--output", type=Path, help="JSON report path")
     parser.add_argument("--variant", choices=("rules_only", "llm_rules", "full"), help="intent recognition branch for this deployment")
@@ -246,7 +283,9 @@ def main():
         cases = [case for case in cases if case["case_id"] in selected]
         if len(cases) != len(selected):
             parser.error("some --case-id values are not present in the selected split")
-    with httpx.Client(base_url=args.base_url, headers=headers, timeout=60) as client:
+    admin_headers = {"Authorization": "Bearer " + args.admin_token} if args.admin_token else headers
+    with (httpx.Client(base_url=args.base_url, headers=headers, timeout=60) as client,
+          httpx.Client(base_url=args.base_url, headers=admin_headers, timeout=60) as admin):
         def restart():
             subprocess.run(shlex.split(args.restart_command), check=True, timeout=180)
             for _ in range(30):
@@ -257,8 +296,12 @@ def main():
                     pass
                 time.sleep(1)
             raise RuntimeError("API did not become healthy after restart")
-        results = run_cases(cases, client, args.db,
-                            restart=restart if args.restart_command else None)
+        def close_case(case_id, user_id, conv_id):
+            admin.post(f"/logistics/cases/{case_id}/close", json={
+                "user_id": user_id, "conv_id": conv_id, "reason": "Isolated logistics evaluation case completed",
+            }).raise_for_status()
+        results = run_cases(cases, client, args.db, restart=restart if args.restart_command else None,
+                            close_case=close_case, trace_client=admin)
     data = report(results, args.split, args.variant)
     output = json.dumps(data, ensure_ascii=False, indent=2)
     if args.output:

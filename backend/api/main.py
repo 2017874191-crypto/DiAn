@@ -24,7 +24,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Response, UploadFile, File, Query, Request as HTTPRequest
 from fastapi.middleware.cors import CORSMiddleware
-from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, Gauge, generate_latest
 from pydantic import BaseModel, Field
 from redis.exceptions import RedisError
 from core.performance import collect_performance, measure_stage, performance_snapshot
@@ -558,6 +558,29 @@ async def hold_logistics_operation(op_key: str, body: HoldOperationRequest, http
     return result
 
 
+class CloseTicketCaseRequest(BaseModel):
+    user_id: str
+    conv_id: str
+    reason: str = Field(min_length=10, max_length=500)
+
+
+@app.post("/logistics/cases/{case_id}/close", tags=["物流案件"])
+async def close_logistics_ticket_case(case_id: str, body: CloseTicketCaseRequest, http_request: HTTPRequest):
+    from core.logistics import LogisticsService
+
+    account = getattr(http_request.state, "account", None)
+    actor_id = account["user_id"] if account else "local-admin"
+    try:
+        result = await asyncio.to_thread(
+            lambda: LogisticsService().close_ticket_case(
+                case_id, body.reason, actor_id, user_id=body.user_id, conv_id=body.conv_id))
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
+    if result is None:
+        raise HTTPException(404, "案件不存在")
+    return result
+
+
 @app.get("/monitor")
 async def monitor_summary():
     """实时监控摘要：Agent 成功率、工具统计、告警、优化建议。"""
@@ -591,7 +614,22 @@ async def list_recent_tool_traces(limit: int = 20):
 @app.get("/metrics")
 async def prometheus_metrics():
     """Prometheus 指标入口。"""
-    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+    metrics = generate_latest()
+    if os.getenv("DIAN_TICKET_PROVIDER") == "http_mock":
+        from core.logistics import LogisticsService
+        from core.logistics_reconcile import alert_after_seconds, backlog
+
+        stats = await asyncio.to_thread(lambda: backlog(LogisticsService(), alert_after_seconds()))
+        registry = CollectorRegistry()
+        for name, help_text in (
+            ("remaining", "Unresolved HTTP ticket operations"),
+            ("oldest_age_seconds", "Age of the oldest unresolved HTTP ticket operation in seconds"),
+            ("overdue", "Unresolved HTTP ticket operations past the reconciliation alert threshold"),
+            ("held", "Unresolved HTTP ticket operations held for manual review"),
+        ):
+            Gauge(f"dian_ticket_reconcile_{name}", help_text, registry=registry).set(stats[name])
+        metrics += generate_latest(registry)
+    return Response(metrics, media_type=CONTENT_TYPE_LATEST)
 
 
 @app.post("/search")

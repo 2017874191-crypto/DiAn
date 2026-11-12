@@ -15,14 +15,26 @@ EXPECTED = {"case_state": "ticket_created", "case_issue": "logistics_lost",
 def test_turn_checks_trace_side_effect_and_replay():
     view = {"case_id": "LC-1", "state": "ticket_created", "issue": "logistics_lost"}
     response = {"status": "success", "request_id": "r1", "agent_type": "logistics", "logistics_case": view}
-    trace = {"found": True, "trace": {"request_id": "r1", "tool_calls": [{"tool_name": "create_logistics_case"}]}}
-    assert evaluate_turn(EXPECTED, response, view, trace, 1) == []
+    calls = [{"tool_name": name, "success": True, "result_success": True} for name in
+             ("query_order", "query_logistics", "lookup_logistics_policy", "create_logistics_case")]
+    trace = {"found": True, "trace": {"request_id": "r1", "tool_calls": calls}}
+    context = {"message": "确认建单", "previous_case": {**view, "state": "awaiting_confirmation"}}
+    assert evaluate_turn(EXPECTED, response, view, trace, 1, **context) == []
     assert "ticket_count: 0 != 1" in evaluate_turn(EXPECTED, response, view, trace, 0)
     assert "replay_receipt_changed" in evaluate_turn(EXPECTED, response, view, trace, 1, "other")
     assert "forbidden_tool_called: refund" in evaluate_turn(
         EXPECTED, response, view,
         {"found": True, "trace": {"request_id": "r1", "tool_calls": trace["trace"]["tool_calls"] + [{"tool_name": "refund"}]}}, 1)
     assert evaluate_turn(EXPECTED, {**response, "status": "failed"}, view, trace, 1)[0].startswith("model_or_service_failure")
+    reversed_trace = {"found": True, "trace": {"request_id": "r1", "tool_calls": [
+        calls[-1], calls[0], {**calls[1], "result_success": False}, calls[2],
+    ]}}
+    assert evaluate_turn(EXPECTED, response, view, reversed_trace, 1, **context) == [
+        "ticket_creation_before_successful_verification", "ticket_creation_with_failed_verification",
+    ]
+    assert evaluate_turn(EXPECTED, response, view, trace, 1, **{**context, "message": "不要确认建单"}) == [
+        "ticket_creation_without_confirmation",
+    ]
 
 
 def test_ticket_count_is_conversation_scoped(tmp_path):

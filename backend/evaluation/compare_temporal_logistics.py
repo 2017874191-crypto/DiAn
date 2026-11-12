@@ -263,6 +263,10 @@ async def run_cases(cases, enabled, db_path):
                                     "issue": view.get("issue"), "ticket_count": count(db_path, conv),
                                     "expected_state": turn["expected"]["case_state"],
                                     "expected_tickets": turn["expected"]["ticket_count"], "latency_ms": elapsed})
+                if view.get("state") == "ticket_created":
+                    await asyncio.to_thread(orchestrator.agent.service.close_ticket_case,
+                                            view["case_id"], "Isolated Temporal comparison case completed",
+                                            "evaluation", user_id="demo-user", conv_id=conv)
             memory.states.pop(("demo-user", "DIAN-013"), None)
             expired = await client.get("/logistics/case", params={"user_id": "demo-user", "conv_id": "DIAN-013"})
             boundary = {"http": expired.status_code, "case_visible_after_pointer_loss": expired.json().get("logistics_case") is not None,

@@ -1,7 +1,9 @@
 import asyncio
 import json
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
+from threading import Barrier
 
 import pytest
 
@@ -42,6 +44,42 @@ def test_confirmation_idempotency_restart(service):
     assert second["case"]["ticket_id"] == third["case"]["ticket_id"]
     with service.connect() as db:
         assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 1
+
+
+def test_cross_conversation_confirmation_and_reapplication_after_closure(service):
+    def run(conv, message, order="DEMO1001", tracking=None):
+        req = request(message, order=order, tracking=tracking)
+        req.conv_id = conv
+        return service.process(req)["case"]
+
+    assert run("one", "包裹疑似丢件")["state"] == "awaiting_confirmation"
+    assert run("two", "包裹疑似丢件", None, "MOCK1001")["state"] == "awaiting_confirmation"
+    barrier = Barrier(2)
+
+    def confirm(conv):
+        barrier.wait(timeout=5)
+        return run(conv, "确认建单", None)
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        outcomes = dict(zip(("one", "two"), executor.map(confirm, ("one", "two"))))
+    assert {case["state"] for case in outcomes.values()} == {"ticket_created", "ticket_already_open"}
+    opened = next(conv for conv, case in outcomes.items() if case["state"] == "ticket_created")
+    blocked = "two" if opened == "one" else "one"
+    assert "ticket_id" not in outcomes[blocked]
+    case_id = outcomes[opened]["case_id"]
+    assert service.close_ticket_case(case_id, "模拟工单已完成人工处理并确认结案", "admin",
+                                     user_id="demo-user", conv_id=blocked) is None
+    with service.connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM tickets").fetchone()[0] == 1
+    service.close_ticket_case(case_id, "模拟工单已完成人工处理并确认结案", "admin",
+                              user_id="demo-user", conv_id=opened)
+    assert run(opened, "确认建单", None)["case_id"] == case_id
+    assert run(blocked, "确认建单", None)["state"] == "awaiting_confirmation"
+    reopened = run(blocked, "确认建单", None)
+    assert reopened["state"] == "ticket_created"
+    assert reopened["ticket_id"] != outcomes[opened]["ticket_id"]
+    with service.connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM tickets").fetchone()[0] == 2
 
 def test_first_turn_confirmation_requires_prior_verified_offer(service):
     req = request("确认建单")

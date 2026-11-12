@@ -17,6 +17,7 @@ def main():
     parser.add_argument("--base-url", help="isolated API address for live case replay")
     parser.add_argument("--db", type=Path, help="isolated API SQLite file")
     parser.add_argument("--token", help="demo-user Bearer token")
+    parser.add_argument("--admin-token", help="admin token for trace reads and fixture case closure")
     parser.add_argument("--restart-command", help="controlled restart of an isolated test deployment")
     parser.add_argument("--report", type=Path, help="live replay JSON report")
     args = parser.parse_args()
@@ -32,6 +33,8 @@ def main():
                    "--base-url", args.base_url, "--db", str(args.db)]
         if args.token:
             command += ["--token", args.token]
+        if args.admin_token:
+            command += ["--admin-token", args.admin_token]
         if args.restart_command:
             command += ["--restart-command", args.restart_command]
         if args.report:

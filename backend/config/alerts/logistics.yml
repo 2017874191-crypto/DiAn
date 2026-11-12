@@ -1,0 +1,11 @@
+groups:
+  - name: logistics
+    rules:
+      - alert: DiAnTicketReconciliationOverdue
+        expr: dian_ticket_reconcile_overdue > 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "DiAn has overdue HTTP ticket operations"
+          description: "Review the operations in GET /logistics/operations/pending and verify the remote result before taking action."

@@ -58,6 +58,7 @@ services:
       - '--web.enable-lifecycle'
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./config/alerts:/etc/prometheus/alerts:ro
       - prometheus-data:/prometheus
     restart: unless-stopped
     networks:

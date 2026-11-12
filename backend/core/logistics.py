@@ -50,6 +50,9 @@ class LogisticsService:
             db.execute("CREATE TABLE IF NOT EXISTS cases (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, payload TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS tickets (case_id TEXT PRIMARY KEY, ticket_id TEXT UNIQUE NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS ticket_operations (op_key TEXT PRIMARY KEY, case_id TEXT NOT NULL UNIQUE, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, params_hash TEXT NOT NULL, params_json TEXT NOT NULL, confirmation_id TEXT NOT NULL, case_version TEXT NOT NULL, state TEXT NOT NULL, external_id TEXT, updated_at TEXT NOT NULL)")
+            db.execute("CREATE TABLE IF NOT EXISTS operation_reviews (op_key TEXT PRIMARY KEY, reason TEXT NOT NULL, actor_id TEXT NOT NULL, reviewed_at TEXT NOT NULL)")
+            db.execute("CREATE TABLE IF NOT EXISTS logistics_runs (run_id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, request_id TEXT NOT NULL, input_hash TEXT NOT NULL, case_id TEXT, state TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)")
+            db.execute("CREATE TABLE IF NOT EXISTS logistics_steps (run_id TEXT NOT NULL, step_name TEXT NOT NULL, state TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(run_id,step_name))")
             db.execute("CREATE TABLE IF NOT EXISTS active_cases (user_id TEXT NOT NULL, conv_id TEXT NOT NULL, case_id TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY (user_id, conv_id))")
             # Older databases have cases but no active pointer. Choose the last
             # updated case per owned conversation once; all future writes are explicit.
@@ -111,6 +114,88 @@ class LogisticsService:
         return json.loads(row[0]) if row else None
 
     @staticmethod
+    def run_id(req):
+        identity = req.client_request_id or [req.request_id, hashlib.sha256(req.message.encode()).hexdigest()]
+        raw = json.dumps([req.user_id, req.conv_id, identity], ensure_ascii=True)
+        return "LR-" + hashlib.sha256(raw.encode()).hexdigest()[:24]
+
+    @staticmethod
+    def _run_state(case_state):
+        return {"awaiting_info": "waiting_input", "awaiting_evidence": "waiting_input",
+                "awaiting_confirmation": "waiting_confirmation", "ticket_pending": "reconciling",
+                "ticket_unknown": "outcome_unknown", "ticket_created": "completed",
+                "manual_review": "manual_review"}.get(case_state, "running")
+
+    @staticmethod
+    def _write_run(db, req, run_id, case):
+        now = datetime.now(timezone.utc).isoformat()
+        input_hash = hashlib.sha256(req.message.encode()).hexdigest()
+        db.execute("INSERT OR IGNORE INTO logistics_runs VALUES (?,?,?,?,?,?,?,?,?)",
+                   (run_id, req.user_id, req.conv_id, req.request_id, input_hash,
+                    case["case_id"], "running", now, now))
+        prior = db.execute("SELECT user_id,conv_id,input_hash FROM logistics_runs WHERE run_id=?", (run_id,)).fetchone()
+        if prior != (req.user_id, req.conv_id, input_hash):
+            raise ValueError("同一运行标识不能用于不同请求")
+        LogisticsService._sync_existing_run(db, run_id, case, now)
+
+    @staticmethod
+    def _sync_existing_run(db, run_id, case, now=None):
+        now = now or datetime.now(timezone.utc).isoformat()
+        state = LogisticsService._run_state(case["state"])
+        db.execute("UPDATE logistics_runs SET case_id=?,state=?,updated_at=? WHERE run_id=?",
+                   (case["case_id"], state, now, run_id))
+        db.execute("INSERT INTO logistics_steps VALUES (?,?,?,?) ON CONFLICT(run_id,step_name) DO UPDATE SET state=excluded.state,updated_at=excluded.updated_at",
+                   (run_id, "case_decision", "succeeded", now))
+        if case["state"] in ("ticket_pending", "ticket_unknown", "ticket_created"):
+            step_state = {"ticket_pending": "pending", "ticket_unknown": "unknown", "ticket_created": "succeeded"}[case["state"]]
+            db.execute("INSERT INTO logistics_steps VALUES (?,?,?,?) ON CONFLICT(run_id,step_name) DO UPDATE SET state=excluded.state,updated_at=excluded.updated_at",
+                       (run_id, "ticket_result", step_state, now))
+
+    def get_run(self, user_id, conv_id, run_id):
+        with self.connect() as db:
+            row = db.execute("SELECT run_id,request_id,case_id,state,created_at,updated_at FROM logistics_runs WHERE run_id=? AND user_id=? AND conv_id=?",
+                             (run_id, user_id, conv_id)).fetchone()
+            if not row:
+                return None
+            steps = db.execute("SELECT step_name,state,updated_at FROM logistics_steps WHERE run_id=? ORDER BY step_name", (run_id,)).fetchall()
+        return {"run_id": row[0], "request_id": row[1], "case_id": row[2], "state": row[3],
+                "created_at": row[4], "updated_at": row[5],
+                "steps": [{"name": name, "state": state, "updated_at": at} for name, state, at in steps]}
+
+    def hold_operation(self, op_key, reason, actor_id="local-admin"):
+        """Admin decision: stop retries and require external/manual result verification."""
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT case_id,user_id,conv_id,state FROM ticket_operations WHERE op_key=?", (op_key,)).fetchone()
+            if not row:
+                return None
+            case_id, user_id, conv_id, state = row
+            if state not in ("prepared", "unknown", "held"):
+                raise ValueError("操作已结束，不能挂起")
+            payload = db.execute("SELECT payload FROM cases WHERE id=? AND user_id=? AND conv_id=?",
+                                 (case_id, user_id, conv_id)).fetchone()
+            if not payload:
+                raise RuntimeError("操作对应案件缺失")
+            case = json.loads(payload[0])
+            if case["state"] not in ("ticket_pending", "ticket_unknown", "manual_review"):
+                raise ValueError("案件状态不允许挂起")
+            now = datetime.now(timezone.utc).isoformat()
+            db.execute("UPDATE ticket_operations SET state='held',updated_at=? WHERE op_key=?", (now, op_key))
+            db.execute("INSERT INTO operation_reviews VALUES (?,?,?,?) ON CONFLICT(op_key) DO UPDATE SET reason=excluded.reason,actor_id=excluded.actor_id,reviewed_at=excluded.reviewed_at",
+                       (op_key, reason, actor_id, now))
+            before = case["state"]
+            case["state"] = "manual_review"
+            case["updated_at"] = now
+            case["events"].append({"request_id": "admin-hold", "from": before,
+                                   "to": "manual_review", "at": now, "reason": "operation_held"})
+            case["events"] = case["events"][-100:]
+            db.execute("UPDATE cases SET payload=? WHERE id=?", (json.dumps(case, ensure_ascii=False), case_id))
+            for (run_id,) in db.execute("SELECT run_id FROM logistics_runs WHERE case_id=? AND state IN ('reconciling','outcome_unknown')", (case_id,)):
+                self._sync_existing_run(db, run_id, case)
+                db.execute("UPDATE logistics_steps SET state='held',updated_at=? WHERE run_id=? AND step_name='ticket_result'", (now, run_id))
+        return {"op_key": op_key, "state": "held", "case_id": case_id, "reviewed_at": now}
+
+    @staticmethod
     def _ticket_params(case):
         return {"case_id": case["case_id"], "issue": case["issue"],
                 "order_id": case["order_id"], "tracking_no": case["tracking_no"],
@@ -141,6 +226,8 @@ class LogisticsService:
         if not row:
             raise RuntimeError("工单操作记录缺失，不能执行外部调用")
         key, params_hash, params_json, state, external_id, case_version, confirmation_id = row
+        if state == "held":
+            return self.get_case(req.user_id, case_id, req.conv_id), None
         if state == "succeeded":
             return self.get_case(req.user_id, case_id, req.conv_id), external_id
         current = self.get_case(req.user_id, case_id, req.conv_id)
@@ -173,6 +260,10 @@ class LogisticsService:
             case = json.loads(row[0])
             if op[0] == "succeeded":
                 return case
+            if op[0] == "held":
+                if ticket_id and not op[1]:
+                    db.execute("UPDATE ticket_operations SET external_id=? WHERE op_key=?", (ticket_id, key))
+                return case
             now = datetime.now(timezone.utc).isoformat()
             observed_ticket_id = ticket_id or op[1]
             if ticket_id and (case.get("ticket_confirmation_version") != op[3]
@@ -192,6 +283,14 @@ class LogisticsService:
             db.execute("UPDATE ticket_operations SET state=?,external_id=?,updated_at=? WHERE op_key=?",
                        ("succeeded" if ticket_id else "unknown", observed_ticket_id, now, key))
             db.execute("UPDATE cases SET payload=? WHERE id=?", (json.dumps(case, ensure_ascii=False), case_id))
+            run_ids = {case.get("last_run_id")}
+            if ticket_id:
+                run_ids.update(row[0] for row in db.execute(
+                    "SELECT run_id FROM logistics_runs WHERE case_id=? AND user_id=? AND conv_id=? "
+                    "AND state IN ('reconciling','outcome_unknown')",
+                    (case_id, req.user_id, req.conv_id)))
+            for run_id in run_ids - {None}:
+                self._sync_existing_run(db, run_id, case)
         return case
 
     def request_manual_review(self, req):
@@ -235,6 +334,7 @@ class LogisticsService:
         # 无单号时也按会话和问题类型持久化；新订单使用独立案件身份。
         identity = json.dumps([req.user_id, req.conv_id, order_id or tracking_no or (old or {}).get("identity", "pending"), issue, req.request_id if new_task else ""], ensure_ascii=True)
         case_id = old["case_id"] if old else "LC-" + hashlib.sha256(identity.encode()).hexdigest()[:20]
+        run_id = self.run_id(req)
         calls = []
         needs_http_ticket = False
         def call(name, args, result):
@@ -244,6 +344,7 @@ class LogisticsService:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("SELECT payload FROM cases WHERE id=? AND user_id=?", (case_id, req.user_id)).fetchone()
             case = json.loads(row[0]) if row else {"case_id": case_id, "issue": issue, "order_id": None, "tracking_no": None, "identity": order_id or tracking_no or "pending", "state": "awaiting_info", "events": []}
+            case["last_run_id"] = run_id
             before = case["state"]
             previously_confirmable = before == "awaiting_confirmation" and case.get("policy_version") == RULE_VERSION
             case["order_id"] = order_id or case.get("order_id")
@@ -252,9 +353,13 @@ class LogisticsService:
             if case["state"] not in ("ticket_pending", "ticket_unknown"):
                 case["policy_version"] = RULE_VERSION
             case["source"] = "mock"
+            held = db.execute("SELECT 1 FROM ticket_operations WHERE case_id=? AND state='held'", (case_id,)).fetchone() is not None
             # 已建单保留终态。每次返回相同工单，不重复操作。
             if case["state"] == "ticket_created":
                 reply = "模拟工单已创建，编号：" + case["ticket_id"] + "。这不是承运商真实工单，未执行退款或赔偿。"
+            elif held:
+                case["state"] = "manual_review"
+                reply = "工单操作已挂起，需人工核对远端结果；不会自动重试建单。"
             elif case["state"] in ("ticket_pending", "ticket_unknown"):
                 needs_http_ticket = self.http_ticket_provider is not None
                 reply = "模拟工单结果待核对，请稍后查询；不要重复提交新的建单操作。"
@@ -314,6 +419,7 @@ class LogisticsService:
             db.execute("INSERT OR REPLACE INTO cases VALUES (?, ?, ?, ?)", (case_id, req.user_id, req.conv_id, json.dumps(case, ensure_ascii=False)))
             db.execute("INSERT INTO active_cases VALUES (?,?,?,?) ON CONFLICT(user_id,conv_id) DO UPDATE SET case_id=excluded.case_id, updated_at=excluded.updated_at",
                        (req.user_id, req.conv_id, case_id, case["updated_at"]))
+            self._write_run(db, req, run_id, case)
         if needs_http_ticket:
             case, ticket_id = self._complete_ticket_operation(req, case_id)
             if ticket_id:
@@ -323,7 +429,7 @@ class LogisticsService:
             else:
                 reply = "模拟工单结果暂未确定，已记录待核对；请稍后查询，不要另建工单。"
         req.conversation_state = dict(state, logistics_case_id=case_id, logistics_case_state=case["state"], logistics_issue=issue)
-        return {"success": True, "source": "mock", "case": case, "reply": reply, "calls": calls, "escalate": case["state"] == "manual_review"}
+        return {"success": True, "source": "mock", "case": case, "run_id": run_id, "reply": reply, "calls": calls, "escalate": case["state"] == "manual_review"}
 
 
 def case_view(case):
@@ -342,6 +448,7 @@ def case_view(case):
         "ticket_created": "模拟工单已创建；未联系承运商，未执行赔偿或退款。",
     }
     return {"case_id": case["case_id"], "issue": case["issue"], "state": state,
+        "run_id": case.get("last_run_id"),
         "order_id": case.get("order_id"), "tracking_no": case.get("tracking_no"),
         "ticket_id": case.get("ticket_id"), "updated_at": case.get("updated_at"),
         "source": "mock", "next_step": actions[state],

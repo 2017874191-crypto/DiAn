@@ -263,7 +263,7 @@ async def access_control(request: HTTPRequest, call_next):
     if account is not None and request.url.path != "/health" and request.method != "OPTIONS":
         if not account:
             return JSONResponse({"detail": "需要有效 Bearer Token"}, status_code=401)
-        reader = request.url.path in {"/chat", "/search", "/knowledge/stats", "/skills", "/mcp", "/mcp/", "/logistics/case"}
+        reader = request.url.path in {"/chat", "/search", "/knowledge/stats", "/skills", "/mcp", "/mcp/", "/logistics/case"} or (request.method == "GET" and request.url.path.startswith("/logistics/runs/"))
         if not reader and account["role"] != "admin":
             return JSONResponse({"detail": "该接口需要管理员权限"}, status_code=403)
     is_chat = request.url.path == "/chat" and request.method == "POST"
@@ -512,6 +512,47 @@ async def current_logistics_case(http_request: HTTPRequest, user_id: str, conv_i
         raise HTTPException(503, "服务未就绪")
     state = await _memory.get_conversation_state(user_id, conv_id)
     return {"logistics_case": await _case_snapshot(user_id, conv_id, state)}
+
+
+@app.get("/logistics/runs/{run_id}", tags=["物流案件"])
+async def logistics_run(run_id: str, http_request: HTTPRequest, user_id: str, conv_id: str):
+    account = getattr(http_request.state, "account", None)
+    if account is not None and user_id != account["user_id"]:
+        raise HTTPException(403, "不能读取其他用户的运行记录")
+    from core.logistics import LogisticsService
+
+    run = await asyncio.to_thread(LogisticsService().get_run, user_id, conv_id, run_id)
+    if run is None:
+        raise HTTPException(404, "运行记录不存在")
+    return run
+
+
+@app.get("/logistics/operations/pending", tags=["物流案件"])
+async def pending_logistics_operations():
+    """Admin-only review queue; no remote writes or automatic resolution."""
+    from core.logistics import LogisticsService
+    from core.logistics_reconcile import pending_operations
+
+    return {"items": await asyncio.to_thread(pending_operations, LogisticsService(), 100, include_held=True)}
+
+
+class HoldOperationRequest(BaseModel):
+    reason: str = Field(min_length=10, max_length=500)
+
+
+@app.post("/logistics/operations/{op_key}/hold", tags=["物流案件"])
+async def hold_logistics_operation(op_key: str, body: HoldOperationRequest, http_request: HTTPRequest):
+    from core.logistics import LogisticsService
+
+    account = getattr(http_request.state, "account", None)
+    actor_id = account["user_id"] if account else "local-admin"
+    try:
+        result = await asyncio.to_thread(LogisticsService().hold_operation, op_key, body.reason, actor_id)
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
+    if result is None:
+        raise HTTPException(404, "操作不存在")
+    return result
 
 
 @app.get("/monitor")

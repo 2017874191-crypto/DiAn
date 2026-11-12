@@ -19,6 +19,7 @@ import api.main as api
 from core.intent_recognizer import IntentCategory
 from core.logistics import LogisticsService
 from core.logistics_providers import HttpTicketProvider
+from core.logistics_reconcile import scan_once
 from core.mock_ticket_http import serve
 from core.temporal_logistics import QUEUE, LogisticsTurn, dispatch, execute, process_logistics_turn
 
@@ -128,6 +129,116 @@ def test_response_lost_reconciles_without_duplicate(tmp_path):
             assert remote_count(remote_db) == 1
             with service.connect() as db:
                 assert db.execute("SELECT state,external_id FROM ticket_operations").fetchone() == ("succeeded", resolved["case"]["ticket_id"])
+        finally:
+            process.terminate(); process.join(5)
+
+
+def test_background_lookup_resolves_existing_ticket_and_run(tmp_path):
+    remote_db = tmp_path / "remote.sqlite3"
+    process, url = start_server(remote_db, drop=True)
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            result = service.process(request("确认建单"))
+            run_id = result["run_id"]
+            assert service.get_run("demo-user", "http-case", run_id)["state"] == "outcome_unknown"
+            assert service.get_run("other", "http-case", run_id) is None
+            assert scan_once(LogisticsService(), min_age_seconds=0)["resolved"] == 1
+            assert service.get_run("demo-user", "http-case", run_id)["state"] == "completed"
+            assert service.get_run("demo-user", "http-case", run_id)["steps"][-1]["state"] == "succeeded"
+            assert remote_count(remote_db) == 1
+            assert scan_once(service, min_age_seconds=0)["scanned"] == 0
+        finally:
+            process.terminate(); process.join(5)
+
+
+def test_background_404_never_creates_ticket(tmp_path):
+    remote_db = tmp_path / "remote.sqlite3"
+    process, url = start_server(remote_db, drop=False)
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            with patch.object(service.http_ticket_provider, "create", side_effect=ConnectionError("before POST")):
+                unknown = service.process(request("确认建单"))
+            assert unknown["case"]["state"] == "ticket_unknown"
+            assert remote_count(remote_db) == 0
+            stats = scan_once(service, min_age_seconds=0)
+            assert stats["not_found"] == 1 and stats["remaining"] == 1
+            assert remote_count(remote_db) == 0
+        finally:
+            process.terminate(); process.join(5)
+
+
+def test_admin_hold_blocks_user_retry_and_background_scan(tmp_path):
+    import asyncio
+
+    remote_db = tmp_path / "remote.sqlite3"
+    process, url = start_server(remote_db, drop=False)
+    user_token = "user-token-12345678901234567890"
+    admin_token = "admin-token-12345678901234567890"
+    tokens = json.dumps({user_token: {"user_id": "demo-user", "role": "user"},
+                         admin_token: {"user_id": "admin", "role": "admin"}})
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url,
+                                 "DIAN_API_TOKENS": tokens, "DIAN_ENV": "production"}):
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            with patch.object(service.http_ticket_provider, "create", side_effect=ConnectionError("before POST")):
+                unknown = service.process(request("确认建单"))
+            with service.connect() as db:
+                key = db.execute("SELECT op_key FROM ticket_operations").fetchone()[0]
+
+            async def hold():
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as client:
+                    path = f"/logistics/operations/{key}/hold"
+                    body = {"reason": "远端结果未确认，需要人工核查"}
+                    denied = await client.post(path, json=body, headers={"Authorization": f"Bearer {user_token}"})
+                    assert denied.status_code == 403
+                    accepted = await client.post(path, json=body, headers={"Authorization": f"Bearer {admin_token}"})
+                    assert accepted.status_code == 200 and accepted.json()["state"] == "held"
+                    queue = await client.get("/logistics/operations/pending", headers={"Authorization": f"Bearer {admin_token}"})
+                    assert queue.json()["items"][0]["review_reason"] == body["reason"]
+                    assert queue.json()["items"][0]["review_actor"] == "admin"
+
+            asyncio.run(hold())
+            held_run = service.get_run("demo-user", "http-case", unknown["run_id"])
+            assert held_run["state"] == "manual_review"
+            assert held_run["steps"][-1]["state"] == "held"
+            assert scan_once(service, min_age_seconds=0)["scanned"] == 0
+            assert service.process(request("继续"))["case"]["state"] == "manual_review"
+            assert remote_count(remote_db) == 0
+        finally:
+            process.terminate(); process.join(5)
+
+
+def test_hold_during_remote_call_preserves_observed_ticket_without_success(tmp_path):
+    remote_db = tmp_path / "remote.sqlite3"
+    process, url = start_server(remote_db, drop=False)
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            original = service.http_ticket_provider.create
+
+            def create_then_hold(key, params, params_hash):
+                result = original(key, params, params_hash)
+                service.hold_operation(key, "远端已返回工单号，需要人工核对")
+                return result
+
+            with patch.object(service.http_ticket_provider, "create", create_then_hold):
+                result = service.process(request("确认建单"))
+            assert result["case"]["state"] == "manual_review"
+            with service.connect() as db:
+                state, external_id = db.execute("SELECT state,external_id FROM ticket_operations").fetchone()
+                assert state == "held" and external_id.startswith("HTTP-MOCK-")
+            assert remote_count(remote_db) == 1
+            assert scan_once(service, min_age_seconds=0)["scanned"] == 0
         finally:
             process.terminate(); process.join(5)
 
@@ -303,3 +414,34 @@ async def _chat_case(tmp_path):
 def test_chat_route_reconciles_http_ticket(tmp_path):
     import asyncio
     asyncio.run(_chat_case(tmp_path))
+
+
+async def _run_api_scope(tmp_path):
+    user_token = "user-token-12345678901234567890"
+    admin_token = "admin-token-12345678901234567890"
+    tokens = json.dumps({user_token: {"user_id": "demo-user", "role": "user"},
+                         admin_token: {"user_id": "admin", "role": "admin"}})
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                 "DIAN_TICKET_PROVIDER": "sqlite", "DIAN_API_TOKENS": tokens,
+                                 "DIAN_ENV": "production"}):
+        service = LogisticsService()
+        result = service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+        run_id = result["run_id"]
+        confirmed = service.process(request("确认建单"))
+        assert service.get_run("demo-user", "http-case", confirmed["run_id"])["steps"][-1]["state"] == "succeeded"
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as client:
+            own = await client.get(f"/logistics/runs/{run_id}", params={"user_id": "demo-user", "conv_id": "http-case"},
+                                   headers={"Authorization": f"Bearer {user_token}"})
+            assert own.status_code == 200 and own.json()["state"] == "waiting_confirmation"
+            other = await client.get(f"/logistics/runs/{run_id}", params={"user_id": "other", "conv_id": "http-case"},
+                                     headers={"Authorization": f"Bearer {user_token}"})
+            assert other.status_code == 403
+            review = await client.get("/logistics/operations/pending", headers={"Authorization": f"Bearer {user_token}"})
+            assert review.status_code == 403
+            admin = await client.get("/logistics/operations/pending", headers={"Authorization": f"Bearer {admin_token}"})
+            assert admin.status_code == 200
+
+
+def test_run_query_scope_and_admin_review_queue(tmp_path):
+    import asyncio
+    asyncio.run(_run_api_scope(tmp_path))

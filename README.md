@@ -41,6 +41,8 @@ experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验�
 
 [独立 HTTP 工单与 Operation 验收](backend/wiki/DiAn-HTTP工单Operation验收.md)：可选的跨进程模拟工单服务、持久 Operation、断线及进程崩溃后的结果核对；默认仍为同库模拟工单。
 
+[物流 Run/Step 与后台结果核对验收](backend/wiki/DiAn-RunStep与后台核对验收.md)：按用户和会话查询运行步骤；可选后台只读核对未决工单，管理员可挂起操作并记录原因。
+
 ## 快速启动
 
 需要 Docker 与 Docker Compose v2。前端构建需要 Node.js 22 或更高的兼容版本；宿主机运行后端需要 Python 3.12。模型通过服务端 API 调用，无需 GPU。

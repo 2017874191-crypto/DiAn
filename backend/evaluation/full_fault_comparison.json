@@ -1,0 +1,26 @@
+{
+  "run_at_utc": "2026-11-12T11:41:07.804922+00:00",
+  "conditions": "real isolated Redis; separate mock HTTP ticket process; controlled routing; local SQLite case DB",
+  "variants": {
+    "baseline": {
+      "first_state": "awaiting_confirmation",
+      "fault_http": 503,
+      "fault_latency_ms": 3308.37,
+      "same_id_state": "ticket_created",
+      "same_id_latency_ms": 364.01,
+      "new_turn_state": "ticket_created",
+      "new_turn_latency_ms": 27.12,
+      "remote_tickets": 1
+    },
+    "temporal": {
+      "first_state": "awaiting_confirmation",
+      "fault_http": 503,
+      "fault_latency_ms": 3865.59,
+      "same_id_state": "ticket_unknown",
+      "same_id_latency_ms": 31.82,
+      "new_turn_state": "ticket_created",
+      "new_turn_latency_ms": 462.26,
+      "remote_tickets": 1
+    }
+  }
+}

@@ -49,6 +49,8 @@ experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验�
 
 [真实 Redis 断线与资源对照验收](backend/wiki/DiAn-真实Redis断线与资源对照验收.md)：隔离 Redis 容器故障、跨进程会话锁、Temporal 与 Worker 联合重启，以及三轮延迟和进程资源对照。
 
+[真实 Redis 与独立 HTTP 工单联合故障对照验收](backend/wiki/DiAn-Redis与HTTP联合故障对照验收.md)：远端已建单但响应丢失、最终回执写入时 Redis 断线，两条路径的同 ID 重试和新一轮核对结果。
+
 ## 快速启动
 
 需要 Docker 与 Docker Compose v2。前端构建需要 Node.js 22 或更高的兼容版本；宿主机运行后端需要 Python 3.12。模型通过服务端 API 调用，无需 GPU。

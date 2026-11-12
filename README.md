@@ -43,6 +43,8 @@ experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验�
 
 [物流 Run/Step 与后台结果核对验收](backend/wiki/DiAn-RunStep与后台核对验收.md)：按用户和会话查询运行步骤；可选后台只读核对未决工单，管理员可挂起操作并记录原因。
 
+[Temporal 接收与并发故障验收](backend/wiki/DiAn-Temporal接收与并发故障验收.md)：接收记录与 Run 同事务创建，验证进程退出、派发等待及多进程核对与挂起竞态。
+
 ## 快速启动
 
 需要 Docker 与 Docker Compose v2。前端构建需要 Node.js 22 或更高的兼容版本；宿主机运行后端需要 Python 3.12。模型通过服务端 API 调用，无需 GPU。

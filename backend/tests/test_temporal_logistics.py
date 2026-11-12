@@ -1,5 +1,7 @@
 """Exercises the opt-in logistics route against a real local Temporal server."""
 import asyncio
+import json
+import multiprocessing as mp
 import os
 import tempfile
 import unittest
@@ -15,10 +17,119 @@ from agents.agent_orchestrator import AgentType, LogisticsAgent, OrchestratorRes
 import api.main as api
 from core.intent_recognizer import IntentCategory
 from core.logistics import LogisticsService
-from core.temporal_logistics import QUEUE, LogisticsTurn, accept, dispatch, execute, process_logistics_turn
+from core.temporal_logistics import QUEUE, LogisticsTurn, _db, _key, accept, dispatch, execute, process_logistics_turn
+
+
+def accept_then_exit(db_path):
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": db_path}):
+        req = Request(message="包裹疑似丢件，订单号 DEMO1001", user_id="demo-user", conv_id="accept-crash",
+                      intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1001"]},
+                      conversation_state={}, client_request_id="same-client-turn")
+        accept(req)
+        os._exit(88)
 
 
 class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
+    async def test_legacy_pending_row_is_upgraded_on_same_id_retry(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": tmp + "/cases.sqlite3"}):
+                req = Request(message="包裹疑似丢件，订单号 DEMO1001", user_id="demo-user", conv_id="legacy",
+                              intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1001"]},
+                              conversation_state={}, client_request_id="legacy-client-id")
+                key, payload = accept(req)
+                payload.pop("run_id"); payload.pop("client_request_id")
+                with _db() as db:
+                    db.execute("UPDATE temporal_dispatch SET payload=? WHERE id=?", (json.dumps(payload), key))
+                    db.execute("DELETE FROM logistics_steps")
+                    db.execute("DELETE FROM logistics_runs")
+                accept(req)
+                with _db() as db:
+                    restored = json.loads(db.execute("SELECT payload FROM temporal_dispatch WHERE id=?", (key,)).fetchone()[0])
+                self.assertEqual(restored["run_id"], LogisticsService.run_id(req))
+                self.assertEqual(restored["client_request_id"], req.client_request_id)
+                self.assertEqual(LogisticsService().get_run(req.user_id, req.conv_id, restored["run_id"])["state"], "accepted")
+
+    async def test_dispatched_run_is_queryable_before_worker_execution(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": tmp + "/cases.sqlite3"}):
+                req = Request(message="包裹疑似丢件，订单号 DEMO1001", user_id="demo-user", conv_id="dispatch-no-worker",
+                              intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1001"]},
+                              conversation_state={}, client_request_id="queued-turn")
+                accept(req)
+                async with await WorkflowEnvironment.start_local() as env:
+                    with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": env.client.service_client.config.target_host}):
+                        task = asyncio.create_task(dispatch(env.client))
+                        try:
+                            for _ in range(50):
+                                run = LogisticsService().get_run(req.user_id, req.conv_id, LogisticsService.run_id(req))
+                                if run["state"] == "dispatched":
+                                    break
+                                await asyncio.sleep(.1)
+                            self.assertEqual(run["state"], "dispatched")
+                            self.assertEqual(run["steps"][0]["state"], "succeeded")
+                        finally:
+                            task.cancel()
+                            with self.assertRaises(asyncio.CancelledError):
+                                await task
+                        async with Worker(env.client, task_queue=QUEUE, workflows=[LogisticsTurn], activities=[process_logistics_turn]):
+                            output = await execute(req)
+                            self.assertEqual(output["result"]["case"]["state"], "awaiting_confirmation")
+
+    async def test_accept_and_run_are_atomic_across_process_exit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = tmp + "/cases.sqlite3"
+            with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": path}):
+                req = Request(message="包裹疑似丢件，订单号 DEMO1001", user_id="demo-user", conv_id="accept-crash",
+                              intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1001"]},
+                              conversation_state={}, client_request_id="same-client-turn")
+                with patch.object(LogisticsService, "reserve_run", side_effect=RuntimeError("before commit")):
+                    with self.assertRaisesRegex(RuntimeError, "before commit"):
+                        accept(req)
+                with _db() as db:
+                    self.assertIsNone(db.execute("SELECT id FROM temporal_dispatch WHERE id=?", (_key(req),)).fetchone())
+                self.assertIsNone(LogisticsService().get_run(req.user_id, req.conv_id, LogisticsService.run_id(req)))
+
+                ablated = Request(message=req.message, user_id=req.user_id, conv_id="ablation",
+                                  intent=req.intent, entities=req.entities, conversation_state={},
+                                  client_request_id="ablate-run-reservation")
+                with patch.object(LogisticsService, "reserve_run", return_value=None):
+                    accept(ablated)
+                with _db() as db:
+                    self.assertEqual(db.execute("SELECT state FROM temporal_dispatch WHERE id=?", (_key(ablated),)).fetchone()[0], "pending")
+                self.assertIsNone(LogisticsService().get_run(ablated.user_id, ablated.conv_id, LogisticsService.run_id(ablated)))
+                accept(ablated)  # Retry repairs the ablated pending row without a second dispatch.
+                self.assertEqual(LogisticsService().get_run(ablated.user_id, ablated.conv_id,
+                                                            LogisticsService.run_id(ablated))["state"], "accepted")
+
+                child = mp.Process(target=accept_then_exit, args=(path,))
+                child.start(); child.join(10)
+                self.assertEqual(child.exitcode, 88)
+                queued = LogisticsService().get_run(req.user_id, req.conv_id, LogisticsService.run_id(req))
+                self.assertEqual(queued["state"], "accepted")
+                self.assertEqual(queued["steps"][0]["state"], "pending")
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as http:
+                    response = await http.get(f"/logistics/runs/{queued['run_id']}",
+                                              params={"user_id": req.user_id, "conv_id": req.conv_id})
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response.json()["state"], "accepted")
+                with _db() as db:
+                    self.assertEqual(db.execute("SELECT state FROM temporal_dispatch WHERE id=?", (_key(req),)).fetchone()[0], "pending")
+
+                async with await WorkflowEnvironment.start_local() as env:
+                    with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": env.client.service_client.config.target_host}):
+                        async with Worker(env.client, task_queue=QUEUE, workflows=[LogisticsTurn], activities=[process_logistics_turn]):
+                            task = asyncio.create_task(dispatch(env.client))
+                            try:
+                                output = await execute(req)
+                                self.assertEqual(output["result"]["case"]["state"], "awaiting_confirmation")
+                                run = LogisticsService().get_run(req.user_id, req.conv_id, LogisticsService.run_id(req))
+                                self.assertEqual(run["state"], "waiting_confirmation")
+                                self.assertEqual(run["steps"][1]["state"], "succeeded")
+                            finally:
+                                task.cancel()
+                                with self.assertRaises(asyncio.CancelledError):
+                                    await task
+
     async def test_pending_row_dispatches_after_worker_starts(self):
         with tempfile.TemporaryDirectory() as tmp:
             with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": tmp + "/cases.sqlite3"}):

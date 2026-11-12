@@ -53,6 +53,91 @@ def remote_count(path):
         return db.execute("SELECT count(*) FROM tickets").fetchone()[0]
 
 
+def scanner_child(local_db, url, ready, release):
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(local_db),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        service = LogisticsService()
+        original = service.http_ticket_provider.lookup
+
+        def lookup_then_pause(key):
+            result = original(key)
+            ready.set()
+            if not release.wait(15):
+                raise TimeoutError("scanner release timed out")
+            return result
+
+        with patch.object(service.http_ticket_provider, "lookup", lookup_then_pause):
+            scan_once(service, min_age_seconds=0)
+
+
+def test_two_scanner_processes_converge_on_one_ticket(tmp_path):
+    remote_db = tmp_path / "remote.sqlite3"
+    local_db = tmp_path / "cases.sqlite3"
+    process, url = start_server(remote_db, drop=True)
+    release = mp.Event()
+    children = []
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(local_db),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            unknown = service.process(request("确认建单"))
+            assert unknown["case"]["state"] == "ticket_unknown"
+            ready = [mp.Event(), mp.Event()]
+            children = [mp.Process(target=scanner_child, args=(local_db, url, event, release)) for event in ready]
+            for child in children:
+                child.start()
+            assert all(event.wait(15) for event in ready)
+            release.set()
+            for child in children:
+                child.join(15)
+                assert child.exitcode == 0
+            assert service.get_run("demo-user", "http-case", unknown["run_id"])["state"] == "completed"
+            with service.connect() as db:
+                assert db.execute("SELECT state FROM ticket_operations").fetchone()[0] == "succeeded"
+            assert remote_count(remote_db) == 1
+        finally:
+            release.set()
+            for child in children:
+                if child.is_alive():
+                    child.terminate(); child.join(5)
+            process.terminate(); process.join(5)
+
+
+def test_admin_hold_wins_against_paused_scanner_process(tmp_path):
+    remote_db = tmp_path / "remote.sqlite3"
+    local_db = tmp_path / "cases.sqlite3"
+    process, url = start_server(remote_db, drop=True)
+    ready, release = mp.Event(), mp.Event()
+    child = None
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(local_db),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            unknown = service.process(request("确认建单"))
+            child = mp.Process(target=scanner_child, args=(local_db, url, ready, release))
+            child.start()
+            assert ready.wait(15)
+            with service.connect() as db:
+                key = db.execute("SELECT op_key FROM ticket_operations").fetchone()[0]
+            service.hold_operation(key, "管理员要求人工核对远端结果", "admin")
+            release.set(); child.join(15)
+            assert child.exitcode == 0
+            case = service.get_active_case("demo-user", "http-case")
+            assert case["state"] == "manual_review"
+            assert service.get_run("demo-user", "http-case", unknown["run_id"])["state"] == "manual_review"
+            with service.connect() as db:
+                state, external_id = db.execute("SELECT state,external_id FROM ticket_operations").fetchone()
+                assert state == "held" and external_id.startswith("HTTP-MOCK-")
+            assert remote_count(remote_db) == 1
+        finally:
+            release.set()
+            if child is not None and child.is_alive():
+                child.terminate(); child.join(5)
+            process.terminate(); process.join(5)
+
+
 def test_ablation_unstable_key_creates_second_remote_ticket(tmp_path):
     remote_db = tmp_path / "remote.sqlite3"
     process, url = start_server(remote_db, drop=False)

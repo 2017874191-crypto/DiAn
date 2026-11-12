@@ -5,7 +5,7 @@ import json
 import os
 import sqlite3
 from contextlib import contextmanager
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from temporalio import activity, workflow
@@ -37,14 +37,20 @@ def _key(req):
 
 
 def _payload(req):
+    from core.logistics import LogisticsService
+
     return dict(message=req.message, user_id=req.user_id, conv_id=req.conv_id,
-                request_id=req.request_id, intent=req.intent.value, entities=req.entities,
+                request_id=req.request_id, client_request_id=req.client_request_id,
+                run_id=LogisticsService.run_id(req), intent=req.intent.value, entities=req.entities,
                 conversation_state=req.conversation_state or {})
 
 
 def accept(req):
+    from core.logistics import LogisticsService
+
     if not req.client_request_id:
         raise ValueError("Temporal logistics requires a client request ID")
+    LogisticsService()  # Initialize the Run tables before the shared acceptance transaction.
     key = _key(req)
     input_hash = hashlib.sha256(req.message.encode()).hexdigest()
     with _db() as db:
@@ -53,7 +59,14 @@ def accept(req):
         row = db.execute("SELECT input_hash,payload FROM temporal_dispatch WHERE id=?", (key,)).fetchone()
         if row[0] != input_hash:
             raise ValueError("同一 client_request_id 不能用于不同消息")
-    return key, json.loads(row[1])
+        stored = json.loads(row[1])
+        if not stored.get("run_id"):
+            stored["client_request_id"] = req.client_request_id
+            stored["run_id"] = LogisticsService.run_id(req)
+            db.execute("UPDATE temporal_dispatch SET payload=? WHERE id=?",
+                       (json.dumps(stored, ensure_ascii=False), key))
+        LogisticsService.reserve_run(db, req, stored["request_id"])
+    return key, stored
 
 
 @activity.defn
@@ -67,6 +80,7 @@ def _process(payload: dict) -> dict:
     from core.logistics import LogisticsService
     req = Request(message=payload["message"], user_id=payload["user_id"],
                   conv_id=payload["conv_id"], request_id=payload["request_id"],
+                  client_request_id=payload.get("client_request_id"),
                   intent=IntentCategory(payload["intent"]), entities=payload["entities"],
                   conversation_state=payload["conversation_state"])
     result = LogisticsService().process(req)
@@ -128,6 +142,13 @@ def _pending():
 def _sent(key):
     with _db() as db:
         db.execute("UPDATE temporal_dispatch SET state='dispatched' WHERE id=?", (key,))
+        row = db.execute("SELECT payload FROM temporal_dispatch WHERE id=?", (key,)).fetchone()
+        if row:
+            run_id = json.loads(row[0]).get("run_id")
+            if run_id:
+                now = datetime.now(timezone.utc).isoformat()
+                db.execute("UPDATE logistics_runs SET state='dispatched',updated_at=? WHERE run_id=? AND state='accepted'", (now, run_id))
+                db.execute("UPDATE logistics_steps SET state='succeeded',updated_at=? WHERE run_id=? AND step_name='dispatch'", (now, run_id))
 
 
 async def worker_main():

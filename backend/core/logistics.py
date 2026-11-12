@@ -137,6 +137,24 @@ class LogisticsService:
         if prior != (req.user_id, req.conv_id, input_hash):
             raise ValueError("同一运行标识不能用于不同请求")
         LogisticsService._sync_existing_run(db, run_id, case, now)
+        db.execute("UPDATE logistics_steps SET state='succeeded',updated_at=? WHERE run_id=? AND step_name='dispatch'",
+                   (now, run_id))
+
+    @staticmethod
+    def reserve_run(db, req, request_id=None):
+        """Called in the same transaction as Temporal's accepted dispatch row."""
+        run_id = LogisticsService.run_id(req)
+        now = datetime.now(timezone.utc).isoformat()
+        input_hash = hashlib.sha256(req.message.encode()).hexdigest()
+        db.execute("INSERT OR IGNORE INTO logistics_runs VALUES (?,?,?,?,?,?,?,?,?)",
+                   (run_id, req.user_id, req.conv_id, request_id or req.request_id, input_hash,
+                    None, "accepted", now, now))
+        prior = db.execute("SELECT user_id,conv_id,input_hash FROM logistics_runs WHERE run_id=?", (run_id,)).fetchone()
+        if prior != (req.user_id, req.conv_id, input_hash):
+            raise ValueError("同一运行标识不能用于不同请求")
+        db.execute("INSERT OR IGNORE INTO logistics_steps VALUES (?,?,?,?)",
+                   (run_id, "dispatch", "pending", now))
+        return run_id
 
     @staticmethod
     def _sync_existing_run(db, run_id, case, now=None):

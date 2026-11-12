@@ -45,6 +45,8 @@ experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验�
 
 [Temporal 接收与并发故障验收](backend/wiki/DiAn-Temporal接收与并发故障验收.md)：接收记录与 Run 同事务创建，验证进程退出、派发等待及多进程核对与挂起竞态。
 
+[持久服务重启与取消边界验收](backend/wiki/DiAn-持久服务重启与取消边界验收.md)：受控验证 Temporal 开发服务持久重启、同案并发确认及取消等待后远端操作仍可完成；真实 Redis TTL 待隔离实例复验。
+
 ## 快速启动
 
 需要 Docker 与 Docker Compose v2。前端构建需要 Node.js 22 或更高的兼容版本；宿主机运行后端需要 Python 3.12。模型通过服务端 API 调用，无需 GPU。

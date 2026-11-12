@@ -11,6 +11,7 @@ from unittest.mock import patch
 
 import httpx
 from temporalio.testing import WorkflowEnvironment
+from temporalio.service import RPCError
 from temporalio.worker import Worker
 
 from agents.agent_orchestrator import AgentType, LogisticsAgent, OrchestratorResult, Request
@@ -30,6 +31,46 @@ def accept_then_exit(db_path):
 
 
 class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
+    async def test_in_memory_server_restart_loses_pending_workflow_control(self):
+        key = "dian-in-memory-control-" + os.urandom(8).hex()
+        async with await WorkflowEnvironment.start_local() as first:
+            await first.client.start_workflow(LogisticsTurn.run, {"message": "control"}, id=key, task_queue=QUEUE)
+            self.assertEqual((await first.client.get_workflow_handle(key).describe()).id, key)
+        async with await WorkflowEnvironment.start_local() as second:
+            with self.assertRaises(RPCError):
+                await second.client.get_workflow_handle(key).describe()
+
+    async def test_persistent_dev_server_restart_preserves_dispatched_workflow(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": tmp + "/cases.sqlite3"}):
+                req = Request(message="包裹疑似丢件，订单号 DEMO1001", user_id="demo-user", conv_id="restart",
+                              intent=IntentCategory.LOGISTICS_LOST, entities={"order_id": ["DEMO1001"]},
+                              conversation_state={}, client_request_id="restart-turn")
+                key, _ = accept(req)
+                temporal_db = tmp + "/temporal-dev.sqlite3"
+                async with await WorkflowEnvironment.start_local(dev_server_database_filename=temporal_db) as first:
+                    task = asyncio.create_task(dispatch(first.client))
+                    try:
+                        for _ in range(50):
+                            run = LogisticsService().get_run(req.user_id, req.conv_id, LogisticsService.run_id(req))
+                            if run["state"] == "dispatched":
+                                break
+                            await asyncio.sleep(.1)
+                        self.assertEqual(run["state"], "dispatched")
+                        self.assertEqual((await first.client.get_workflow_handle(key).describe()).id, key)
+                    finally:
+                        task.cancel()
+                        with self.assertRaises(asyncio.CancelledError):
+                            await task
+                # A new server process reads the same on-disk Temporal history.
+                async with await WorkflowEnvironment.start_local(dev_server_database_filename=temporal_db) as second:
+                    with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": second.client.service_client.config.target_host}):
+                        async with Worker(second.client, task_queue=QUEUE, workflows=[LogisticsTurn], activities=[process_logistics_turn]):
+                            result = await execute(req)
+                            self.assertEqual(result["result"]["case"]["state"], "awaiting_confirmation")
+                            self.assertEqual(LogisticsService().get_run(req.user_id, req.conv_id,
+                                                                        LogisticsService.run_id(req))["state"], "waiting_confirmation")
+
     async def test_legacy_pending_row_is_upgraded_on_same_id_retry(self):
         with tempfile.TemporaryDirectory() as tmp:
             with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": tmp + "/cases.sqlite3"}):

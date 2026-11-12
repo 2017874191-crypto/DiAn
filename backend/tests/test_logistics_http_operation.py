@@ -6,6 +6,7 @@ import os
 import socket
 import sqlite3
 import time
+import threading
 from contextlib import asynccontextmanager, closing
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -68,6 +69,99 @@ def scanner_child(local_db, url, ready, release):
 
         with patch.object(service.http_ticket_provider, "lookup", lookup_then_pause):
             scan_once(service, min_age_seconds=0)
+
+
+def confirm_child(local_db, url, client_id, ready, release, results):
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(local_db),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        ready.set()
+        if not release.wait(15):
+            raise TimeoutError("confirmation release timed out")
+        result = LogisticsService().process(request("确认建单", client_id=client_id))
+        results.put((result["case"]["state"], result["case"].get("ticket_id"), result["run_id"]))
+
+
+def test_two_distinct_confirmations_same_case_create_one_remote_ticket(tmp_path):
+    remote_db = tmp_path / "remote.sqlite3"
+    local_db = tmp_path / "cases.sqlite3"
+    process, url = start_server(remote_db, drop=False)
+    release, results = mp.Event(), mp.Queue()
+    children = []
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(local_db),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            ready = [mp.Event(), mp.Event()]
+            children = [mp.Process(target=confirm_child, args=(local_db, url, f"confirm-{i}", ready[i], release, results))
+                        for i in range(2)]
+            for child in children:
+                child.start()
+            assert all(event.wait(15) for event in ready)
+            release.set()
+            for child in children:
+                child.join(15)
+                assert child.exitcode == 0
+            outcomes = [results.get(timeout=2) for _ in children]
+            assert all(state == "ticket_created" for state, _, _ in outcomes)
+            assert len({ticket for _, ticket, _ in outcomes}) == 1
+            assert all(service.get_run("demo-user", "http-case", run_id)["state"] == "completed"
+                       for _, _, run_id in outcomes)
+            assert remote_count(remote_db) == 1
+        finally:
+            release.set()
+            for child in children:
+                if child.is_alive():
+                    child.terminate(); child.join(5)
+            process.terminate(); process.join(5)
+
+
+def test_cancelled_api_wait_does_not_claim_remote_action_cancelled(tmp_path):
+    import asyncio
+
+    async def scenario():
+        remote_db = tmp_path / "remote.sqlite3"
+        process, url = start_server(remote_db, drop=False)
+        with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                     "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url,
+                                     "DIAN_TEMPORAL_LOGISTICS": "false"}):
+            committed, release = threading.Event(), threading.Event()
+            try:
+                service = LogisticsService()
+                service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+                agent = object.__new__(LogisticsAgent)
+                agent.service = service
+                original = service.http_ticket_provider.create
+
+                def create_then_pause(key, params, params_hash):
+                    result = original(key, params, params_hash)
+                    committed.set()
+                    if not release.wait(10):
+                        raise TimeoutError("test release timed out")
+                    return result
+
+                with patch.object(service.http_ticket_provider, "create", create_then_pause):
+                    task = asyncio.create_task(LogisticsAgent._call_llm(agent, request("确认建单")))
+                    assert await asyncio.to_thread(committed.wait, 5)
+                    task.cancel()
+                    try:
+                        await task
+                        assert False, "API wait should be cancelled"
+                    except asyncio.CancelledError:
+                        pass
+                    release.set()
+                    for _ in range(50):
+                        case = service.get_active_case("demo-user", "http-case")
+                        if case["state"] == "ticket_created":
+                            break
+                        await asyncio.sleep(.1)
+                    assert case["state"] == "ticket_created"
+                    assert remote_count(remote_db) == 1
+            finally:
+                release.set()
+                process.terminate(); process.join(5)
+
+    asyncio.run(scenario())
 
 
 def test_two_scanner_processes_converge_on_one_ticket(tmp_path):
@@ -422,6 +516,42 @@ async def _temporal_case(tmp_path):
 def test_temporal_path_uses_same_operation_ledger(tmp_path):
     import asyncio
     asyncio.run(_temporal_case(tmp_path))
+
+
+async def _temporal_concurrent_confirmations(tmp_path):
+    import asyncio
+
+    remote_db = tmp_path / "remote.sqlite3"
+    process, url = start_server(remote_db, drop=False)
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        try:
+            async with await WorkflowEnvironment.start_local() as env:
+                with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": env.client.service_client.config.target_host}):
+                    async with Worker(env.client, task_queue=QUEUE, workflows=[LogisticsTurn], activities=[process_logistics_turn]):
+                        task = asyncio.create_task(dispatch(env.client))
+                        try:
+                            first = await execute(request("包裹疑似丢件，订单号 DEMO1001", client_id="first"))
+                            state = first["conversation_state"]
+                            results = await asyncio.gather(
+                                execute(request("确认建单", state, client_id="confirm-a")),
+                                execute(request("确认建单", state, client_id="confirm-b")))
+                            assert all(item["result"]["case"]["state"] == "ticket_created" for item in results)
+                            assert len({item["result"]["case"]["ticket_id"] for item in results}) == 1
+                            assert remote_count(remote_db) == 1
+                        finally:
+                            task.cancel()
+                            try:
+                                await task
+                            except asyncio.CancelledError:
+                                pass
+        finally:
+            process.terminate(); process.join(5)
+
+
+def test_temporal_two_distinct_confirmations_one_remote_ticket(tmp_path):
+    import asyncio
+    asyncio.run(_temporal_concurrent_confirmations(tmp_path))
 
 
 async def _chat_case(tmp_path):

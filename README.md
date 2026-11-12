@@ -45,7 +45,7 @@ experiments/temporal-poc/  Temporal 执行恢复与副作用核对的隔离验�
 
 [Temporal 接收与并发故障验收](backend/wiki/DiAn-Temporal接收与并发故障验收.md)：接收记录与 Run 同事务创建，验证进程退出、派发等待及多进程核对与挂起竞态。
 
-[持久服务重启与取消边界验收](backend/wiki/DiAn-持久服务重启与取消边界验收.md)：受控验证 Temporal 开发服务持久重启、同案并发确认及取消等待后远端操作仍可完成；真实 Redis TTL 待隔离实例复验。
+[持久服务重启与取消边界验收](backend/wiki/DiAn-持久服务重启与取消边界验收.md)：受控验证 Temporal 开发服务持久重启、同案并发确认及取消等待后远端操作仍可完成；另用独立 Docker Redis 验证回执和状态 TTL 后案件仍可回查。
 
 ## 快速启动
 

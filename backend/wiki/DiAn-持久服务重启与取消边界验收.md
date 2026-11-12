@@ -20,19 +20,21 @@
 
 这些数字包含开发服务冷启动、0.5 秒待投递扫描和本机 ASGI 路径，样本仅 14 轮、顺序执行。该对照使用 SQLite 模拟工单和受控会话替身，**不是**真实 HTTP Provider 与 Redis 的吞吐、资源或生产延迟对照。没有测 CPU、内存、部署运维成本，不能据此改默认执行引擎。
 
-## Redis TTL：准备好检查，但本机未验收
+## Redis TTL：独立 Docker 实例验收
 
-当前主机未提供可连接的 Redis 服务，Docker 引擎未运行；不把清空内存替身当作真实 TTL 证据。已增加独立检查脚本 `evaluation/check_real_redis_ttl.py`。在隔离的真实 Redis 测试实例可用时，从 `backend` 目录运行：
+2026-11-12 重新启动本机 Docker Desktop 后，引擎可连接。在已有本地 `redis:7-alpine` 镜像上启动临时容器 `dian-ttl-check-20261112`，仅把容器 6379 映射到主机 `127.0.0.1:16379`，没有挂载数据卷，也没有启动或修改仓库中的其他容器。验收命令（运行 Python 前进入 `backend` 目录）：
 
 ```powershell
-$env:DIAN_REDIS_TEST_URL="redis://127.0.0.1:6379/0"
+docker run -d --rm --name dian-ttl-check-20261112 -p 127.0.0.1:16379:6379 redis:7-alpine
+$env:DIAN_REDIS_TEST_URL="redis://127.0.0.1:16379/0"
 python -m evaluation.check_real_redis_ttl
+docker stop dian-ttl-check-20261112
 ```
 
-脚本使用唯一会话名写真实 Redis 回执和会话状态，设置 2 秒 TTL，等待过期后通过 `/logistics/case` 验证业务库中的案件仍可回查，并清理本次键。脚本未在当前主机执行；它只覆盖这一条 TTL 与案件回查路径，不代表真实 Redis 断线、多实例锁竞争或聊天历史恢复。
+脚本使用唯一会话名写真实 Redis 回执和会话状态，设置 2 秒 TTL，等待过期后通过 `/logistics/case` 验证业务库中的案件仍可回查。实测输出：`{"real_redis": true, "receipt_expired": true, "state_expired": true, "case_visible_after_ttl": true}`；停止容器前 `redis-cli dbsize` 为 0。容器已停止并由 `--rm` 删除。这只覆盖真实 Redis 的短 TTL 与案件回查，不代表 Redis 断线、多实例锁竞争、`/chat` 完整链路或聊天历史恢复。
 
 ## 决策边界与下一步
 
 默认 `DIAN_TEMPORAL_LOGISTICS=false` 维持不变。Temporal 负责工作流执行恢复；同案外部写操作最多一张还依赖业务库 Operation、稳定键及模拟服务唯一约束。HTTP 请求等待取消不撤销已派发副作用，管理员挂起也只阻止后续自动推进。真实系统必须先确认权威结果查询、幂等键和归属校验契约。
 
-下一步在隔离环境完成真实 Redis TTL/断线、持久化 Temporal 服务与 Worker 同时重启、以及带 CPU/内存采样的重复对照；再做是否默认开启的成本收益决策。本轮未满足这些门槛，不能称为生产级可靠执行平台。
+下一步在隔离环境验证 Redis 断线与多实例锁、持久化 Temporal 服务与 Worker 同时重启，以及带 CPU/内存采样的重复对照；再做是否默认开启的成本收益决策。本轮仍未满足这些门槛，不能称为生产级可靠执行平台。

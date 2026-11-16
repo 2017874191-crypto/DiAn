@@ -37,6 +37,8 @@
 
 原始报告：`data/ablation-verified/rules_only/eval/report.json`、`data/ablation-verified/llm_rules/eval/report.json`、`data/ablation-verified/full/eval/report.json`；单案复测：`data/ablation-verified/full/eval/DIAN-029-retry.json`；逐案比较：`data/ablation-verified/comparison.json`。
 
+两种模式使用不同的融合权重和回退路径。正常分支中，`full` 按 0.70、0.20、0.10 合并模型、向量和规则分，`llm_rules` 按 0.85、0.15 合并模型和规则分。此次比较反映整套识别配置在该开发集上的结果。完整组少观察到一轮，47 ms 的 P95 差异来自单次回放，无法据此估计向量分支的独立耗时或稳定回归幅度。[分数融合实现](../core/intent_recognizer.py#L408)
+
 ## 4. 结论和下一步
 
 在这 30 个开发案件上，LLM＋规则比纯规则多通过 9 案；完整三路没有观察到增益，首次运行有一次未定位的服务失败，P50/P95 也略高。物流写操作继续只由领域状态机决定。下一步先对 `DIAN-029` 的模型／服务错误做可追踪的重复运行，核对调用阶段和错误类型；再完成测试集双人语义复核与金标冻结，并在独立物流配置上评估关闭向量分支。待这些证据稳定后设计真实 provider 的超时、鉴权、结果未知和幂等契约。当前分数只反映模拟工具世界的开发集流程，不是生产准确率或 SLA。

@@ -242,7 +242,7 @@ Monitor 定时采集 Agent 成功率、平均延迟、工具成功率和熔断�
 
 ### 文档
 
-- `wiki/简历包装.md`：完整版本（含 Java/Spring Boot 版本简历模板）
+- `wiki/简历包装.md`：Python 项目经历写法
 
 - `wiki/带数据指标的加强版简历模板.md`
 

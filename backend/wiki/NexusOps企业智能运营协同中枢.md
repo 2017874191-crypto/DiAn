@@ -36,13 +36,13 @@ NexusOps = Intent Recognition + RAG + Memory + Multi-Agent Routing + Skills + Mo
   -> 意图识别
   -> 实体提取
   -> 记忆读取
-  -> 按意图触发 RAG
   -> 多 Agent 路由
   -> 动态规则注入
+  -> 适用的 Agent 按需调用知识库工具
   -> 专业 Agent 回复
   -> 记忆写入
   -> 运行监控
-  -> 自动评测
+  -> 按需提交评测任务
   -> 持续优化
 ```
 
@@ -93,13 +93,13 @@ NexusOps 可以统一处理企业运营中的多类请求：
 
 | 场景 | 用户示例 | 系统处理方式 |
 |---|---|---|
-| 订单履约 | 我的订单什么时候到？物流多久更新？ | 识别 `logistics/order_status`，检索配送规则，由运营协调 Agent 处理 |
+| 订单履约 | 我的订单什么时候到？物流多久更新？ | 识别物流或订单状态意图，按对应客服流程处理 |
 | 技术故障 | 登录一直 401，页面总是 500 | 识别 `technical_login/technical_crash`，路由到技术可靠性 Agent |
 | 账务异常 | 我被重复扣款了，退款什么时候到账？ | 识别 `payment_issue/refund`，路由到收入与合规 Agent |
 | 发票处理 | 帮我开发票，抬头需要修改 | 识别 `invoice`，路由到收入与合规 Agent |
 | 复合问题 | 登录报错，而且刚才还重复扣款了 | 生成主 Agent + 辅助 Agent，协同处理技术和账务线索 |
 | 升级诉求 | 我要投诉，帮我转人工 | 识别 `human_handoff/escalation`，触发升级标记 |
-| 政策咨询 | 会员权益怎么用？退款规则是什么？ | 按意图检索知识库，结合动态 Skills 生成规范回复 |
+| 政策咨询 | 会员权益怎么用？退款规则是什么？ | Agent 按需调用知识库工具，结合动态 Skills 生成规范回复 |
 
 ## 5. Agent 角色包装
 
@@ -126,14 +126,13 @@ NexusOps 可以统一处理企业运营中的多类请求：
   -> 读取 Redis 工作记忆、ChromaDB 历史摘要和用户画像
   -> 识别细粒度业务意图、意图组、置信度和紧急程度
   -> 提取订单号、金额、日期、错误码等结构化实体
-  -> 按意图决定是否检索企业知识库
-  -> 通过查询改写、多子查询召回、重排获取相关知识
   -> 生成结构化路由决策
      - primary_agent
      - supporting_agents
      - routing_reason
      - routing_confidence
-  -> 注入业务知识、历史上下文、结构化实体和动态 Skills
+  -> 向 Agent 提供历史上下文、结构化实体、动态 Skills 和可用工具
+  -> 模型按需调用知识库工具，获得相关片段
   -> 专业 Agent 生成回复
   -> 写入工作记忆
   -> 异步更新用户画像
@@ -150,7 +149,7 @@ NexusOps 可以统一处理企业运营中的多类请求：
 | 细粒度意图识别 | 更准确判断问题属于订单、物流、退款、发票、技术故障还是转人工 |
 | `intent_group` 归一化 | 同时保留细粒度业务语义和上层路由类别，便于统计和路由 |
 | 结构化实体提取 | 自动识别订单号、金额、日期、错误码，减少反复追问 |
-| 按意图触发 RAG | 业务类问题检索知识库，闲聊、问候、转人工等请求不浪费检索成本 |
+| Agent 按需检索 | 获得知识库工具的 Agent 由模型决定是否调用 |
 | 查询改写与重排 | 提升知识库召回质量，减少无关知识污染回答 |
 | 主辅 Agent 路由 | 复合问题有主处理 Agent，也能让辅助 Agent 补充专业意见 |
 | 动态 Skills | 运营规则、排障 SOP、账务边界可热加载，不必改代码 |
@@ -251,7 +250,7 @@ general = 低
 | 对比项 | 普通客服 Bot | NexusOps |
 |---|---|---|
 | 问题理解 | 关键词或单轮 prompt | 细粒度意图、意图组、实体、紧急程度 |
-| 知识使用 | 直接塞知识库结果 | 按意图触发 RAG，支持查询改写、召回和重排 |
+| 知识使用 | 直接塞知识库结果 | Agent 按需调用知识库工具，支持查询改写、召回和重排 |
 | 上下文 | 只依赖当前 prompt | Redis 工作记忆 + ChromaDB 历史摘要 + 用户画像 |
 | 多领域问题 | 容易漏答或答偏 | 主 Agent + 辅助 Agent 协同 |
 | 运营规则 | 写死在 prompt 或代码里 | Skills 文件动态加载，按 Agent 隔离注入 |
@@ -268,10 +267,9 @@ general = 低
 - 支持复合问题协同处理
 - 支持运行状态影响后续路由
 
-### 2. 按意图触发的 RAG，而不是无差别检索
+### 2. Agent 按需调用的知识库检索
 
-- 业务类问题检索知识库
-- 问候、反馈、转人工、未知意图不触发检索
+- 获得知识库工具的 Agent 由模型决定本轮是否调用
 - 检索前可做查询改写
 - 检索后可做结果重排
 
@@ -323,7 +321,7 @@ NexusOps: Multi-Agent Customer Support Harness
 ### 简历 bullet 示例
 
 - 设计多 Agent 编排链路，将用户请求解析为细粒度意图、意图组、结构化实体和路由置信度，并生成 `primary_agent + supporting_agents` 的可解释路由决策。
-- 构建按意图触发的 RAG 检索链路，结合 ChromaDB 知识库、查询改写、多子查询召回和 LLM 重排，降低无关知识注入对回复质量的干扰。
+- 提供 Agent 按需调用的 ChromaDB 知识库工具，保留原查询并加入最多 3 个改写查询，去重后最多并行发起 4 路向量召回，合并结果后按需重排。
 - 实现 Redis + ChromaDB 分层记忆体系，支持当前会话工作记忆、历史会话摘要和用户画像召回，提升多轮对话连续性。
 - 引入动态 Skills 机制，将运营 SOP、技术排障规范和账务合规边界从代码中解耦，支持按 Agent 隔离注入和热加载。
 - 建设工具可靠性治理能力，为知识库检索等工具调用增加参数校验、TTL 缓存、超时控制、熔断和 fallback 降级。
@@ -334,7 +332,7 @@ NexusOps: Multi-Agent Customer Support Harness
 ```text
 这个项目最开始可以理解成客服 Agent，但我没有停留在单轮问答，而是把它做成了一个小型 Multi-Agent Runtime。
 
-用户请求进入 /chat 后，系统会先读取工作记忆和长期记忆，再识别细粒度意图、提取实体，并按意图决定是否触发 RAG。随后 Orchestrator 会生成包含主 Agent、辅助 Agent、路由原因和置信度的结构化决策。不同 Agent 在生成回复前会注入对应的业务知识、历史上下文和动态 Skills。最后系统会写入记忆，并通过 Monitor 和 LLM-as-Judge 做运行观测和质量评测。
+用户请求进入 /chat 后，系统会先读取工作记忆和长期记忆，再识别细粒度意图、提取实体。随后 Orchestrator 会生成包含主 Agent、辅助 Agent、路由原因和置信度的结构化决策。适用的 Agent 会获得历史上下文、动态 Skills 和知识库工具，模型按需调用该工具。最后系统会写入记忆，并通过 Monitor 和 LLM-as-Judge 做运行观测和质量评测。
 
 所以这个项目的重点不是“调用大模型回答问题”，而是围绕复杂客服/运营场景实现了理解、检索、记忆、路由、执行、监控和评测的一整套工程闭环。
 ```
@@ -345,7 +343,7 @@ NexusOps: Multi-Agent Customer Support Harness
 
 - Multi-Agent Orchestration
 - Agent Runtime
-- RAG with Intent Gating
+- Agent Tool Calling for RAG
 - Memory-Augmented Agent
 - Dynamic Skills Injection
 - Tool Reliability

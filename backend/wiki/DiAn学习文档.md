@@ -822,7 +822,7 @@ async def search_with_rewrite(self, tool_name, query, top_k=5, context=None) -> 
     return ToolResult(success=True, data=reranked, reranked=True)
 ```
 
-**查询改写**（`rewrite_query`）用 LLM 把原始查询扩写成 3 个不同角度的子查询，比如"退款流程"会被改写成`["如何申请退款", "退款需要多少天", "退款政策是什么"]`（并保留原始查询，去重后一起用于并行召回）。这样能覆盖单一查询召回不全的问题。
+**查询改写**（`rewrite_query`）使用 LLM 生成最多 3 个改写查询，保留原查询并去重，每次未命中完整流程缓存的检索最多并行发起 4 路向量召回。改写失败时使用原查询。
 
 **结果重排**（`_rerank`）用 LLM 对合并后的候选结果打分排序，只取 Top\-K：
 

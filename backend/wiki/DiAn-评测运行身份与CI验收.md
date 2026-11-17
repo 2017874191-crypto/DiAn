@@ -17,6 +17,8 @@ GitHub Actions 包含后端全量回归、独立真实 Redis 的陈旧写入实�
 
 本机 Windows / Python 3.11.9 后端全量 260 项通过。Node 24 下前端 17 项测试与构建通过。实际容器镜像检查成功，错误的目标主机名被拒绝。真实 Redis 7.4.12 的两个进程接管回归通过。
 
+首轮云端后端回归失败。Linux 容器复现了 Temporal SDK 拒绝在 `fork` 子进程中复用父进程原生运行时的错误。Temporal 故障脚本和重启测试现在使用 `spawn` 启动独立 Worker，原有故障注入和断言照常运行。[首次 CI](https://github.com/2017874191-crypto/DiAn/actions/runs/44027783988)
+
 在 `backend` 目录复现：
 
 ```powershell

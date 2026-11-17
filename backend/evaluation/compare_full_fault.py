@@ -24,7 +24,7 @@ from core.concurrency import KeyedLocks
 from core.logistics import LogisticsService
 from core.mock_ticket_http import serve
 from evaluation.check_docker_redis_recovery import docker, start_redis, wait_redis
-from evaluation.compare_temporal_logistics import ControlledOrchestrator, worker_process
+from evaluation.compare_temporal_logistics import ControlledOrchestrator, WORKER_CONTEXT, worker_process
 from memory.conversation_memory import MemoryManager
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -132,8 +132,8 @@ async def variant(name, redis_url, redis_name, redis_port, root):
             if enabled:
                 async with await WorkflowEnvironment.start_local() as temporal:
                     with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": temporal.client.service_client.config.target_host}):
-                        stop = mp.Event()
-                        worker = mp.Process(target=worker_process, args=(stop,))
+                        stop = WORKER_CONTEXT.Event()
+                        worker = WORKER_CONTEXT.Process(target=worker_process, args=(stop,))
                         worker.start()
                         try:
                             return await calls()

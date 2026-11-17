@@ -18,7 +18,7 @@ from unittest.mock import patch
 import psutil
 from temporalio.testing import WorkflowEnvironment
 
-from evaluation.compare_temporal_logistics import ROOT, SELECTED, run_cases, summary, worker_process
+from evaluation.compare_temporal_logistics import ROOT, SELECTED, WORKER_CONTEXT, run_cases, summary, worker_process
 
 
 def sample_process_tree(stop, samples, result):
@@ -53,8 +53,8 @@ async def one_variant(cases, variant, db_path):
         if enabled:
             async with await WorkflowEnvironment.start_local() as temporal:
                 with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": temporal.client.service_client.config.target_host}):
-                    stop_worker = mp.Event()
-                    worker = mp.Process(target=worker_process, args=(stop_worker,))
+                    stop_worker = WORKER_CONTEXT.Event()
+                    worker = WORKER_CONTEXT.Process(target=worker_process, args=(stop_worker,))
                     worker.start()
                     try:
                         return await measure(cases, enabled, db_path)

@@ -1,7 +1,6 @@
 """Exercises the opt-in logistics route against a real local Temporal server."""
 import asyncio
 import json
-import multiprocessing as mp
 import os
 import tempfile
 import unittest
@@ -19,7 +18,7 @@ import api.main as api
 from core.intent_recognizer import IntentCategory
 from core.logistics import LogisticsService
 from core.temporal_logistics import QUEUE, LogisticsTurn, _db, _key, accept, dispatch, execute, process_logistics_turn
-from evaluation.compare_temporal_logistics import worker_process
+from evaluation.compare_temporal_logistics import WORKER_CONTEXT, worker_process
 
 
 def accept_then_exit(db_path):
@@ -43,8 +42,8 @@ class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
                                 conversation_state={}, client_request_id="first")
                 async with await WorkflowEnvironment.start_local(dev_server_database_filename=temporal_db) as env:
                     with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": env.client.service_client.config.target_host}):
-                        stop = mp.Event()
-                        child = mp.Process(target=worker_process, args=(stop, marker))
+                        stop = WORKER_CONTEXT.Event()
+                        child = WORKER_CONTEXT.Process(target=worker_process, args=(stop, marker))
                         child.start()
                         try:
                             initial = await execute(first)
@@ -69,8 +68,8 @@ class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
                 # The original server and worker are gone. Recover both from disk.
                 async with await WorkflowEnvironment.start_local(dev_server_database_filename=temporal_db) as restored:
                     with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": restored.client.service_client.config.target_host}):
-                        stop = mp.Event()
-                        replacement = mp.Process(target=worker_process, args=(stop,))
+                        stop = WORKER_CONTEXT.Event()
+                        replacement = WORKER_CONTEXT.Process(target=worker_process, args=(stop,))
                         replacement.start()
                         try:
                             result = await execute(second)
@@ -195,7 +194,7 @@ class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(LogisticsService().get_run(ablated.user_id, ablated.conv_id,
                                                             LogisticsService.run_id(ablated))["state"], "accepted")
 
-                child = mp.Process(target=accept_then_exit, args=(path,))
+                child = WORKER_CONTEXT.Process(target=accept_then_exit, args=(path,))
                 child.start(); child.join(10)
                 self.assertEqual(child.exitcode, 88)
                 queued = LogisticsService().get_run(req.user_id, req.conv_id, LogisticsService.run_id(req))

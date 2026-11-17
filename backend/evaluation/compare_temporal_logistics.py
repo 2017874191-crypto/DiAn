@@ -30,6 +30,8 @@ from core.temporal_logistics import QUEUE, LogisticsTurn, dispatch, process_logi
 
 SELECTED = ("DIAN-007", "DIAN-008", "DIAN-013", "DIAN-014", "DIAN-033", "DIAN-034", "DIAN-049", "DIAN-050")
 ROOT = Path(__file__).resolve().parents[1]
+# Temporal's native client runtime must be initialized inside a fresh process.
+WORKER_CONTEXT = mp.get_context("spawn")
 
 
 class Memory:
@@ -144,8 +146,8 @@ async def receipt_fault(enabled, root):
             return await requests()
         async with await WorkflowEnvironment.start_local() as temporal:
             with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": temporal.client.service_client.config.target_host}):
-                stop = mp.Event()
-                proc = mp.Process(target=worker_process, args=(stop,)); proc.start()
+                stop = WORKER_CONTEXT.Event()
+                proc = WORKER_CONTEXT.Process(target=worker_process, args=(stop,)); proc.start()
                 try:
                     return await requests()
                 finally:
@@ -162,8 +164,8 @@ async def worker_crash_after_commit(root):
         orchestrator.issue = "logistics_lost"
         async with await WorkflowEnvironment.start_local() as temporal:
             with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": temporal.client.service_client.config.target_host}):
-                stop = mp.Event()
-                proc = mp.Process(target=worker_process, args=(stop, marker)); proc.start()
+                stop = WORKER_CONTEXT.Event()
+                proc = WORKER_CONTEXT.Process(target=worker_process, args=(stop, marker)); proc.start()
                 try:
                     with patch.object(api, "_memory", memory), patch.object(api, "_orchestrator", orchestrator), patch.object(api, "_profile_updater", None):
                         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test", timeout=55) as client:
@@ -180,8 +182,8 @@ async def worker_crash_after_commit(root):
                             assert Path(marker).exists(), "worker did not reach post-commit crash"
                             proc.join(5)
                             assert proc.exitcode == 86, f"worker exit={proc.exitcode}"
-                            replacement_stop = mp.Event()
-                            replacement = mp.Process(target=worker_process, args=(replacement_stop,)); replacement.start()
+                            replacement_stop = WORKER_CONTEXT.Event()
+                            replacement = WORKER_CONTEXT.Process(target=worker_process, args=(replacement_stop,)); replacement.start()
                             try:
                                 response = await asyncio.wait_for(pending, timeout=48)
                                 view = response.json().get("logistics_case") or {}
@@ -229,8 +231,8 @@ async def cancel_before_dispatch(root):
                             await pending
                         except asyncio.CancelledError:
                             pass
-                        stop = mp.Event()
-                        proc = mp.Process(target=worker_process, args=(stop,)); proc.start()
+                        stop = WORKER_CONTEXT.Event()
+                        proc = WORKER_CONTEXT.Process(target=worker_process, args=(stop,)); proc.start()
                         try:
                             retry = await client.post("/chat", json=payload)
                             result = {"http": retry.status_code, "state": (retry.json().get("logistics_case") or {}).get("state"),
@@ -293,8 +295,8 @@ async def compare():
                 else:
                     async with await WorkflowEnvironment.start_local() as temporal:
                         with patch.dict(os.environ, {"DIAN_TEMPORAL_ADDRESS": temporal.client.service_client.config.target_host}):
-                            stop = mp.Event()
-                            proc = mp.Process(target=worker_process, args=(stop,)); proc.start()
+                            stop = WORKER_CONTEXT.Event()
+                            proc = WORKER_CONTEXT.Process(target=worker_process, args=(stop,)); proc.start()
                             try:
                                 records, pointer = await run_cases(cases, True, path)
                             finally:

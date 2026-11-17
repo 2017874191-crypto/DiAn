@@ -122,6 +122,7 @@ npm test
 - [Agent Infra 工程能力审查与优化方案](backend/wiki/DiAn-AgentInfra工程能力审查与优化方案.md)（2026-11-11，含能力分级、代码证据、故障复现、消融设计与分阶段验收）
 - [DiAn 开发文档](backend/wiki/DiAn开发文档.md)
 - [规则与消融验收记录](backend/wiki/DiAn-P2规则与消融验收记录.md)
+- [物流上下文消融与按需读取验收](backend/wiki/DiAn-A2物流上下文消融验收.md)
 - [故障追踪与物流向量开关验收记录](backend/wiki/DiAn-P3故障追踪与物流向量开关验收记录.md)
 
 ### 意图识别的实验基线

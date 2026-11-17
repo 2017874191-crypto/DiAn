@@ -1,0 +1,4912 @@
+{
+  "execution": "local ASGI, SDK MockTransport, Redis substitute, SQLite, configured storage delays",
+  "baseline_commit": "2e5d75558ba837e3ebaace493fdecf9928893382",
+  "candidate_commit": "3d1fa96dac4362fc2f12ddde16e18d81cd6700f9",
+  "dataset_sha256": "bfe297d2044b343f4ce5d3961eaed5b37883710bc42fc2a604f951322602bbf4",
+  "runtime_identity": {
+    "build": {
+      "source_sha256": "be95fc5c55dc8676749523c5735aab0850af3f5ad3339e20277d0f9a1982d091",
+      "dependencies_sha256": "c57985c46ce607f584add2b095b6a56130e4434a15370cf3404680f6cb151cd1",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1"
+    },
+    "fixtures_sha256": "11f4f61d00c2e6d4ef6f62076c7da00986b736e6f20872fa4939fe4b25fb9077",
+    "policy_sha256": "e1810fb7e7a0455892c567eeb35d0451d0491219963cc00b9f40301ed201753b",
+    "skills_sha256": "6622f37e9b7f095663b44015b0e3a8dfb1fa3b421670dd6d85399adf4c518825",
+    "tools_sha256": "91bd8f321b05d8f821cb609e51d2b775700b85082244670562905d8afc9bd9a7",
+    "configuration": {
+      "intent_mode": "full",
+      "model": "fault-fixture",
+      "model_endpoint_sha256": "6a8231295f6f648f2b78204e22f2045e2e1300e484904fad8213020311c9c60f",
+      "intent_embedding": true,
+      "logistics_embedding": false,
+      "embedding_provider": "local",
+      "remote_embedding_available": false,
+      "embedding_model": "BAAI/bge-m3",
+      "ticket_provider": "sqlite",
+      "temporal_logistics": false,
+      "external_mcp": false,
+      "authentication": true,
+      "intent_timeout_s": 8.0,
+      "agent_timeout_s": 15.0,
+      "composer_timeout_s": 8.0,
+      "composer_temperature": 0.1,
+      "composer_max_tokens": 1000,
+      "model_timeout_s": 30.0,
+      "chat_timeout_s": 50.0,
+      "chat_model_calls": 16,
+      "queue_timeout_s": 2.0,
+      "chat_per_user": 4,
+      "chat_active": 16,
+      "chat_waiting": 32,
+      "logistics_active": 4,
+      "logistics_waiting": 8,
+      "model_active": 8,
+      "model_waiting": 16
+    }
+  },
+  "baseline_source_sha256": "7c8ab77157a53c7ec2a77e7d6390a5f3341c2725ed935b01480eaa8a0cc2e1ca",
+  "fixture_read_delay_ms": 20.0,
+  "summary": {
+    "eager": {
+      "passed": 50,
+      "total": 50,
+      "profile_reads": 85,
+      "episodic_reads": 85,
+      "ticket_count": 5,
+      "unexpected_tickets": 0,
+      "chat_wall_p50_ms": 94.0,
+      "chat_wall_p95_ms": 110.0,
+      "chat_wall_samples": 85
+    },
+    "without_profile": {
+      "passed": 50,
+      "total": 50,
+      "profile_reads": 0,
+      "episodic_reads": 85,
+      "ticket_count": 5,
+      "unexpected_tickets": 0,
+      "chat_wall_p50_ms": 63.0,
+      "chat_wall_p95_ms": 79.0,
+      "chat_wall_samples": 85
+    },
+    "without_episodic": {
+      "passed": 50,
+      "total": 50,
+      "profile_reads": 85,
+      "episodic_reads": 0,
+      "ticket_count": 5,
+      "unexpected_tickets": 0,
+      "chat_wall_p50_ms": 63.0,
+      "chat_wall_p95_ms": 79.0,
+      "chat_wall_samples": 85
+    },
+    "recent_only": {
+      "passed": 50,
+      "total": 50,
+      "profile_reads": 0,
+      "episodic_reads": 0,
+      "ticket_count": 5,
+      "unexpected_tickets": 0,
+      "chat_wall_p50_ms": 31.0,
+      "chat_wall_p95_ms": 47.0,
+      "chat_wall_samples": 85
+    },
+    "routed": {
+      "passed": 50,
+      "total": 50,
+      "profile_reads": 10,
+      "episodic_reads": 10,
+      "ticket_count": 5,
+      "unexpected_tickets": 0,
+      "chat_wall_p50_ms": 32.0,
+      "chat_wall_p95_ms": 109.0,
+      "chat_wall_samples": 85
+    }
+  },
+  "matched_flow_results": 50,
+  "paired_cases": [
+    {
+      "round": 1,
+      "case_id": "DIAN-001",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            141.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-017",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_dispute",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-019",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "order_status",
+          "agent": "general",
+          "case_state": null,
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.87, logistics=0.00, technical=0.00, billing=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-023",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "billing",
+          "agent": "billing",
+          "case_state": null,
+          "routing_reason": "intent=billing, group=billing, primary=billing, supporting=none, scores=[billing=0.75, general=0.10, logistics=0.00, technical=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-026",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 1,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": true,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "ticket_created",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 1,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            93.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            63.0,
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0,
+            79.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-041",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            63.0,
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            46.0,
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-042",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-043",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            62.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            63.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            47.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            32.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-047",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            94.0,
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            63.0,
+            78.0,
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            32.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0,
+            32.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 1,
+      "case_id": "DIAN-048",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "human_handoff",
+          "agent": "escalation",
+          "case_state": "manual_review",
+          "routing_reason": "意图为 human_handoff，触发升级路由",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "manual_review",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            94.0,
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            63.0,
+            62.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            62.0,
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            46.0,
+            32.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-001",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            110.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-017",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_dispute",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            110.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-019",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "order_status",
+          "agent": "general",
+          "case_state": null,
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.87, logistics=0.00, technical=0.00, billing=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-023",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "billing",
+          "agent": "billing",
+          "case_state": null,
+          "routing_reason": "intent=billing, group=billing, primary=billing, supporting=none, scores=[billing=0.75, general=0.10, logistics=0.00, technical=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            79.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-026",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 1,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": true,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "ticket_created",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 1,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            110.0,
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            79.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-041",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            62.0,
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            15.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-042",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            110.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-043",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            78.0,
+            110.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            62.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0,
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            16.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-047",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            94.0,
+            110.0,
+            109.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            63.0,
+            47.0,
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0,
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            47.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            46.0,
+            63.0,
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "case_id": "DIAN-048",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "human_handoff",
+          "agent": "escalation",
+          "case_state": "manual_review",
+          "routing_reason": "意图为 human_handoff，触发升级路由",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "manual_review",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            94.0,
+            78.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            62.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0,
+            79.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            32.0,
+            15.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0,
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-001",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-017",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_dispute",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            79.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            79.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-019",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "order_status",
+          "agent": "general",
+          "case_state": null,
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.87, logistics=0.00, technical=0.00, billing=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            46.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-023",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "billing",
+          "agent": "billing",
+          "case_state": null,
+          "routing_reason": "intent=billing, group=billing, primary=billing, supporting=none, scores=[billing=0.75, general=0.10, logistics=0.00, technical=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-026",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 1,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": true,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "ticket_created",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 1,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            109.0,
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            46.0,
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-041",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            78.0,
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            46.0,
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            46.0,
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-042",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-043",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            15.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-047",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            78.0,
+            78.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            47.0,
+            78.0,
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            94.0,
+            62.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "case_id": "DIAN-048",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "human_handoff",
+          "agent": "escalation",
+          "case_state": "manual_review",
+          "routing_reason": "意图为 human_handoff，触发升级路由",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "manual_review",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            109.0,
+            63.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            63.0,
+            62.0,
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            94.0,
+            62.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            46.0,
+            32.0,
+            15.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0,
+            31.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-001",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            110.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-017",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_dispute",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-019",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "order_status",
+          "agent": "general",
+          "case_state": null,
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.87, logistics=0.00, technical=0.00, billing=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-023",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "billing",
+          "agent": "billing",
+          "case_state": null,
+          "routing_reason": "intent=billing, group=billing, primary=billing, supporting=none, scores=[billing=0.75, general=0.10, logistics=0.00, technical=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-026",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 1,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": true,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "ticket_created",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 1,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            47.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            16.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-041",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            93.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            63.0,
+            46.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-042",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-043",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            63.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-047",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            94.0,
+            109.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0,
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0,
+            46.0,
+            47.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            32.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            47.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 4,
+      "case_id": "DIAN-048",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "human_handoff",
+          "agent": "escalation",
+          "case_state": "manual_review",
+          "routing_reason": "意图为 human_handoff，触发升级路由",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "manual_review",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            94.0,
+            94.0,
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            78.0,
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0,
+            47.0,
+            47.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            16.0,
+            47.0,
+            16.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            47.0,
+            32.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-001",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            109.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            79.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-017",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_dispute",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-019",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "order_status",
+          "agent": "general",
+          "case_state": null,
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.87, logistics=0.00, technical=0.00, billing=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            110.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-023",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 0,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 0,
+          "stage": "reply",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "billing",
+          "agent": "billing",
+          "case_state": null,
+          "routing_reason": "intent=billing, group=billing, primary=billing, supporting=none, scores=[billing=0.75, general=0.10, logistics=0.00, technical=0.00]",
+          "embedding_source": "local-ngram",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-026",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 1,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": true,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "ticket_created",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 1,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            109.0,
+            110.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            94.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-041",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            109.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            62.0,
+            63.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            16.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-042",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 1,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            93.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 1
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 1,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-043",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_info",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 2,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            109.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 2
+          },
+          "chat_wall_ms": [
+            62.0,
+            78.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 2,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            63.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            32.0,
+            15.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-047",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_lost",
+          "agent": "logistics",
+          "case_state": "awaiting_confirmation",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            109.0,
+            94.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            63.0,
+            78.0,
+            62.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            78.0,
+            63.0,
+            62.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            32.0,
+            31.0
+          ]
+        }
+      }
+    },
+    {
+      "round": 5,
+      "case_id": "DIAN-048",
+      "status": "flow_pass_semantic_pending",
+      "ticket_count": 0,
+      "cases_created": 1,
+      "cleared_redis_before_confirmation": false,
+      "model_attempts": [
+        {
+          "turn": 0,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 1,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        },
+        {
+          "turn": 2,
+          "stage": "intent",
+          "outcome": "success",
+          "count": 1
+        }
+      ],
+      "turns": [
+        {
+          "turn": 0,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "awaiting_evidence",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 1,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "human_handoff",
+          "agent": "escalation",
+          "case_state": "manual_review",
+          "routing_reason": "意图为 human_handoff，触发升级路由",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        },
+        {
+          "turn": 2,
+          "status": "pass",
+          "failed_checks": [],
+          "http_status": 200,
+          "intent": "logistics_damaged",
+          "agent": "logistics",
+          "case_state": "manual_review",
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "embedding_source": "disabled-logistics",
+          "ticket_count": 0,
+          "unexpected_tickets": 0
+        }
+      ],
+      "arms": {
+        "eager": {
+          "reads": {
+            "profile": 3,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            93.0,
+            94.0,
+            94.0
+          ]
+        },
+        "without_profile": {
+          "reads": {
+            "profile": 0,
+            "episodic": 3
+          },
+          "chat_wall_ms": [
+            78.0,
+            78.0,
+            47.0
+          ]
+        },
+        "without_episodic": {
+          "reads": {
+            "profile": 3,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            62.0,
+            63.0,
+            78.0
+          ]
+        },
+        "recent_only": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            31.0,
+            31.0
+          ]
+        },
+        "routed": {
+          "reads": {
+            "profile": 0,
+            "episodic": 0
+          },
+          "chat_wall_ms": [
+            47.0,
+            16.0,
+            31.0
+          ]
+        }
+      }
+    }
+  ]
+}

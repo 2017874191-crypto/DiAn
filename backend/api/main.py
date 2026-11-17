@@ -25,8 +25,11 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Response, UploadFile, File, Query, Request as HTTPRequest
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, Gauge, generate_latest
+from prometheus_client.core import CounterMetricFamily
 from pydantic import BaseModel, Field
 from redis.exceptions import RedisError
+from core.concurrency import Capacity, CapacityExceeded, ConversationBusyError, LeaseLostError
+from core.llm_utils import configure_model_capacities, model_capacities, model_scope
 from core.performance import collect_performance, measure_stage, performance_snapshot
 
 load_dotenv(pathlib.Path(_ROOT) / '.env')
@@ -50,8 +53,24 @@ _eval_tool_manager = None
 _skill_manager = None
 _profile_updater = None
 _mcp_client = None
+_chat_tasks: set[asyncio.Task] = set()
 from evaluation.jobs import EvaluationJobs
 _eval_jobs = EvaluationJobs()
+
+
+def _make_chat_capacity():
+    return Capacity.from_env("DIAN_CHAT", 16, 32,
+                             per_user=max(1, int(os.getenv("DIAN_CHAT_PER_USER", "4"))))
+
+
+_chat_capacity = _make_chat_capacity()
+
+
+def _chat_finished(task):
+    _chat_tasks.discard(task)
+    if not task.cancelled():
+        task.exception()  # Also observe errors after the HTTP caller has left.
+
 
 def _anthropic_cfg() -> Dict[str, Any]:
     key = os.getenv("ANTHROPIC_API_KEY", "")
@@ -70,12 +89,13 @@ def _anthropic_cfg() -> Dict[str, Any]:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _eval_orchestrator, _eval_tool_manager, _orchestrator, _memory, _tool_manager, _monitor, _evaluator, _skill_manager, _profile_updater, _mcp_client
+    global _chat_capacity
 
     from core.access import identity
     identity("")  # 启动时验证生产鉴权配置
     print(BANNER, flush=True)
 
-    from agents.agent_orchestrator import AgentOrchestrator, Request, build_shared_rag_tools
+    from agents.agent_orchestrator import AgentOrchestrator, LogisticsAgent, Request, build_shared_rag_tools
     from core.intent_recognizer import IntentRecognizer
     from evaluation.evaluator import EndToEndEvaluator
     from tooling.knowledge_base import KnowledgeBase
@@ -84,6 +104,9 @@ async def lifespan(app: FastAPI):
     from monitor.performance_monitor import PerformanceMonitor
     from core.skill_loader import SkillManager
 
+    _chat_capacity = _make_chat_capacity()
+    LogisticsAgent.capacity = Capacity.from_env("DIAN_LOGISTICS", 4, 8)
+    configure_model_capacities()
     cfg = _anthropic_cfg()
     logger.info(f"模型: {cfg['model']}  base_url: {cfg.get('base_url', '(官方)')}")
 
@@ -202,6 +225,8 @@ async def lifespan(app: FastAPI):
         try:
             yield
         finally:
+            # A timed-out HTTP response may leave a local writer draining.
+            await asyncio.gather(*_chat_tasks, return_exceptions=True)
             await _eval_jobs.close()
             await _profile_updater.close()
             await _mcp_client.close()
@@ -365,11 +390,35 @@ async def chat(req: ChatRequest, http_request: HTTPRequest):
     account = getattr(http_request.state, "account", None)
     if account:
         req.user_id = account["user_id"]
+    timeout = max(.001, float(os.getenv("DIAN_CHAT_TIMEOUT_S", "50")))
+    deadline = asyncio.get_running_loop().time() + timeout
+    owner = asyncio.create_task(_run_admitted_chat(req, account["user_id"] if account else None))
+    _chat_tasks.add(owner)
+    owner.add_done_callback(_chat_finished)
+    try:
+        async with asyncio.timeout_at(deadline):
+            return await asyncio.shield(owner)
+    except CapacityExceeded as ex:
+        raise HTTPException(429, str(ex), headers={"Retry-After": "2"}) from ex
+    except TimeoutError as ex:
+        raise HTTPException(504, f"本轮处理超过 {timeout:g} 秒，请核对案件状态后使用相同 client_request_id 重试") from ex
+    finally:
+        if not owner.done():
+            owner.cancel()
+
+
+async def _run_admitted_chat(req, subject):
+    started = time.monotonic()
+    async with _chat_capacity.hold(subject):
+        with model_scope(max_calls=max(1, int(os.getenv("DIAN_CHAT_MODEL_CALLS", "16")))):
+            return await _run_chat(req, started)
+
+
+async def _run_chat(req, started):
     from agents.agent_orchestrator import Request as OrcReq
 
     client_id = req.client_request_id or str(uuid.uuid4())
     conv_id = req.conv_id or str(uuid.uuid5(uuid.NAMESPACE_URL, req.user_id + ":" + client_id))
-    started = time.monotonic()
 
     def render(reply):
         if reply.status == "failed":
@@ -377,9 +426,8 @@ async def chat(req: ChatRequest, http_request: HTTPRequest):
             return JSONResponse(reply.model_dump(), status_code=503)
         return reply
 
-    from core.concurrency import ConversationBusyError, LeaseLostError
     try:
-        async with asyncio.timeout(50), _memory.conversation(req.user_id, conv_id):
+        async with _memory.conversation(req.user_id, conv_id):
             receipt = await _memory.get_turn_receipt(req.user_id, conv_id, client_id)
             if receipt:
                 if receipt["message"] != req.message:
@@ -462,8 +510,6 @@ async def chat(req: ChatRequest, http_request: HTTPRequest):
             if response.status != "failed" and _profile_updater is not None:
                 _profile_updater.submit(req.user_id, conv_id)
             return render(response)
-    except TimeoutError as ex:
-        raise HTTPException(504, "本轮处理超过 50 秒，请使用相同 client_request_id 重试") from ex
     except RedisError as ex:
         raise HTTPException(503, "会话存储暂不可用；请先核对执行结果，再使用相同 client_request_id 重试") from ex
     except (ConversationBusyError, LeaseLostError) as ex:
@@ -615,6 +661,25 @@ async def list_recent_tool_traces(limit: int = 20):
 async def prometheus_metrics():
     """Prometheus 指标入口。"""
     metrics = generate_latest()
+    from agents.agent_orchestrator import LogisticsAgent
+
+    capacity_registry = CollectorRegistry()
+    resources = {"chat": _chat_capacity, "logistics": LogisticsAgent.capacity,
+                 **{f"model_{lane}": gate for lane, gate in model_capacities.items()}}
+    for name in ("active", "waiting"):
+        gauge = Gauge(f"dian_capacity_{name}", f"Process capacity {name}", ["resource"], registry=capacity_registry)
+        for resource, capacity in resources.items():
+            gauge.labels(resource).set(getattr(capacity, name))
+
+    class _CapacityRejections:
+        def collect(self):
+            counter = CounterMetricFamily("dian_capacity_rejected", "Rejected admissions by resource", labels=["resource"])
+            for resource, capacity in resources.items():
+                counter.add_metric([resource], capacity.rejected)
+            yield counter
+
+    capacity_registry.register(_CapacityRejections())
+    metrics += generate_latest(capacity_registry)
     if os.getenv("DIAN_TICKET_PROVIDER") == "http_mock":
         from core.logistics import LogisticsService
         from core.logistics_reconcile import alert_after_seconds, backlog
@@ -828,11 +893,12 @@ async def _execute_eval(body: Optional[EvalRunInput] = None, progress=None):
     else:
         dialog_cases = DEFAULT_DIALOG_CASES
 
-    report = await _evaluator.run(
-        intent_cases=intent_cases,
-        dialog_cases=dialog_cases,
-        progress=progress,
-    )
+    with model_scope("evaluation"):
+        report = await _evaluator.run(
+            intent_cases=intent_cases,
+            dialog_cases=dialog_cases,
+            progress=progress,
+        )
     return {
         "pass_rate":       report.pass_rate,
         "scope":           "orchestrator",

@@ -1,7 +1,10 @@
-"""请求串行化与有界后台画像更新。"""
+"""进程内容量限制、会话串行化与后台画像更新。"""
 import asyncio
 import logging
+import os
 from contextlib import asynccontextmanager
+from contextvars import copy_context
+from functools import partial
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +15,83 @@ class ConversationBusyError(RuntimeError):
 
 class LeaseLostError(RuntimeError):
     pass
+
+
+class CapacityExceeded(RuntimeError):
+    pass
+
+
+class Capacity:
+    """Bound active work and its waiters on one event loop."""
+
+    def __init__(self, active, waiting, wait_seconds, *, per_user=None):
+        self._slots = asyncio.Semaphore(active)
+        self._max_waiting = waiting
+        self._wait_seconds = wait_seconds
+        self._per_user = per_user
+        self._users = {}
+        self.active = self.waiting = self.rejected = 0
+
+    @classmethod
+    def from_env(cls, prefix, active, waiting, *, per_user=None):
+        return cls(max(1, int(os.getenv(f"{prefix}_ACTIVE", str(active)))),
+                   max(0, int(os.getenv(f"{prefix}_WAITING", str(waiting)))),
+                   max(.001, float(os.getenv("DIAN_QUEUE_TIMEOUT_S", "2"))),
+                   per_user=per_user)
+
+    @asynccontextmanager
+    async def hold(self, user=None):
+        if user is not None and self._per_user is not None and self._users.get(user, 0) >= self._per_user:
+            self.rejected += 1
+            raise CapacityExceeded("当前账户的请求过多，请稍后重试")
+        queued = self._slots.locked()
+        if queued and self.waiting >= self._max_waiting:
+            self.rejected += 1
+            raise CapacityExceeded("服务繁忙，请稍后重试")
+        if user is not None:
+            self._users[user] = self._users.get(user, 0) + 1
+        try:
+            if queued:
+                self.waiting += 1
+                try:
+                    async with asyncio.timeout(self._wait_seconds):
+                        await self._slots.acquire()
+                except TimeoutError as exc:
+                    self.rejected += 1
+                    raise CapacityExceeded("等待执行额度超时，请稍后重试") from exc
+                finally:
+                    self.waiting -= 1
+            else:
+                await self._slots.acquire()
+            self.active += 1
+            try:
+                yield
+            finally:
+                self.active -= 1
+                self._slots.release()
+        finally:
+            if user is not None:
+                self._users[user] -= 1
+                if not self._users[user]:
+                    del self._users[user]
+
+
+async def finish_blocking_call(fn, *args):
+    """Keep the caller's locks and slots until the submitted thread exits."""
+    future = asyncio.get_running_loop().run_in_executor(None, partial(copy_context().run, fn, *args))
+    try:
+        return await asyncio.shield(future)
+    except asyncio.CancelledError:
+        while not future.done():
+            try:
+                await asyncio.shield(future)
+            except asyncio.CancelledError:
+                continue
+            except Exception:
+                break
+        if not future.cancelled():
+            future.exception()
+        raise
 
 
 class KeyedLocks:

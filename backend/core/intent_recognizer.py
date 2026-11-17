@@ -170,7 +170,7 @@ class IntentRecognizer:
         kwargs: Dict[str, Any] = {"api_key": api_key}
         if base_url:
             kwargs["base_url"] = base_url
-        self.client    = AsyncAnthropic(**kwargs)
+        self.client    = AsyncAnthropic(**kwargs, max_retries=0)
         self.model     = model
         self.threshold = confidence_threshold
         from core.intent_embedding import IntentEmbedding

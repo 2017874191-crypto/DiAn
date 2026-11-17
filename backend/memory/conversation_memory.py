@@ -29,7 +29,7 @@ import redis.asyncio as redis
 from redis.exceptions import WatchError
 from anthropic import AsyncAnthropic
 
-from core.llm_utils import create_message, extract_text_content
+from core.llm_utils import create_message, extract_text_content, model_scope
 from core.performance import record_event
 from core.concurrency import KeyedLocks, redis_lease
 
@@ -106,7 +106,7 @@ class MemoryManager:
         kwargs: Dict[str, Any] = {"api_key": api_key}
         if base_url:
             kwargs["base_url"] = base_url
-        self._client = AsyncAnthropic(**kwargs)
+        self._client = AsyncAnthropic(**kwargs, max_retries=0)
         self._model  = model
 
         self._redis = redis.from_url(redis_url, decode_responses=True)
@@ -190,8 +190,9 @@ class MemoryManager:
 
     async def maintain(self, user_id, conv_id):
         # _compress 的快照与 WATCH 提交已保护一致性；生成摘要不占聊天锁。
-        await asyncio.wait_for(self._compress(user_id, conv_id), 30)
-        await self.update_profile(user_id, conv_id, only_if_due=True)
+        with model_scope("profile"):
+            await asyncio.wait_for(self._compress(user_id, conv_id), 30)
+            await self.update_profile(user_id, conv_id, only_if_due=True)
 
     async def add_message(
         self,

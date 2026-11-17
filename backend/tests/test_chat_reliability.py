@@ -2,6 +2,7 @@
 import asyncio
 import json
 import sys
+import threading
 import types
 from collections import deque
 from datetime import datetime
@@ -21,12 +22,12 @@ except ModuleNotFoundError:
 
 import api.main as api
 from agents.agent_orchestrator import (
-    AgentOrchestrator, AgentType, BillingAgent, GeneralAgent, TechnicalAgent,
+    AgentOrchestrator, AgentType, BillingAgent, GeneralAgent, LogisticsAgent, TechnicalAgent,
     ResponseComposer,
 )
 from agents.tools import AgentToolSpec
 from evaluation.evaluator import EndToEndEvaluator, QualityScores
-from core.concurrency import KeyedLocks
+from core.concurrency import Capacity, KeyedLocks
 from core.intent_recognizer import IntentCategory, IntentRecognizer, IntentResult, UrgencyLevel
 from memory.conversation_memory import MemoryManager
 from monitor.performance_monitor import PerformanceMonitor
@@ -65,6 +66,7 @@ async def services(monkeypatch):
     monkeypatch.setattr(api, "_orchestrator", orch)
     monkeypatch.setattr(api, "_profile_updater", None)
     monkeypatch.setattr(api, "_monitor", None)
+    monkeypatch.setattr(api, "_chat_capacity", Capacity(16, 32, 2, per_user=4))
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as http:
         yield memory, orch, client, http
     await memory._redis.aclose()
@@ -72,6 +74,193 @@ async def services(monkeypatch):
 
 def body(message="退款规则", request_id="one", conv_id="c"):
     return {"message": message, "user_id": "u", "conv_id": conv_id, "client_request_id": request_id}
+
+
+@pytest.mark.asyncio
+async def test_health_responds_while_logistics_waits_for_sqlite_write_lock(services, tmp_path, monkeypatch):
+    _, orch, model, http = services
+    monkeypatch.setenv("DIAN_LOGISTICS_DB", str(tmp_path / "cases.sqlite3"))
+    monkeypatch.setenv("DIAN_TICKET_PROVIDER", "sqlite")
+    monkeypatch.setenv("DIAN_TEMPORAL_LOGISTICS", "false")
+    agent = LogisticsAgent(model, "test-model")
+    orch._pool[AgentType.LOGISTICS] = [agent]
+    held, release, finished = threading.Event(), threading.Event(), threading.Event()
+    entered = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    original = agent.service.process
+
+    def lock_db():
+        with agent.service.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            held.set()
+            release.wait(2)
+
+    def process(request):
+        loop.call_soon_threadsafe(entered.set)
+        try:
+            return original(request)
+        finally:
+            finished.set()
+
+    lock_holder = threading.Thread(target=lock_db)
+    lock_holder.start()
+    monkeypatch.setattr(agent.service, "process", process)
+    request = None
+    try:
+        assert await asyncio.to_thread(held.wait, 1)
+        request = asyncio.create_task(http.post("/chat", json=body("包裹丢件，订单号 DEMO1001")))
+        await asyncio.wait_for(entered.wait(), 3)
+        health = await http.get("/health")
+        print(f"health={health.status_code}, logistics_finished={finished.is_set()}")
+        assert health.status_code == 200 and not finished.is_set()
+    finally:
+        release.set()
+        await asyncio.to_thread(lock_holder.join)
+        if request:
+            response = await request
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_timed_out_logistics_write_keeps_its_slot_and_conversation_lock(services, tmp_path, monkeypatch):
+    memory, orch, model, http = services
+    monkeypatch.setenv("DIAN_LOGISTICS_DB", str(tmp_path / "cases.sqlite3"))
+    monkeypatch.setenv("DIAN_TICKET_PROVIDER", "sqlite")
+    monkeypatch.setenv("DIAN_TEMPORAL_LOGISTICS", "false")
+    monkeypatch.setattr(LogisticsAgent, "capacity", Capacity(1, 0, 2))
+    agent = LogisticsAgent(model, "test-model")
+    orch._pool[AgentType.LOGISTICS] = [agent]
+    first = {**body("包裹丢件，订单号 DEMO1001", "ask"), "user_id": "demo-user"}
+    response = await http.post("/chat", json=first)
+    assert response.json()["logistics_case"]["state"] == "awaiting_confirmation"
+    response = await http.post("/chat", json={**first, "conv_id": "other"})
+    assert response.json()["logistics_case"]["state"] == "awaiting_confirmation"
+
+    release, entered = threading.Event(), threading.Event()
+    original = agent.service.process
+
+    def pause(req):
+        entered.set()
+        assert release.wait(5)
+        return original(req)
+
+    monkeypatch.setattr(agent.service, "process", pause)
+    confirmation = {**first, "message": "确认建单", "client_request_id": "confirm"}
+    monkeypatch.setenv("DIAN_CHAT_TIMEOUT_S", ".35")
+    try:
+        timed_out = await http.post("/chat", json=confirmation)
+        assert timed_out.status_code == 504 and entered.is_set()
+        assert api._chat_capacity.active == LogisticsAgent.capacity.active == 1
+        assert len(await memory._redis.keys("lock:conversation:*")) == 1
+
+        monkeypatch.setenv("DIAN_CHAT_TIMEOUT_S", "2")
+        busy = await http.post("/chat", json={**confirmation, "conv_id": "other"})
+        assert busy.status_code == 429 and busy.headers["retry-after"] == "2"
+        assert await memory.get_turn_receipt("demo-user", "other", "confirm") is None
+        metrics = (await http.get("/metrics")).text
+        assert 'dian_capacity_active{resource="logistics"} 1.0' in metrics
+        assert 'dian_capacity_rejected_total{resource="logistics"} 1.0' in metrics
+        assert agent.service.get_active_case("demo-user", "c")["state"] == "awaiting_confirmation"
+    finally:
+        release.set()
+        await asyncio.wait_for(asyncio.gather(*api._chat_tasks, return_exceptions=True), 3)
+
+    assert api._chat_capacity.active == LogisticsAgent.capacity.active == 0
+    assert not await memory._redis.keys("lock:conversation:*")
+    replay = await http.post("/chat", json=confirmation)
+    assert replay.status_code == 503 and replay.json()["error_code"] == "tool_outcome_unknown"
+    assert agent.service.get_active_case("demo-user", "c")["state"] == "ticket_created"
+    with agent.service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("queue_timeout, chat_timeout, expected_status", [(.35, 2, 429), (2, .35, 504)])
+async def test_chat_bounds_active_waiting_and_authenticated_user_admission(
+    services, monkeypatch, queue_timeout, chat_timeout, expected_status,
+):
+    memory, orch, _, http = services
+    monkeypatch.setenv("DIAN_CHAT_TIMEOUT_S", "2")
+    gate = Capacity(1, 1, queue_timeout, per_user=1)
+    monkeypatch.setattr(api, "_chat_capacity", gate)
+    tokens = {f"local-test-key-with-more-than-24-{user}": {"user_id": user, "role": "user"} for user in ("a", "b", "c")}
+    monkeypatch.setenv("DIAN_API_TOKENS", json.dumps(tokens))
+    entered, release = asyncio.Event(), asyncio.Event()
+    original = orch.recognize_intent.side_effect
+
+    async def recognize(message, history=None):
+        if message == "暂停请求":
+            entered.set()
+            await release.wait()
+        return await original(message, history)
+
+    orch.recognize_intent.side_effect = recognize
+
+    async def post(user, message="退款规则", conv="c"):
+        return await http.post("/chat", json=body(message, conv_id=conv),
+                               headers={"Authorization": f"Bearer local-test-key-with-more-than-24-{user}"})
+
+    first = asyncio.create_task(post("a", "暂停请求"))
+    queued = None
+    try:
+        await asyncio.wait_for(entered.wait(), 2)
+        assert (await post("a", conv="another")).status_code == 429
+        monkeypatch.setenv("DIAN_CHAT_TIMEOUT_S", str(chat_timeout))
+        queued = asyncio.create_task(post("b"))
+        async with asyncio.timeout(1):
+            while gate.waiting != 1:
+                await asyncio.sleep(.001)
+        assert (gate.active, gate.waiting) == (1, 1)
+        assert (await post("c")).status_code == 429
+        assert (await queued).status_code == expected_status
+        assert await memory.get_turn_receipt("b", "c", "one") is None
+        await asyncio.wait_for(asyncio.gather(*[task for task in api._chat_tasks if task.cancelling()],
+                                             return_exceptions=True), 1)
+        assert (gate.active, gate.waiting, gate.rejected) == (1, 0, 3 if expected_status == 429 else 2)
+    finally:
+        release.set()
+        if queued is not None:
+            await asyncio.gather(queued, return_exceptions=True)
+        first_result = await first
+    assert first_result.status_code == 200
+    monkeypatch.setenv("DIAN_CHAT_TIMEOUT_S", "2")
+    assert (await post("b")).status_code == 200
+    assert (gate.active, gate.waiting) == (0, 0)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("active,per_user,expected", [(8, None, (6, 0, 0)), (2, None, (2, 4, 0)), (2, 1, (2, 1, 3))])
+async def test_capacity_ablation_same_six_request_burst(services, monkeypatch, active, per_user, expected):
+    _, orch, _, http = services
+    gate = Capacity(active, 4, 2, per_user=per_user)
+    monkeypatch.setattr(api, "_chat_capacity", gate)
+    tokens = {f"local-test-key-with-more-than-24-{user}": {"user_id": user, "role": "user"} for user in ("a", "b", "c")}
+    monkeypatch.setenv("DIAN_API_TOKENS", json.dumps(tokens))
+    release = asyncio.Event()
+    recognize = orch.recognize_intent.side_effect
+
+    async def pause(message, history=None):
+        await release.wait()
+        return await recognize(message, history)
+
+    orch.recognize_intent.side_effect = pause
+    tasks = [
+        asyncio.create_task(http.post("/chat", json=body(conv_id=f"conv-{index}"),
+                                      headers={"Authorization": f"Bearer local-test-key-with-more-than-24-{user}"}))
+        for index, user in enumerate(("a", "a", "a", "a", "b", "c"))
+    ]
+    try:
+        async with asyncio.timeout(1.5):
+            while gate.active + gate.waiting + gate.rejected < len(tasks):
+                await asyncio.sleep(.001)
+        observed = (gate.active, gate.waiting, gate.rejected)
+        print(f"burst_active={observed[0]} burst_waiting={observed[1]} burst_rejected={observed[2]}")
+        assert observed == expected
+    finally:
+        release.set()
+        responses = await asyncio.gather(*tasks)
+    assert sum(reply.status_code == 429 for reply in responses) == expected[2]
+    assert sum(reply.status_code == 200 for reply in responses) == len(tasks) - expected[2]
 
 
 @pytest.mark.asyncio
@@ -180,8 +369,7 @@ async def test_unsafe_tool_timeout_preserves_non_replayable_receipt(services, mo
     write = AsyncMock(return_value={"success": True})
     orch.set_shared_tools({"write": AgentToolSpec("write", "test", {"type": "object"}, write, retry_safe=False)})
     model.messages.create.side_effect = generate
-    original_timeout = asyncio.timeout
-    monkeypatch.setattr(api.asyncio, "timeout", lambda seconds: original_timeout(.2))
+    monkeypatch.setenv("DIAN_CHAT_TIMEOUT_S", ".2")
     first = await http.post("/chat", json=body())
     assert first.status_code == 504
     repeat = await http.post("/chat", json=body())

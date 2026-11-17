@@ -116,7 +116,7 @@ def test_two_distinct_confirmations_same_case_create_one_remote_ticket(tmp_path)
             process.terminate(); process.join(5)
 
 
-def test_cancelled_api_wait_does_not_claim_remote_action_cancelled(tmp_path):
+def test_cancelled_mock_http_writer_drains_and_keeps_remote_result(tmp_path):
     import asyncio
 
     async def scenario():
@@ -144,17 +144,11 @@ def test_cancelled_api_wait_does_not_claim_remote_action_cancelled(tmp_path):
                     task = asyncio.create_task(LogisticsAgent._call_llm(agent, request("确认建单")))
                     assert await asyncio.to_thread(committed.wait, 5)
                     task.cancel()
-                    try:
-                        await task
-                        assert False, "API wait should be cancelled"
-                    except asyncio.CancelledError:
-                        pass
+                    await asyncio.sleep(0)
+                    assert not task.done()
                     release.set()
-                    for _ in range(50):
-                        case = service.get_active_case("demo-user", "http-case")
-                        if case["state"] == "ticket_created":
-                            break
-                        await asyncio.sleep(.1)
+                    assert isinstance((await asyncio.gather(task, return_exceptions=True))[0], asyncio.CancelledError)
+                    case = service.get_active_case("demo-user", "http-case")
                     assert case["state"] == "ticket_created"
                     assert remote_count(remote_db) == 1
             finally:

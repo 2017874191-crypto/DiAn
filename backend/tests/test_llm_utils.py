@@ -1,5 +1,6 @@
 import asyncio
 import json
+from functools import partial
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
@@ -7,7 +8,8 @@ import httpx
 import pytest
 from anthropic import AsyncAnthropic
 
-from core.llm_utils import create_message, extract_text_content
+from core.concurrency import Capacity, CapacityExceeded
+from core.llm_utils import ModelBudgetExceeded, create_message, extract_text_content, model_capacities, model_scope
 
 
 def model_response(content, stop_reason="end_turn"):
@@ -137,3 +139,59 @@ def test_explicit_thinking_and_extra_body_are_preserved():
         assert create.call_args.kwargs["extra_body"] == {**body, "thinking":{"type":"disabled"}}
         assert body == {"metadata":{"user_id":"u"}}
     asyncio.run(run())
+
+
+@pytest.mark.asyncio
+async def test_model_budget_counts_failed_http_attempts_and_disables_sdk_retries(monkeypatch):
+    from core import intent_recognizer
+    from core.performance import collect_performance
+
+    attempts = 0
+
+    def reject(_):
+        nonlocal attempts
+        attempts += 1
+        return httpx.Response(429, json={"error": {"message": "test rate limit"}})
+
+    async with httpx.AsyncClient(transport=httpx.MockTransport(reject)) as transport:
+        monkeypatch.setattr(intent_recognizer, "AsyncAnthropic", partial(AsyncAnthropic, http_client=transport))
+        recognizer = intent_recognizer.IntentRecognizer(api_key="isolated-test", model="mock-model")
+        with model_scope(max_calls=2), collect_performance() as trace:
+            for _ in range(2):
+                assert (await recognizer._llm_recognize("你好", None))["failed"]
+            with pytest.raises(ModelBudgetExceeded):
+                await create_message(recognizer.client, model="mock-model", max_tokens=16,
+                                     messages=[{"role": "user", "content": "hello"}])
+        assert attempts == 2
+        assert len(trace["llm_calls"]) == 2
+        assert all(call["status"] == "error" and call["input_tokens"] is None for call in trace["llm_calls"])
+        assert trace["events"]["model_budget_exhausted"] == 1
+
+
+@pytest.mark.asyncio
+async def test_model_lanes_are_isolated_and_release_on_cancellation(monkeypatch):
+    online = Capacity(1, 0, 1)
+    evaluation = Capacity(1, 0, 1)
+    monkeypatch.setitem(model_capacities, "online", online)
+    monkeypatch.setitem(model_capacities, "evaluation", evaluation)
+    entered = asyncio.Event()
+
+    async def slow_create(**kwargs):
+        entered.set()
+        await asyncio.Event().wait()
+
+    client = SimpleNamespace(messages=SimpleNamespace(create=AsyncMock(side_effect=slow_create)))
+    healthy = SimpleNamespace(messages=SimpleNamespace(create=AsyncMock(return_value="ok")))
+    task = asyncio.create_task(create_message(client, model="stub"))
+    try:
+        await asyncio.wait_for(entered.wait(), 1)
+        with pytest.raises(CapacityExceeded):
+            await create_message(healthy, model="stub")
+        assert healthy.messages.create.await_count == 0
+        with model_scope("evaluation"):
+            assert await create_message(healthy, model="stub") == "ok"
+    finally:
+        task.cancel()
+        assert isinstance((await asyncio.gather(task, return_exceptions=True))[0], asyncio.CancelledError)
+    assert online.active == evaluation.active == 0
+    assert await create_message(healthy, model="stub") == "ok"

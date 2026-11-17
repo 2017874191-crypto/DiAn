@@ -41,6 +41,7 @@ from agents.tools import (
 )
 from core.intent_recognizer import IntentCategory, IntentRecognizer, UrgencyLevel
 from core.llm_utils import create_message, extract_text_content
+from core.concurrency import Capacity, CapacityExceeded, finish_blocking_call
 
 logger = logging.getLogger(__name__)
 
@@ -300,6 +301,8 @@ class BaseAgent:
             elapsed = (time.monotonic() - t0) * 1000
             self.stats.total_ms += elapsed
             self.stats.record(False, elapsed, req.request_id)
+            raise
+        except CapacityExceeded:
             raise
         except Exception as ex:
             ms = (time.monotonic() - t0) * 1000
@@ -623,6 +626,7 @@ class BillingAgent(BaseAgent):
 class LogisticsAgent(BaseAgent):
     """受控案件节点：工具和状态转换由代码驱动，避免模型跳过核验和确认。"""
     agent_type = AgentType.LOGISTICS
+    capacity = Capacity.from_env("DIAN_LOGISTICS", 4, 8)
     profile = AgentProfile(
         role="物流异常案件处理", mission="核验事实、收集材料并创建模拟核查工单",
         workflow=("收集单号", "核验订单物流", "匹配规则", "收集材料", "确认建单"),
@@ -642,32 +646,38 @@ class LogisticsAgent(BaseAgent):
         from agents.tools import make_tool
         return {"process_logistics_case": replace(make_tool(
             "process_logistics_case", "核验并推进模拟物流案件；写操作要求当前轮明确确认", {},
-            lambda req, args: self.service.process(req)), retry_safe=False)}
+            lambda req, args: self._process(req)), retry_safe=False)}
 
     async def _call_llm(self, req):
-        # 本节点不调用模型作交易决策；沿用 BaseAgent 的统计、trace 和故障处理。
-        # 模拟事务同步短路径：不把可写事务交给取消后仍继续运行的线程。
-        from core.logistics import is_confirmed
-        confirmation = is_confirmed(req.message)
-        temporal_enabled = os.getenv("DIAN_TEMPORAL_LOGISTICS", "false").lower() == "true"
-        durable_operation = temporal_enabled or self.service.http_ticket_provider is not None
-        if confirmation:
-            # The HTTP mode records an Operation before calling the external service.
-            req.tool_attempts.append({"tool_name": "create_logistics_case", "retry_safe": durable_operation})
-            if req.before_unsafe_tool is not None and not durable_operation:
-                await req.before_unsafe_tool("create_logistics_case")
-        if temporal_enabled:
-            from core.temporal_logistics import execute
-            output = await execute(req)
-            result = output["result"]
-            req.conversation_state = output["conversation_state"]
-        elif self.service.http_ticket_provider is not None:
-            result = await asyncio.to_thread(self.service.process, req)
-        else:
-            result = self.service.process(req)
+        result = await self._process(req)
         traces = result["calls"] + [{"event": "logistics_case_transition", "case_id": result["case"]["case_id"],
             "state": result["case"]["state"], "request_id": req.request_id, "source": "mock"}]
         return AgentCallResult(result["reply"], [c["tool_name"] for c in result["calls"]], traces)
+
+    async def _process(self, req):
+        if os.getenv("DIAN_TEMPORAL_LOGISTICS", "false").lower() == "true":
+            self._mark_confirmation(req, durable=True)
+            from core.temporal_logistics import execute
+            output = await execute(req)
+            req.conversation_state = output["conversation_state"]
+            return output["result"]
+        async with self.capacity.hold():
+            durable = self.service.http_ticket_provider is not None
+            if self._mark_confirmation(req, durable=durable) and not durable and req.before_unsafe_tool is not None:
+                await req.before_unsafe_tool("create_logistics_case")
+            return await finish_blocking_call(self.service.process, req)
+
+    @staticmethod
+    def _mark_confirmation(req, *, durable):
+        from core.logistics import is_confirmed
+        confirmation = is_confirmed(req.message)
+        if confirmation:
+            req.tool_attempts.append({"tool_name": "create_logistics_case", "retry_safe": durable})
+        return confirmation
+
+    async def request_manual_review(self, req):
+        async with self.capacity.hold():
+            await finish_blocking_call(self.service.request_manual_review, req)
 
     def _needs_escalation(self, content):
         return "需要人工核查" in content or "转人工" in content
@@ -830,7 +840,7 @@ class AgentOrchestrator:
         kwargs: Dict[str, Any] = {"api_key": api_key}
         if base_url:
             kwargs["base_url"] = base_url
-        client = AsyncAnthropic(**kwargs)
+        client = AsyncAnthropic(**kwargs, max_retries=0)
 
         self._intent_recognizer = IntentRecognizer(api_key=api_key, base_url=base_url, model=model)
         self._skill_manager = skill_manager
@@ -966,7 +976,7 @@ class AgentOrchestrator:
             req.entities = req.conversation_state["entities"]
 
         if req.intent == IntentCategory.HUMAN_HANDOFF and (req.conversation_state or {}).get("logistics_case_id"):
-            self._pool[AgentType.LOGISTICS][0].service.request_manual_review(req)
+            await self._pool[AgentType.LOGISTICS][0].request_manual_review(req)
 
         rules_only_fallback = (os.getenv("INTENT_RECOGNITION_MODE", "full").strip().lower() == "rules_only"
                                and req.intent not in (IntentCategory.LOGISTICS_LOST, IntentCategory.LOGISTICS_DISPUTE,

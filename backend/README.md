@@ -188,7 +188,9 @@ docker compose --env-file ../backend/.env up -d --build
 | `CHROMA_HOST` / `CHROMA_PORT` | Docker 使用 `chromadb:8000`；宿主机开发使用 `localhost:8001`。 |
 | `CHROMA_PERSIST_DIRECTORY` | development 无法连接远端 ChromaDB 时的本地存储路径；容器内为 `/app/data/chroma`。production 连接失败时中止启动。 |
 | `DIAN_SEED_DEMO_DOCS` | development 空库是否自动导入示例政策，默认 `true`；production 始终禁止自动导入。 |
-| `DIAN_INTENT_TIMEOUT_S` / `DIAN_LLM_TIMEOUT_S` / `DIAN_COMPOSER_TIMEOUT_S` | 意图识别、Agent 每次模型请求和汇总模型请求的超时，默认 8 / 15 / 8 秒；均受聊天 50 秒总预算限制。 |
+| `DIAN_INTENT_TIMEOUT_S` / `DIAN_LLM_TIMEOUT_S` / `DIAN_COMPOSER_TIMEOUT_S` | 意图识别、Agent 每次模型请求和汇总模型请求的超时，默认 8 / 15 / 8 秒。 |
+| `DIAN_CHAT_TIMEOUT_S` / `DIAN_QUEUE_TIMEOUT_S` | 聊天总时限默认 50 秒，包含排队。单次等待执行额度默认最多 2 秒。 |
+| `DIAN_CHAT_*` / `DIAN_LOGISTICS_*` / `DIAN_MODEL_*` 容量配置 | 活跃、等待、认证账户及每轮模型调用上限见 [有界执行与模型预算验收](wiki/DiAn-有界执行与模型预算验收.md)。 |
 | `PROFILE_UPDATE_MIN_INTERVAL_S` | 普通后台画像最短更新间隔，默认 60 秒；明确表达偏好时立即更新。设为 0 恢复逐轮更新。会话消息和业务字段仍每轮保存。 |
 | `LOG_LEVEL` | 日志级别，默认 `INFO`。 |
 | `INTENT_EMBEDDING_ENABLED` | 是否执行向量分支，默认 `true`；设为 `false` 后仅融合 LLM 和规则。 |

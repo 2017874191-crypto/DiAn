@@ -33,8 +33,8 @@ ADMIN_TOKEN = "isolated-fault-admin-token-local"
 
 
 class ScriptedModel:
-    def __init__(self, case_id, stages, fault_turns):
-        self.case_id = case_id
+    def __init__(self, intent_label, stages, fault_turns):
+        self.intent_label = intent_label
         self.stages = stages
         self.fault_turns = fault_turns
         self.turn = -1
@@ -46,7 +46,7 @@ class ScriptedModel:
             self.attempts[(self.turn, stage, "connect_error" if disconnected else "success")] += 1
             if disconnected:
                 raise httpx.ConnectError("scripted connection failure", request=request)
-            text = (json.dumps({"intent": LABELS[self.case_id], "confidence": .97})
+            text = (json.dumps({"intent": self.intent_label, "confidence": .97})
                     if stage == "intent" else "这是模拟评测回复，请核对订单信息。")
             return httpx.Response(200, json={
                 "id": "msg_fault_fixture", "type": "message", "role": "assistant", "model": "fault-fixture",
@@ -97,7 +97,7 @@ def _single_close(client, case_id, user_id, conv_id):
 
 
 async def replay(case, mode, embedding, stages, build, *, fault_turns=(0,),
-                 cleanup_fault=None, close=close_fixture_case):
+                 cleanup_fault=None, close=close_fixture_case, intent_label=None, configure_memory=None):
     with tempfile.TemporaryDirectory(prefix="dian-intent-fault-") as folder:
         path = Path(folder) / "cases.sqlite3"
         settings = {
@@ -112,7 +112,7 @@ async def replay(case, mode, embedding, stages, build, *, fault_turns=(0,),
                 ADMIN_TOKEN: {"role": "admin", "user_id": "local-fault-admin"},
             }),
         }
-        model = ScriptedModel(case["case_id"], stages, fault_turns)
+        model = ScriptedModel(intent_label or LABELS[case["case_id"]], stages, fault_turns)
         skills = SkillManager(str(ROOT / "skills"))
         skills.load()
         memory = MemoryManager.__new__(MemoryManager)
@@ -121,10 +121,12 @@ async def replay(case, mode, embedding, stages, build, *, fault_turns=(0,),
         memory._query_episodic = AsyncMock(return_value={})
         memory._get_profile = AsyncMock(return_value={})
         try:
+            if configure_memory is not None:
+                configure_memory(memory)
             async with (
-                AsyncAnthropic(api_key="local-fixture-only", max_retries=0,
+                AsyncAnthropic(api_key="local-fixture-only", base_url="http://model.fixture", max_retries=0,
                                http_client=httpx.AsyncClient(transport=model.transport("intent"))) as intent_client,
-                AsyncAnthropic(api_key="local-fixture-only", max_retries=0,
+                AsyncAnthropic(api_key="local-fixture-only", base_url="http://model.fixture", max_retries=0,
                                http_client=httpx.AsyncClient(transport=model.transport("reply"))) as reply_client,
                 httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://fixture") as http,
             ):
@@ -157,6 +159,7 @@ async def replay(case, mode, embedding, stages, build, *, fault_turns=(0,),
             "routing_reason": obs.get("routing_reason"),
             "embedding_source": obs.get("intent_embedding_source"), "ticket_count": obs.get("ticket_count"),
             "unexpected_tickets": obs.get("unexpected_ticket_count"),
+            "chat_wall_ms": obs.get("wall_latency_ms"),
         })
     return {
         "runtime": runtime,

@@ -63,4 +63,4 @@ python -m evaluation.logistics_eval_runner --split dev --variant llm_rules --bas
 docker compose -p dian-ablation-replay-llm -f docker-compose.acceptance.yml -f docker-compose.local-check.yml down
 ```
 
-runner 发现失败时会返回非零退出码并照常写报告；应查看 `summary` 和逐案 `failures`。`down` 不带 `-v`，保留独立验收卷。比较脚本用 `python -m evaluation.compare_logistics_ablation --root <三组报告的共同目录> --image-id <镜像ID> --output <比较报告路径>`；三组报告必须来自同一镜像、数据集与模拟规则版本。
+runner 发现失败时会返回非零退出码并照常写报告。请查看 `summary` 和逐案 `failures`。`down` 不带 `-v`，保留独立验收卷。当前比较脚本使用 `python -m evaluation.compare_logistics_ablation --root <三组报告的共同目录> --output <比较报告路径>`。三组报告需从已开启运行身份采集的新部署重新生成。Docker 运行可在回放命令中指定 `--container <目标容器>`，由回放器采集镜像 ID。[运行身份与 CI 验收](DiAn-评测运行身份与CI验收.md)

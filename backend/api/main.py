@@ -221,6 +221,10 @@ async def lifespan(app: FastAPI):
     from core.concurrency import ProfileUpdater
     _profile_updater = ProfileUpdater(_memory, workers=int(os.getenv("PROFILE_UPDATE_WORKERS", "4")))
     _profile_updater.start()
+    app.state.eval_runtime_build = None
+    if os.getenv("DIAN_EVAL_PROVENANCE", "false").lower() == "true":
+        from evaluation.provenance import build_identity
+        app.state.eval_runtime_build = build_identity(pathlib.Path(_ROOT))
     logger.info("DiAn 已就绪")
     async with standard_mcp_server.session_manager.run():
         try:
@@ -868,6 +872,15 @@ async def run_eval(body: Optional[EvalRunInput] = None):
         return _eval_jobs.submit(lambda progress: _execute_eval(snapshot, progress))
     except RuntimeError as ex:
         raise HTTPException(429, str(ex)) from ex
+
+
+@app.get("/eval/runtime", tags=["评测"])
+async def evaluation_runtime(http_request: HTTPRequest):
+    build = getattr(http_request.app.state, "eval_runtime_build", None)
+    if build is None:
+        raise HTTPException(404, "运行身份采集未启用")
+    from evaluation.provenance import runtime_snapshot
+    return runtime_snapshot(build, _orchestrator, _logistics_service(), _skill_manager)
 
 
 @app.get("/eval/jobs/{job_id}")

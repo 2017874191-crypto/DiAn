@@ -1,0 +1,6 @@
+# Preserve the P0 snapshot and pin the dependencies added by later fault tests.
+-r requirements-dev-lock-linux-py312.txt
+nexus-rpc==1.5.0
+psutil==7.2.2
+temporalio==1.36.0
+types-protobuf==7.35.1.20260906

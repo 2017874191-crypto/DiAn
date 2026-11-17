@@ -36,6 +36,7 @@ services:
       - .env
     environment:
       DIAN_ENV: development
+      DIAN_EVAL_PROVENANCE: "true"
       DIAN_API_TOKENS: ""
       REDIS_URL: redis://redis:6379/0
       CHROMA_HOST: chromadb

@@ -84,8 +84,9 @@ async def scenario(url, checkpoint):
     conv = f"suspend-{checkpoint}-{uuid.uuid4().hex}"
     memory = memory_at(url)
     orch = ControlledOrchestrator()
-    ready, release, result = mp.Event(), mp.Event(), mp.Queue()
-    child = mp.Process(target=stale_worker, args=(url, conv, checkpoint, ready, release, result))
+    spawn = mp.get_context("spawn")
+    ready, release, result = spawn.Event(), spawn.Event(), spawn.Queue()
+    child = spawn.Process(target=stale_worker, args=(url, conv, checkpoint, ready, release, result))
     child.start()
     process = psutil.Process(child.pid)
     suspended = False

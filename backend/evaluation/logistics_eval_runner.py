@@ -21,14 +21,18 @@ from pathlib import Path
 import httpx
 
 from core.logistics import is_confirmed
+from evaluation.provenance import MODES, SCHEMA, build_identity, git_commit, inspect_image, sha256, value_digest
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "evaluation/datasets/dian_logistics_v1"
 
 
 def load_cases(split):
-    path = SUITE / ("all.jsonl" if split == "all" else f"{split}.jsonl")
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return decode_cases((SUITE / f"{split}.jsonl").read_bytes())
+
+
+def decode_cases(data):
+    return [json.loads(line) for line in data.decode("utf-8").splitlines() if line.strip()]
 
 
 def check_fixtures(case):
@@ -262,6 +266,33 @@ def report(results, split, variant=None):
             "semantic_evaluation": "pending_human_review", "cases": results}
 
 
+def read_target(admin, base_url, container):
+    response = admin.get("/eval/runtime", timeout=5)
+    response.raise_for_status()
+    snapshot = response.json()
+    if snapshot.get("schema") != SCHEMA:
+        raise ValueError("unsupported target provenance schema")
+    return {
+        "runtime": snapshot["identity"],
+        "image_id": inspect_image(container, base_url, snapshot["hostname"]) if container else None,
+    }
+
+
+def verify_target(target, cases, variant):
+    runtime = target["runtime"]
+    configuration = runtime["configuration"]
+    if variant is not None and configuration["intent_mode"] != variant:
+        raise ValueError("requested variant differs from target API intent mode")
+    if configuration["ticket_provider"] != "sqlite":
+        raise ValueError("this replay counts tickets in the target's SQLite ticket table")
+    for case in cases:
+        check_fixtures(case)
+        fixtures = json.loads((ROOT / case["setup"]["fixtures_file"]).read_bytes())
+        policy = json.loads((ROOT / case["setup"]["policy_file"]).read_bytes())
+        if value_digest(fixtures["orders"]) != runtime["fixtures_sha256"] or value_digest(policy) != runtime["policy_sha256"]:
+            raise ValueError(f"target fixture or policy differs from suite: {case['case_id']}")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--split", choices=("dev", "test", "all"), default="dev")
@@ -272,25 +303,59 @@ def main():
     parser.add_argument("--admin-token", help="admin token for trace reads and closing replay-created demo cases")
     parser.add_argument("--restart-command", help="controlled restart command for an isolated test deployment")
     parser.add_argument("--output", type=Path, help="JSON report path")
-    parser.add_argument("--variant", choices=("rules_only", "llm_rules", "full"), help="intent recognition branch for this deployment")
+    parser.add_argument("--variant", choices=MODES, help="expected intent mode of the isolated API, verified before replay")
+    parser.add_argument("--provenance", action="store_true", help="measure runtime identity for a replay without an explicit variant")
+    parser.add_argument("--container", help="target Docker container to verify and record its immutable image ID")
     args = parser.parse_args()
     if not args.db.is_file():
         parser.error("--db must point to the target API's existing SQLite file")
     headers = {"Authorization": "Bearer " + args.token} if args.token else {}
-    cases = load_cases(args.split)
+    dataset = (SUITE / f"{args.split}.jsonl").read_bytes()
+    cases = decode_cases(dataset)
     if args.case_id:
         selected = set(args.case_id)
         cases = [case for case in cases if case["case_id"] in selected]
         if len(cases) != len(selected):
             parser.error("some --case-id values are not present in the selected split")
     admin_headers = {"Authorization": "Bearer " + args.admin_token} if args.admin_token else headers
+    provenance = None
     with (httpx.Client(base_url=args.base_url, headers=headers, timeout=60) as client,
           httpx.Client(base_url=args.base_url, headers=admin_headers, timeout=60) as admin):
+        if args.variant or args.provenance or args.container:
+            try:
+                target = read_target(admin, args.base_url, args.container)
+                verify_target(target, cases, args.variant)
+            except (httpx.HTTPError, KeyError, OSError, ValueError, subprocess.SubprocessError) as exc:
+                parser.error(f"cannot verify replay target: {exc}")
+            provenance = {
+                "schema": SCHEMA,
+                "dataset_sha256": sha256(dataset),
+                "case_ids": sorted(case["case_id"] for case in cases),
+                "runner": {**build_identity(ROOT), "git_commit": git_commit(ROOT)},
+                "target": target,
+                "controlled_restart": bool(args.restart_command),
+                "verification_errors": [],
+            }
+
+        def verify_checkpoint(checkpoint):
+            if provenance is None:
+                return True
+            try:
+                if read_target(admin, args.base_url, args.container) == provenance["target"]:
+                    return True
+                reason = "target_identity_changed"
+            except (httpx.HTTPError, KeyError, OSError, ValueError, subprocess.SubprocessError) as exc:
+                reason = type(exc).__name__
+            provenance["verification_errors"].append({"checkpoint": checkpoint, "reason": reason})
+            return False
+
         def restart():
             subprocess.run(shlex.split(args.restart_command), check=True, timeout=180)
             for _ in range(30):
                 try:
                     if client.get("/health", timeout=3).status_code == 200:
+                        if not verify_checkpoint("after_restart"):
+                            raise RuntimeError("target identity no longer matches the replay start")
                         return
                 except httpx.HTTPError:
                     pass
@@ -302,13 +367,17 @@ def main():
             }).raise_for_status()
         results = run_cases(cases, client, args.db, restart=restart if args.restart_command else None,
                             close_case=close_case, trace_client=admin)
+        verify_checkpoint("after_replay")
     data = report(results, args.split, args.variant)
+    if provenance is not None:
+        data["provenance"] = provenance
     output = json.dumps(data, ensure_ascii=False, indent=2)
     if args.output:
         args.output.write_text(output + "\n", encoding="utf-8")
     else:
         print(output)
-    return 0 if data["summary"] == {"flow_pass_semantic_pending": len(results)} else 1
+    valid = provenance is None or not provenance["verification_errors"]
+    return 0 if valid and data["summary"] == {"flow_pass_semantic_pending": len(results)} else 1
 
 
 if __name__ == "__main__":

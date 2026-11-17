@@ -1,0 +1,245 @@
+{
+  "source_commit": "30fce46585a6488ba2bd47fe8f36f4c04422c3fa",
+  "baseline": "same source with the targeted predicate disabled in the fixture",
+  "source_case": "DIAN-025",
+  "dataset_sha256": "bfe297d2044b343f4ce5d3961eaed5b37883710bc42fc2a604f951322602bbf4",
+  "scope": "local ASGI, scripted SDK disconnects, Redis substitute, isolated SQLite mock tickets",
+  "pairs": [
+    {
+      "variant": "full",
+      "without_clarification": {
+        "turns": [
+          {
+            "turn": 0,
+            "status": "model_or_service_failure",
+            "failed_checks": [
+              "model_or_service_failure: agent_failed"
+            ],
+            "http_status": 503,
+            "intent": "order_status",
+            "agent": "general",
+            "case_state": null,
+            "routing_reason": null,
+            "embedding_source": "local-ngram",
+            "ticket_count": 0,
+            "unexpected_tickets": 0
+          }
+        ],
+        "cases_created": 0,
+        "ticket_count": 0,
+        "model_attempts": [
+          {
+            "turn": 0,
+            "stage": "intent",
+            "outcome": "connect_error",
+            "count": 1
+          },
+          {
+            "turn": 0,
+            "stage": "reply",
+            "outcome": "connect_error",
+            "count": 1
+          }
+        ]
+      },
+      "with_clarification": {
+        "turns": [
+          {
+            "turn": 0,
+            "status": "pass",
+            "failed_checks": [],
+            "http_status": 200,
+            "intent": "other",
+            "agent": "general",
+            "case_state": null,
+            "routing_reason": "意图模型不可用，先澄清是否需要丢件核查",
+            "embedding_source": "local-ngram",
+            "ticket_count": 0,
+            "unexpected_tickets": 0
+          }
+        ],
+        "cases_created": 0,
+        "ticket_count": 0,
+        "model_attempts": [
+          {
+            "turn": 0,
+            "stage": "intent",
+            "outcome": "connect_error",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "variant": "llm_rules",
+      "without_clarification": {
+        "turns": [
+          {
+            "turn": 0,
+            "status": "model_or_service_failure",
+            "failed_checks": [
+              "model_or_service_failure: agent_failed"
+            ],
+            "http_status": 503,
+            "intent": "query",
+            "agent": "general",
+            "case_state": null,
+            "routing_reason": null,
+            "embedding_source": "disabled",
+            "ticket_count": 0,
+            "unexpected_tickets": 0
+          }
+        ],
+        "cases_created": 0,
+        "ticket_count": 0,
+        "model_attempts": [
+          {
+            "turn": 0,
+            "stage": "intent",
+            "outcome": "connect_error",
+            "count": 1
+          },
+          {
+            "turn": 0,
+            "stage": "reply",
+            "outcome": "connect_error",
+            "count": 1
+          }
+        ]
+      },
+      "with_clarification": {
+        "turns": [
+          {
+            "turn": 0,
+            "status": "pass",
+            "failed_checks": [],
+            "http_status": 200,
+            "intent": "other",
+            "agent": "general",
+            "case_state": null,
+            "routing_reason": "意图模型不可用，先澄清是否需要丢件核查",
+            "embedding_source": "disabled",
+            "ticket_count": 0,
+            "unexpected_tickets": 0
+          }
+        ],
+        "cases_created": 0,
+        "ticket_count": 0,
+        "model_attempts": [
+          {
+            "turn": 0,
+            "stage": "intent",
+            "outcome": "connect_error",
+            "count": 1
+          }
+        ]
+      }
+    },
+    {
+      "variant": "full_off",
+      "without_clarification": {
+        "turns": [
+          {
+            "turn": 0,
+            "status": "model_or_service_failure",
+            "failed_checks": [
+              "model_or_service_failure: agent_failed"
+            ],
+            "http_status": 503,
+            "intent": "order_status",
+            "agent": "general",
+            "case_state": null,
+            "routing_reason": null,
+            "embedding_source": "local-ngram",
+            "ticket_count": 0,
+            "unexpected_tickets": 0
+          }
+        ],
+        "cases_created": 0,
+        "ticket_count": 0,
+        "model_attempts": [
+          {
+            "turn": 0,
+            "stage": "intent",
+            "outcome": "connect_error",
+            "count": 1
+          },
+          {
+            "turn": 0,
+            "stage": "reply",
+            "outcome": "connect_error",
+            "count": 1
+          }
+        ]
+      },
+      "with_clarification": {
+        "turns": [
+          {
+            "turn": 0,
+            "status": "pass",
+            "failed_checks": [],
+            "http_status": 200,
+            "intent": "other",
+            "agent": "general",
+            "case_state": null,
+            "routing_reason": "意图模型不可用，先澄清是否需要丢件核查",
+            "embedding_source": "local-ngram",
+            "ticket_count": 0,
+            "unexpected_tickets": 0
+          }
+        ],
+        "cases_created": 0,
+        "ticket_count": 0,
+        "model_attempts": [
+          {
+            "turn": 0,
+            "stage": "intent",
+            "outcome": "connect_error",
+            "count": 1
+          }
+        ]
+      }
+    }
+  ],
+  "confirmed_only_after_verification": [
+    {
+      "turn": 0,
+      "status": "pass",
+      "failed_checks": [],
+      "http_status": 200,
+      "intent": "other",
+      "agent": "general",
+      "case_state": null,
+      "routing_reason": "意图模型不可用，先澄清是否需要丢件核查",
+      "embedding_source": "local-ngram",
+      "ticket_count": 0,
+      "unexpected_tickets": 0
+    },
+    {
+      "turn": 1,
+      "status": "pass",
+      "failed_checks": [],
+      "http_status": 200,
+      "intent": "logistics_lost",
+      "agent": "logistics",
+      "case_state": "awaiting_confirmation",
+      "routing_reason": "物流异常案件：串行核验与确认建单",
+      "embedding_source": "local-ngram",
+      "ticket_count": 0,
+      "unexpected_tickets": 0
+    },
+    {
+      "turn": 2,
+      "status": "pass",
+      "failed_checks": [],
+      "http_status": 200,
+      "intent": "logistics_lost",
+      "agent": "logistics",
+      "case_state": "ticket_created",
+      "routing_reason": "物流异常案件：串行核验与确认建单",
+      "embedding_source": "local-ngram",
+      "ticket_count": 1,
+      "unexpected_tickets": 0
+    }
+  ]
+}

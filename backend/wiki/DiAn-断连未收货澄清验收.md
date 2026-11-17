@@ -29,3 +29,5 @@ python -m pytest -q -s tests/test_logistics_clarification.py
 ```
 
 这次通过的是故障澄清验收，原开发集 `DIAN-025` 健康流程的金标仍要求核验后待确认。结论覆盖已测语句、模拟物流工具和固定模型故障序列。向量开关和模式默认值沿用现有配置。
+
+本机 16 项专项测试与 280 项后端全量测试通过。[逐组消融与确认序列](../evaluation/missing_delivery_clarification.json)

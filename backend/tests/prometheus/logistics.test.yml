@@ -1,0 +1,43 @@
+rule_files:
+  - ../../config/alerts/logistics.yml
+evaluation_interval: 1m
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'dian_ticket_reconcile_last_completed_timestamp_seconds{instance="never-started"}'
+        values: '0+0x15'
+      - series: 'dian_ticket_reconcile_last_completed_timestamp_seconds{instance="stalled-then-recovered"}'
+        values: '1+0x13 840+60x1'
+      - series: 'dian_ticket_reconcile_last_completed_timestamp_seconds{instance="running"}'
+        values: '1+60x15'
+    alert_rule_test:
+      - eval_time: 1m
+        alertname: DiAnTicketReconcilerStalled
+        exp_alerts: []
+      - eval_time: 2m
+        alertname: DiAnTicketReconcilerStalled
+        exp_alerts:
+          - exp_labels:
+              instance: never-started
+              severity: warning
+            exp_annotations: &stalled
+              summary: "DiAn HTTP ticket reconciler has not completed a recent scan"
+              description: "Check the reconciler process, its access to the shared case database, and the HTTP mock provider."
+      - eval_time: 13m
+        alertname: DiAnTicketReconcilerStalled
+        exp_alerts:
+          - exp_labels:
+              instance: never-started
+              severity: warning
+            exp_annotations: *stalled
+          - exp_labels:
+              instance: stalled-then-recovered
+              severity: warning
+            exp_annotations: *stalled
+      - eval_time: 15m
+        alertname: DiAnTicketReconcilerStalled
+        exp_alerts:
+          - exp_labels:
+              instance: never-started
+              severity: warning
+            exp_annotations: *stalled

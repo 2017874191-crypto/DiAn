@@ -395,6 +395,11 @@ def test_admin_hold_blocks_user_retry_and_background_scan(tmp_path):
                     metrics = await client.get("/metrics", headers={"Authorization": f"Bearer {admin_token}"})
                     assert "dian_ticket_reconcile_overdue 1.0" in metrics.text
                     assert "dian_ticket_reconcile_held 1.0" in metrics.text
+                    assert "dian_ticket_reconcile_last_completed_timestamp_seconds 0.0" in metrics.text
+                    await asyncio.to_thread(scan_once, service, min_age_seconds=0)
+                    metrics = await client.get("/metrics", headers={"Authorization": f"Bearer {admin_token}"})
+                    assert "dian_ticket_reconcile_last_completed_timestamp_seconds" in metrics.text
+                    assert "dian_ticket_reconcile_last_completed_timestamp_seconds 0.0" not in metrics.text
                     close_path = f"/logistics/cases/{unknown['case']['case_id']}/close"
                     closure = {"reason": body["reason"], "user_id": "demo-user", "conv_id": "http-case"}
                     denied = await client.post(close_path, json=closure, headers={"Authorization": f"Bearer {user_token}"})

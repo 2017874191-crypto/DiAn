@@ -57,6 +57,13 @@ class LogisticsService:
                     db.execute("UPDATE ticket_operations SET created_at=updated_at")
                 db.commit()
             db.execute("CREATE TABLE IF NOT EXISTS operation_reviews (op_key TEXT PRIMARY KEY, reason TEXT NOT NULL, actor_id TEXT NOT NULL, reviewed_at TEXT NOT NULL)")
+            db.execute("""CREATE TABLE IF NOT EXISTS ticket_reconcile_schedule (
+                op_key TEXT PRIMARY KEY, attempts INTEGER NOT NULL, last_attempt_at TEXT NOT NULL,
+                next_attempt_at TEXT, last_result TEXT NOT NULL
+            )""")
+            db.execute("""CREATE TABLE IF NOT EXISTS ticket_reconcile_status (
+                id INTEGER PRIMARY KEY CHECK (id=1), last_completed_timestamp_seconds REAL NOT NULL
+            )""")
             db.execute("CREATE TABLE IF NOT EXISTS logistics_runs (run_id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, request_id TEXT NOT NULL, input_hash TEXT NOT NULL, case_id TEXT, state TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS logistics_steps (run_id TEXT NOT NULL, step_name TEXT NOT NULL, state TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(run_id,step_name))")
             db.execute("CREATE TABLE IF NOT EXISTS active_cases (user_id TEXT NOT NULL, conv_id TEXT NOT NULL, case_id TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY (user_id, conv_id))")

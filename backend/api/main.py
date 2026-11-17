@@ -626,6 +626,7 @@ async def prometheus_metrics():
             ("oldest_age_seconds", "Age of the oldest unresolved HTTP ticket operation in seconds"),
             ("overdue", "Unresolved HTTP ticket operations past the reconciliation alert threshold"),
             ("held", "Unresolved HTTP ticket operations held for manual review"),
+            ("last_completed_timestamp_seconds", "Unix timestamp of the last completed reconciliation scan, zero before the first scan"),
         ):
             Gauge(f"dian_ticket_reconcile_{name}", help_text, registry=registry).set(stats[name])
         metrics += generate_latest(registry)

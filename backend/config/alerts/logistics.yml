@@ -9,3 +9,13 @@ groups:
         annotations:
           summary: "DiAn has overdue HTTP ticket operations"
           description: "Review the operations in GET /logistics/operations/pending and verify the remote result before taking action."
+      - alert: DiAnTicketReconcilerStalled
+        expr: |
+          dian_ticket_reconcile_last_completed_timestamp_seconds == 0
+          or time() - dian_ticket_reconcile_last_completed_timestamp_seconds > 600
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "DiAn HTTP ticket reconciler has not completed a recent scan"
+          description: "Check the reconciler process, its access to the shared case database, and the HTTP mock provider."

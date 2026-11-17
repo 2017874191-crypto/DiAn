@@ -15,6 +15,21 @@ ISSUES = {"logistics_lost", "logistics_dispute", "logistics_damaged"}
 RULE_VERSION = "demo-2026-11-v1"
 STATES = {"awaiting_info", "verifying", "awaiting_evidence", "awaiting_confirmation", "manual_review", "ticket_pending", "ticket_unknown", "ticket_created", "ticket_already_open"}
 
+_NOT_RECEIVED = re.compile(r"(?:没(?:有)?|未)收到(?:货|包裹|快递|商品)")
+_LOSS_CHECK = re.compile(r"(?:核实|核查|确认|查一下)\s*(?:一下\s*)?(?:是否|是不是|会不会)(?:已经|已)?(?:遗失|丢失|丢件)")
+_CLARIFICATION_EXCLUSIONS = re.compile(
+    r"运费|邮费|配送费用|寄送费|物流费用|(?:只想|只是|仅想|就是想)(?:查|查询|看看)(?:一下)?(?:物流|运单|快递|包裹)"
+    r"|(?:不是|并非|没有说|没说|没有要求|未要求|不需要|不必|不用|无需|不要|不想|不打算|暂不|不|别)"
+    r"(?:要|想|说|表示|认为)?\s*(?:帮我|我|包裹|快递)?\s*(?:没(?:有)?收到|未收到|核实|核查|确认|查)"
+    r"|我(?:已|已经|确实)收到|我收到了"
+)
+
+
+def needs_missing_delivery_clarification(message, order_ids):
+    """An explicit but weak loss inquiry can invite clarification only."""
+    return (len(order_ids) == 1 and not _CLARIFICATION_EXCLUSIONS.search(message)
+            and bool(_NOT_RECEIVED.search(message) and _LOSS_CHECK.search(message)))
+
 
 class StaleLogisticsWrite(RuntimeError):
     pass

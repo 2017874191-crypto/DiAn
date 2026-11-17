@@ -202,6 +202,7 @@ class Request:
     before_unsafe_tool: Any = field(default=None, repr=False)
     unsafe_tool_calls: set = field(default_factory=set, repr=False)
     conversation_state: Optional[Dict[str, Any]] = None
+    intent_model_failed: bool = False
 
 
 @dataclass
@@ -946,9 +947,10 @@ class AgentOrchestrator:
             req.urgency = intent_result.urgency
             req.intent_confidence = intent_result.confidence
             req.entities = intent_result.entities
+            req.intent_model_failed = getattr(intent_result, "llm_failed", False)
 
         # 明确异常表达优先；短回复如单号、举证、确认，接续持久化案件。
-        from core.logistics import detect_issue
+        from core.logistics import ISSUES, detect_issue, needs_missing_delivery_clarification
         issue = detect_issue(req.message)
         previous = req.conversation_state or {}
         continuation = bool(re.fullmatch(r"\s*(?:确认建单|确认创建工单|确认提交工单|重试|继续|(?:订单号?|运单号?|快递单号)\s*[:：#]?\s*[A-Za-z0-9_-]{4,32}|已(?:上传|提供|提交).{0,30}(?:照片|图片|视频)[。！!]?)\s*", req.message))
@@ -971,7 +973,12 @@ class AgentOrchestrator:
             req.intent = IntentCategory(issue or previous["logistics_issue"])
             req.intent_group = "logistics"
             req.intent_confidence = max(req.intent_confidence, 0.9)
-        if req.conversation_state is not None:
+        clarify_missing_delivery = (
+            req.intent_model_failed and not explicit_handoff and not issue
+            and req.intent.value not in ISSUES and not previous.get("logistics_case_id")
+            and needs_missing_delivery_clarification(req.message, req.entities.get("order_id", []))
+        )
+        if req.conversation_state is not None and not clarify_missing_delivery:
             from core.conversation_state import merge_state
             req.conversation_state = merge_state(req.conversation_state, req.entities,
                 req.intent_group, req.message, req.request_id)
@@ -983,17 +990,25 @@ class AgentOrchestrator:
         rules_only_fallback = (os.getenv("INTENT_RECOGNITION_MODE", "full").strip().lower() == "rules_only"
                                and req.intent not in (IntentCategory.LOGISTICS_LOST, IntentCategory.LOGISTICS_DISPUTE,
                                                       IntentCategory.LOGISTICS_DAMAGED, IntentCategory.HUMAN_HANDOFF))
-        if self._needs_clarification(req) or rules_only_fallback:
+        if clarify_missing_delivery or self._needs_clarification(req) or rules_only_fallback:
+            if clarify_missing_delivery:
+                req.intent, req.intent_group, req.intent_confidence = IntentCategory.OTHER, "other", 0.0
+                content = ("这笔订单是还没收到、怀疑丢件，还是只想查物流进度？"
+                           "请带订单号回复“疑似丢件”或“查询物流进度”。")
+                reason = "意图模型不可用，先澄清是否需要丢件核查"
+            else:
+                content = "我还不能确定您要处理的是哪类问题。请补充一下是订单物流、退款账单、账户资料，还是技术故障？"
+                reason = "规则未识别到可处理意图，先澄清用户需求" if rules_only_fallback else "低置信度 OTHER 意图，先澄清用户需求"
             result = OrchestratorResult(
                 request_id=req.request_id,
-                response="我还不能确定您要处理的是哪类问题。请补充一下是订单物流、退款账单、账户资料，还是技术故障？",
+                response=content,
                 agent_type=AgentType.GENERAL,
                 intent=req.intent,
                 escalated=False,
                 latency_ms=(time.monotonic() - t0) * 1000,
                 agent_types=[AgentType.GENERAL],
                 primary_agent=AgentType.GENERAL,
-                routing_reason="规则未识别到可处理意图，先澄清用户需求" if rules_only_fallback else "低置信度 OTHER 意图，先澄清用户需求",
+                routing_reason=reason,
                 routing_confidence=req.intent_confidence,
             )
             self._record_tool_trace(result)

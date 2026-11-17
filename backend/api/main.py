@@ -470,6 +470,7 @@ async def _run_chat(req, started):
                 intent_group=intent_result.intent_group,
                 urgency=intent_result.urgency,
                 intent_confidence=intent_result.confidence,
+                intent_model_failed=getattr(intent_result, "llm_failed", False),
                 logistics_revision=revision,
                 conversation_state=getattr(mem_ctx, "state", {}),
             )

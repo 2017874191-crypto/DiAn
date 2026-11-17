@@ -223,6 +223,7 @@ def run_cases(cases, client, db_path, restart=None, close_case=None, trace_clien
                         failures.append("ticket_id_changed")
                 observed = {"response": response.get("response", ""),
                             "agent_type": response.get("agent_type"),
+                            "routing_reason": response.get("routing_reason"),
                             "intent": response.get("intent"),
                             "intent_embedding_source": response.get("intent_embedding_source"),
                             "intent_source_scores": response.get("intent_source_scores", {}),

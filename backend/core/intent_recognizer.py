@@ -71,6 +71,7 @@ class IntentResult:
     latency_ms: float
     source_scores: Dict[str, float] = field(default_factory=dict)
     embedding_source: str = "local-ngram"
+    llm_failed: bool = False
 
 
 # ── Few-shot 模板（同时用于 LLM 示例和 Embedding 匹配）────────────────────────
@@ -249,8 +250,11 @@ class IntentRecognizer:
             latency_ms=(time.monotonic() - t0) * 1000,
             source_scores=source_scores,
             embedding_source=emb.get("source", "unavailable"),
+            llm_failed=bool(llm.get("failed")),
         )
 
+        if result.llm_failed:
+            return result  # A later request should see the model when it recovers.
         # LRU 缓存
         if len(self._cache) >= 1000:
             for k in list(self._cache)[:500]:
@@ -343,7 +347,7 @@ class IntentRecognizer:
             confidence = data.get("confidence")
             if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not math.isfinite(confidence) or not 0 <= confidence <= 1:
                 raise ValueError("意图 confidence 必须是 0 到 1 的有限数字")
-            return data
+            return {"intent": data["intent"], "confidence": confidence, "reasoning": data.get("reasoning", "")}
         except Exception as ex:
             logger.warning(f"LLM 识别失败: {ex}")
             return {"intent": IntentCategory.OTHER, "confidence": 0.0, "reasoning": "LLM 失败", "failed": True}

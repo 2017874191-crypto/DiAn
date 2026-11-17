@@ -33,15 +33,16 @@ ADMIN_TOKEN = "isolated-fault-admin-token-local"
 
 
 class ScriptedModel:
-    def __init__(self, case_id, stages):
+    def __init__(self, case_id, stages, fault_turns):
         self.case_id = case_id
         self.stages = stages
+        self.fault_turns = fault_turns
         self.turn = -1
         self.attempts = Counter()
 
     def transport(self, stage):
         def handle(request):
-            disconnected = self.turn == 0 and stage in self.stages
+            disconnected = self.turn in self.fault_turns and stage in self.stages
             self.attempts[(self.turn, stage, "connect_error" if disconnected else "success")] += 1
             if disconnected:
                 raise httpx.ConnectError("scripted connection failure", request=request)
@@ -95,7 +96,8 @@ def _single_close(client, case_id, user_id, conv_id):
     }).raise_for_status()
 
 
-async def replay(case, mode, embedding, stages, build, *, cleanup_fault=None, close=close_fixture_case):
+async def replay(case, mode, embedding, stages, build, *, fault_turns=(0,),
+                 cleanup_fault=None, close=close_fixture_case):
     with tempfile.TemporaryDirectory(prefix="dian-intent-fault-") as folder:
         path = Path(folder) / "cases.sqlite3"
         settings = {
@@ -110,7 +112,7 @@ async def replay(case, mode, embedding, stages, build, *, cleanup_fault=None, cl
                 ADMIN_TOKEN: {"role": "admin", "user_id": "local-fault-admin"},
             }),
         }
-        model = ScriptedModel(case["case_id"], stages)
+        model = ScriptedModel(case["case_id"], stages, fault_turns)
         skills = SkillManager(str(ROOT / "skills"))
         skills.load()
         memory = MemoryManager.__new__(MemoryManager)
@@ -152,6 +154,7 @@ async def replay(case, mode, embedding, stages, build, *, cleanup_fault=None, cl
             "turn": turn["turn"], "status": turn["status"], "failed_checks": turn.get("failures", []),
             "http_status": obs.get("http_status") or (200 if "response" in obs else None),
             "intent": obs.get("intent"), "agent": obs.get("agent_type"), "case_state": obs.get("case_state"),
+            "routing_reason": obs.get("routing_reason"),
             "embedding_source": obs.get("intent_embedding_source"), "ticket_count": obs.get("ticket_count"),
             "unexpected_tickets": obs.get("unexpected_ticket_count"),
         })

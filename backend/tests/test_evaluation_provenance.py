@@ -9,7 +9,7 @@ import api.main as api
 from agents.agent_orchestrator import AgentOrchestrator
 from core.skill_loader import SkillManager
 from evaluation import logistics_eval_runner as runner
-from evaluation.compare_logistics_ablation import VARIANTS, compare
+from evaluation.compare_logistics_ablation import VARIANTS, compare, compare_rounds
 from evaluation.provenance import NUMERIC_CONFIG, build_identity, value_digest
 
 
@@ -62,6 +62,38 @@ def test_comparison_keeps_failed_cases_with_measured_metadata(tmp_path):
     assert result["variants"]["full"]["summary"]["model_or_service_failure"] == 1
     assert result["variants"]["full"]["metrics"]["cases_total"] == 30
     assert result["case_differences"]["llm_to_full_regressed"] == [runner.load_cases("dev")[0]["case_id"]]
+
+
+def test_vector_contrast_accepts_only_the_logistics_embedding_difference(tmp_path):
+    write_reports(tmp_path)
+    source = tmp_path / "full" / "eval" / "report.json"
+    off = tmp_path / "full_off" / "eval" / "report.json"
+    off.parent.mkdir(parents=True)
+    raw = json.loads(source.read_text(encoding="utf-8"))
+    config = raw["provenance"]["target"]["runtime"]["configuration"]
+    config["logistics_embedding"] = False
+    off.write_text(json.dumps(raw), encoding="utf-8")
+    result = compare(tmp_path, "logistics_embedding")
+    assert result["case_differences"] == {"on_to_off_improved": [], "on_to_off_regressed": []}
+    config["model"] = "different"
+    off.write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(ValueError, match="conditions differ"):
+        compare(tmp_path, "logistics_embedding")
+
+
+def test_repeated_comparison_pairs_the_same_cases_and_retains_failures(tmp_path):
+    write_reports(tmp_path / "r01")
+    write_reports(tmp_path / "r02")
+    result = compare_rounds(tmp_path, 2, "intent_mode")
+    paired = result["paired_flow_pass"]["full_minus_llm_rules"]
+    assert paired["paired_cases"] == 60 and paired["delta"] == pytest.approx(-2 / 60)
+    assert len(result["rounds"]) == 2
+    path = tmp_path / "r02" / "full" / "eval" / "report.json"
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    raw["provenance"]["dataset_sha256"] = "e" * 64
+    path.write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(ValueError, match="conditions differ"):
+        compare_rounds(tmp_path, 2, "intent_mode")
 
 
 @pytest.mark.parametrize("path,changed", [

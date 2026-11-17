@@ -121,6 +121,25 @@ def classify(failures):
     return "flow_failure"
 
 
+def close_fixture_case(client, case_id, user_id, conv_id):
+    """Retry a lost response only for the idempotent evaluator cleanup endpoint."""
+    transport_errors = []
+    for attempt in (1, 2):
+        try:
+            client.post(f"/logistics/cases/{case_id}/close", json={
+                "user_id": user_id, "conv_id": conv_id,
+                "reason": "Isolated logistics evaluation case completed",
+            }, timeout=5).raise_for_status()
+        except httpx.TransportError as exc:
+            transport_errors.append(type(exc).__name__)
+        except httpx.HTTPStatusError as exc:
+            return {"status": "http_failure", "attempts": attempt, "transport_errors": transport_errors,
+                    "http_status": exc.response.status_code}
+        else:
+            return {"status": "closed", "attempts": attempt, "transport_errors": transport_errors}
+    return {"status": "transport_failure", "attempts": 2, "transport_errors": transport_errors}
+
+
 def run_cases(cases, client, db_path, restart=None, close_case=None, trace_client=None):
     results = []
     for case in cases:
@@ -234,9 +253,15 @@ def run_cases(cases, client, db_path, restart=None, close_case=None, trace_clien
                        if item.get("snapshot") and item["snapshot"].get("state") == "ticket_created"}
             for case_id in sorted(created):
                 try:
-                    close_case(case_id, user_id, conv_id)
+                    outcome = close_case(case_id, user_id, conv_id)
                 except httpx.HTTPError as exc:
                     results[-1].update(status="environment_failure", reason=f"fixture case closure failed: {exc}")
+                else:
+                    if outcome is not None:
+                        results[-1].setdefault("fixture_cleanup", []).append(outcome)
+                        if outcome["status"] != "closed":
+                            results[-1].update(status="environment_failure",
+                                               reason=f"fixture case closure failed: {outcome['status']}")
     return results
 
 
@@ -362,9 +387,7 @@ def main():
                 time.sleep(1)
             raise RuntimeError("API did not become healthy after restart")
         def close_case(case_id, user_id, conv_id):
-            admin.post(f"/logistics/cases/{case_id}/close", json={
-                "user_id": user_id, "conv_id": conv_id, "reason": "Isolated logistics evaluation case completed",
-            }).raise_for_status()
+            return close_fixture_case(admin, case_id, user_id, conv_id)
         results = run_cases(cases, client, args.db, restart=restart if args.restart_command else None,
                             close_case=close_case, trace_client=admin)
         verify_checkpoint("after_replay")

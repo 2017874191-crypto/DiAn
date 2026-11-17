@@ -263,7 +263,7 @@ class TemporalLogisticsContract(unittest.IsolatedAsyncioTestCase):
             async def get_conversation_state(self, *_):
                 return self.state.copy()
 
-            async def commit_turn(self, user, conv, client, message, response, *_args, state=None):
+            async def commit_turn(self, user, conv, client, message, response, *_args, state=None, lease=None):
                 self.receipts[client] = {"message": message, "response": response}
                 if state is not None:
                     self.state = state.copy()

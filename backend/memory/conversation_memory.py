@@ -31,7 +31,7 @@ from anthropic import AsyncAnthropic
 
 from core.llm_utils import create_message, extract_text_content, model_scope
 from core.performance import record_event
-from core.concurrency import KeyedLocks, redis_lease
+from core.concurrency import KeyedLocks, LeaseLostError, redis_lease
 
 logger = logging.getLogger(__name__)
 
@@ -139,11 +139,11 @@ class MemoryManager:
     @asynccontextmanager
     async def conversation(self, user_id: str, conv_id: str):
         # 哈希避免 user_id/conv_id 中的分隔符引起锁键碰撞。
-        digest = hashlib.sha256(json.dumps([self._safe_text(user_id), self._safe_text(conv_id)]).encode()).hexdigest()
+        digest = self._conversation_id(user_id, conv_id)
         async with self._request_locks.hold(digest):
-            async with redis_lease(self._redis, f"lock:conversation:{digest}"):
+            async with redis_lease(self._redis, f"lock:conversation:{digest}") as lease:
                 await self._migrate_legacy_keys(user_id, conv_id)
-                yield
+                yield lease
 
     # ── 写入 ──────────────────────────────────────────────────────────────────
 
@@ -154,28 +154,42 @@ class MemoryManager:
         raw = await self._redis.get(self.receipt_key(user_id, conv_id, request_id))
         return json.loads(raw) if raw else None
 
-    async def commit_turn(self, user_id, conv_id, request_id, message, response, trace=None, *, state=None):
-        """原子保存一整轮及响应回执；由 conversation 锁保护。"""
+    async def commit_turn(self, user_id, conv_id, request_id, message, response, trace=None, *, state=None, lease=None):
+        """Atomically save the turn while the supplied conversation lease is still current."""
         await self._migrate_legacy_keys(user_id, conv_id)
         def raw(role, content):
             return json.dumps({"role": role, "content": self._safe_text(content),
                 "ts": datetime.now().isoformat(), "metadata": {"request_id": request_id}})
         key = self._wm_key(user_id, conv_id)
-        async with self._redis.pipeline(transaction=True) as pipe:
-            if response.get("status") != "failed":
-                pipe.lpush(key, raw("user", message), raw("assistant", response["response"]))
-                pipe.expire(key, 86400)
-                if state is not None:
-                    pipe.setex(self._state_key(user_id, conv_id), 86400, json.dumps(state))
-            pipe.setex(self.receipt_key(user_id, conv_id, request_id), 86400,
-                        json.dumps({"message": message, "response": response}))
-            if trace:
-                from core.redaction import redact
-                encoded_trace = json.dumps(redact(trace))
-                pipe.setex("trace:" + response["request_id"], 7 * 86400, encoded_trace)
-                pipe.lpush("trace:recent", response["request_id"])
-                pipe.ltrim("trace:recent", 0, 199)
-            await pipe.execute()
+        if lease is not None and lease.name != f"lock:conversation:{self._conversation_id(user_id, conv_id)}":
+            raise LeaseLostError("会话锁与当前请求不匹配")
+        for _ in range(3):
+            async with self._redis.pipeline(transaction=True) as pipe:
+                if lease is not None:
+                    # Expiry, replacement or renewal after WATCH invalidates EXEC.
+                    await pipe.watch(lease.name)
+                    if not await lease.owned():
+                        raise LeaseLostError("会话锁已失效，本次回执未写入")
+                    pipe.multi()
+                if response.get("status") != "failed":
+                    pipe.lpush(key, raw("user", message), raw("assistant", response["response"]))
+                    pipe.expire(key, 86400)
+                    if state is not None:
+                        pipe.setex(self._state_key(user_id, conv_id), 86400, json.dumps(state))
+                pipe.setex(self.receipt_key(user_id, conv_id, request_id), 86400,
+                            json.dumps({"message": message, "response": response}))
+                if trace:
+                    from core.redaction import redact
+                    encoded_trace = json.dumps(redact(trace))
+                    pipe.setex("trace:" + response["request_id"], 7 * 86400, encoded_trace)
+                    pipe.lpush("trace:recent", response["request_id"])
+                    pipe.ltrim("trace:recent", 0, 199)
+                try:
+                    await pipe.execute()
+                except WatchError:
+                    continue
+                return
+        raise LeaseLostError("会话锁在提交期间变化，本次回执未写入")
 
     async def get_trace(self, request_id):
         raw = await self._redis.get("trace:" + request_id)

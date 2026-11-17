@@ -138,7 +138,7 @@ async def redis_lease(client, key, wait_s=30, lease_s=120):
 
     renewal = asyncio.create_task(renew())
     try:
-        yield
+        yield lock
     except asyncio.CancelledError:
         if lost:
             raise LeaseLostError("会话锁已失效，本次请求已中止") from None

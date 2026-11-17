@@ -15,6 +15,11 @@ ISSUES = {"logistics_lost", "logistics_dispute", "logistics_damaged"}
 RULE_VERSION = "demo-2026-11-v1"
 STATES = {"awaiting_info", "verifying", "awaiting_evidence", "awaiting_confirmation", "manual_review", "ticket_pending", "ticket_unknown", "ticket_created", "ticket_already_open"}
 
+
+class StaleLogisticsWrite(RuntimeError):
+    pass
+
+
 def detect_issue(message):
     # 用户明确否认的异常不能作为建案依据；保留同句中其他肯定异常。
     message = re.sub(r"(?:不是|并非|没有|没发生)(?:要查询|包裹|快递|物流|发生|出现|的)?(?:丢件|丢失)", "", message)
@@ -67,6 +72,10 @@ class LogisticsService:
             db.execute("CREATE TABLE IF NOT EXISTS logistics_runs (run_id TEXT PRIMARY KEY, user_id TEXT NOT NULL, conv_id TEXT NOT NULL, request_id TEXT NOT NULL, input_hash TEXT NOT NULL, case_id TEXT, state TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)")
             db.execute("CREATE TABLE IF NOT EXISTS logistics_steps (run_id TEXT NOT NULL, step_name TEXT NOT NULL, state TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(run_id,step_name))")
             db.execute("CREATE TABLE IF NOT EXISTS active_cases (user_id TEXT NOT NULL, conv_id TEXT NOT NULL, case_id TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY (user_id, conv_id))")
+            db.execute("""CREATE TABLE IF NOT EXISTS logistics_conversation_revisions (
+                user_id TEXT NOT NULL, conv_id TEXT NOT NULL, revision INTEGER NOT NULL,
+                PRIMARY KEY (user_id, conv_id)
+            )""")
             db.execute("CREATE INDEX IF NOT EXISTS cases_order_issue ON cases "
                        "(user_id, json_extract(payload, '$.order_id'), json_extract(payload, '$.issue')) "
                        "WHERE json_valid(payload)")
@@ -128,6 +137,29 @@ class LogisticsService:
                              "ON c.id=a.case_id AND c.user_id=a.user_id AND c.conv_id=a.conv_id "
                              "WHERE a.user_id=? AND a.conv_id=?", (user_id, conv_id)).fetchone()
         return json.loads(row[0]) if row else None
+
+    @staticmethod
+    def _check_revision(db, user_id, conv_id, expected):
+        row = db.execute("SELECT revision FROM logistics_conversation_revisions WHERE user_id=? AND conv_id=?",
+                         (user_id, conv_id)).fetchone()
+        current = row[0] if row else 0
+        if expected is not None and expected != current:
+            raise StaleLogisticsWrite("物流案件已由更新的请求推进，请查询当前案件状态")
+        return current
+
+    def get_revision(self, user_id, conv_id):
+        with self.connect() as db:
+            return self._check_revision(db, user_id, conv_id, None)
+
+    @classmethod
+    def _advance_revision(cls, db, req):
+        # The caller holds the SQLite write transaction through the domain commit.
+        current = cls._check_revision(db, req.user_id, req.conv_id, getattr(req, "logistics_revision", None))
+        revision = current + 1
+        db.execute("""INSERT INTO logistics_conversation_revisions (user_id,conv_id,revision) VALUES (?,?,?)
+                      ON CONFLICT(user_id,conv_id) DO UPDATE SET revision=excluded.revision""",
+                   (req.user_id, req.conv_id, revision))
+        return revision
 
     @staticmethod
     def run_id(req):
@@ -285,7 +317,7 @@ class LogisticsService:
         case["ticket_confirmation_id"] = req.request_id
         return key
 
-    def _complete_ticket_operation(self, req, case_id):
+    def _complete_ticket_operation(self, req, case_id, *, expected_revision=None):
         with self.connect() as db:
             row = db.execute("SELECT op_key,params_hash,params_json,state,external_id,case_version,confirmation_id FROM ticket_operations "
                              "WHERE case_id=? AND user_id=? AND conv_id=?", (case_id, req.user_id, req.conv_id)).fetchone()
@@ -301,7 +333,7 @@ class LogisticsService:
                 or current.get("ticket_confirmation_id") != confirmation_id
                 or hashlib.sha256(json.dumps(self._ticket_params(current), sort_keys=True,
                                              ensure_ascii=True).encode()).hexdigest() != params_hash):
-            return self._finish_ticket_operation(req, case_id, key, None), None
+            return self._finish_ticket_operation(req, case_id, key, None, expected_revision=expected_revision), None
         try:
             found = self.http_ticket_provider.lookup(key)
             if found is None:
@@ -310,11 +342,12 @@ class LogisticsService:
                 raise RuntimeError("外部工单结果与已确认参数不一致")
         except Exception:
             # Timeout, disconnect and provider errors are ambiguous. Never blind-retry here.
-            return self._finish_ticket_operation(req, case_id, key, None), None
-        finished = self._finish_ticket_operation(req, case_id, key, found["ticket_id"])
+            return self._finish_ticket_operation(req, case_id, key, None, expected_revision=expected_revision), None
+        finished = self._finish_ticket_operation(req, case_id, key, found["ticket_id"],
+                                                 expected_revision=expected_revision)
         return finished, finished.get("ticket_id") if finished["state"] == "ticket_created" else None
 
-    def _finish_ticket_operation(self, req, case_id, key, ticket_id):
+    def _finish_ticket_operation(self, req, case_id, key, ticket_id, *, expected_revision=None):
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("SELECT payload FROM cases WHERE id=? AND user_id=? AND conv_id=?",
@@ -330,6 +363,8 @@ class LogisticsService:
                 if ticket_id and not op[1]:
                     db.execute("UPDATE ticket_operations SET external_id=? WHERE op_key=?", (ticket_id, key))
                 return case
+            if expected_revision is not None:
+                self._check_revision(db, req.user_id, req.conv_id, expected_revision)
             now = datetime.now(timezone.utc).isoformat()
             observed_ticket_id = ticket_id or op[1]
             if ticket_id and (case.get("ticket_confirmation_version") != op[3]
@@ -371,6 +406,7 @@ class LogisticsService:
             case = json.loads(row[0])
             if case["state"] == "ticket_created":
                 return
+            self._advance_revision(db, req)
             before = case["state"]
             case["state"] = "manual_review"
             case["updated_at"] = datetime.now(timezone.utc).isoformat()
@@ -408,6 +444,7 @@ class LogisticsService:
             return result
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
+            revision = self._advance_revision(db, req)
             row = db.execute("SELECT payload FROM cases WHERE id=? AND user_id=?", (case_id, req.user_id)).fetchone()
             case = json.loads(row[0]) if row else {"case_id": case_id, "issue": issue, "order_id": None, "tracking_no": None, "identity": order_id or tracking_no or "pending", "state": "awaiting_info", "events": []}
             case["last_run_id"] = run_id
@@ -495,7 +532,8 @@ class LogisticsService:
                        (req.user_id, req.conv_id, case_id, case["updated_at"]))
             self._write_run(db, req, run_id, case)
         if needs_http_ticket:
-            case, ticket_id = self._complete_ticket_operation(req, case_id)
+            expected = revision if getattr(req, "logistics_revision", None) is not None else None
+            case, ticket_id = self._complete_ticket_operation(req, case_id, expected_revision=expected)
             if ticket_id:
                 tool = "reconcile_logistics_ticket" if before in ("ticket_pending", "ticket_unknown") else "create_logistics_case"
                 call(tool, {"case_id": case_id},

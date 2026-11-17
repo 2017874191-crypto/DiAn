@@ -27,7 +27,7 @@ from agents.agent_orchestrator import (
 )
 from agents.tools import AgentToolSpec
 from evaluation.evaluator import EndToEndEvaluator, QualityScores
-from core.concurrency import Capacity, KeyedLocks
+from core.concurrency import Capacity, KeyedLocks, LeaseLostError
 from core.intent_recognizer import IntentCategory, IntentRecognizer, IntentResult, UrgencyLevel
 from memory.conversation_memory import MemoryManager
 from monitor.performance_monitor import PerformanceMonitor
@@ -74,6 +74,28 @@ async def services(monkeypatch):
 
 def body(message="退款规则", request_id="one", conv_id="c"):
     return {"message": message, "user_id": "u", "conv_id": conv_id, "client_request_id": request_id}
+
+
+@pytest.mark.asyncio
+async def test_receipt_transaction_rejects_takeover_after_ownership_check(services, monkeypatch):
+    memory, _, _, _ = services
+    async with memory.conversation("u", "c") as lease:
+        owned = lease.owned
+
+        async def taken_over_after_read():
+            still_owner = await owned()
+            if still_owner:
+                await memory._redis.set(lease.name, "next-owner", ex=10)
+            return still_owner
+
+        monkeypatch.setattr(lease, "owned", taken_over_after_read)
+        with pytest.raises(LeaseLostError):
+            await memory.commit_turn("u", "c", "stale", "old", {"status": "success", "response": "old"},
+                                     state={"logistics_case_id": "old"}, lease=lease)
+    assert await memory.get_turn_receipt("u", "c", "stale") is None
+    assert await memory._redis.llen(memory._wm_key("u", "c")) == 0
+    assert not await memory._redis.exists(memory._state_key("u", "c"))
+    assert await memory._redis.get(lease.name) == "next-owner"
 
 
 @pytest.mark.asyncio

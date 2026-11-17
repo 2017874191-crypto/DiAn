@@ -8,17 +8,19 @@ import sqlite3
 import time
 import threading
 from contextlib import asynccontextmanager, closing
+from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 from unittest.mock import patch
 
 import httpx
+import pytest
 from temporalio.testing import WorkflowEnvironment
 from temporalio.worker import Worker
 
 from agents.agent_orchestrator import AgentType, LogisticsAgent, OrchestratorResult, Request
 import api.main as api
 from core.intent_recognizer import IntentCategory
-from core.logistics import LogisticsService
+from core.logistics import LogisticsService, StaleLogisticsWrite
 from core.logistics_providers import HttpTicketProvider
 from core.logistics_reconcile import scan_once
 from core.mock_ticket_http import serve
@@ -334,6 +336,49 @@ def test_background_lookup_resolves_existing_ticket_and_run(tmp_path):
             process.terminate(); process.join(5)
 
 
+def test_late_http_result_reconciles_without_overwriting_new_current_case(tmp_path):
+    remote_db = tmp_path / "remote.sqlite3"
+    process, url = start_server(remote_db, drop=False)
+    with patch.dict(os.environ, {"DIAN_LOGISTICS_DB": str(tmp_path / "cases.sqlite3"),
+                                 "DIAN_TICKET_PROVIDER": "http_mock", "DIAN_TICKET_URL": url}):
+        committed, release = threading.Event(), threading.Event()
+        try:
+            service = LogisticsService()
+            service.process(request("包裹疑似丢件，订单号 DEMO1001"))
+            confirm = request("确认建单")
+            confirm.logistics_revision = service.get_revision(confirm.user_id, confirm.conv_id)
+            old_id = service.get_active_case(confirm.user_id, confirm.conv_id)["case_id"]
+            create = service.http_ticket_provider.create
+
+            def delayed_response(key, params, params_hash):
+                result = create(key, params, params_hash)
+                committed.set()
+                assert release.wait(10)
+                return result
+
+            with patch.object(service.http_ticket_provider, "create", delayed_response), ThreadPoolExecutor(1) as pool:
+                old = pool.submit(service.process, confirm)
+                try:
+                    assert committed.wait(5)
+                    advance = request("另一个订单 DEMO1002 丢件")
+                    advance.entities = {"order_id": ["DEMO1002"]}
+                    advance.logistics_revision = service.get_revision(advance.user_id, advance.conv_id)
+                    new_case = service.process(advance)["case"]
+                    assert new_case["order_id"] == "DEMO1002"
+                finally:
+                    release.set()
+                with pytest.raises(StaleLogisticsWrite):
+                    old.result(5)
+            assert service.get_case(confirm.user_id, old_id, confirm.conv_id)["state"] == "ticket_pending"
+            assert scan_once(service, min_age_seconds=0)["resolved"] == 1
+            assert service.get_case(confirm.user_id, old_id, confirm.conv_id)["state"] == "ticket_created"
+            assert service.get_active_case(confirm.user_id, confirm.conv_id) == new_case
+            assert remote_count(remote_db) == 1
+        finally:
+            process.terminate()
+            process.join(5)
+
+
 def test_background_404_never_creates_ticket(tmp_path):
     remote_db = tmp_path / "remote.sqlite3"
     process, url = start_server(remote_db, drop=False)
@@ -594,7 +639,7 @@ async def _chat_case(tmp_path):
         async def get_conversation_state(self, *_):
             return self.state.copy()
 
-        async def commit_turn(self, user, conv, client, message, response, *_args, state=None):
+        async def commit_turn(self, user, conv, client, message, response, *_args, state=None, lease=None):
             if response.get("error_code") == "tool_outcome_unknown":
                 self.unsafe_markers += 1
             self.receipts[client] = {"message": message, "response": response}

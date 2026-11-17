@@ -42,6 +42,7 @@ from agents.tools import (
 from core.intent_recognizer import IntentCategory, IntentRecognizer, UrgencyLevel
 from core.llm_utils import create_message, extract_text_content
 from core.concurrency import Capacity, CapacityExceeded, finish_blocking_call
+from core.logistics import StaleLogisticsWrite
 
 logger = logging.getLogger(__name__)
 
@@ -196,6 +197,7 @@ class Request:
     intent_confidence: float = 1.0
     request_id:  str = field(default_factory=lambda: str(uuid.uuid4()))
     client_request_id: Optional[str] = None
+    logistics_revision: Optional[int] = field(default=None, repr=False)
     tool_attempts: List[Dict[str, Any]] = field(default_factory=list)
     before_unsafe_tool: Any = field(default=None, repr=False)
     unsafe_tool_calls: set = field(default_factory=set, repr=False)
@@ -302,7 +304,7 @@ class BaseAgent:
             self.stats.total_ms += elapsed
             self.stats.record(False, elapsed, req.request_id)
             raise
-        except CapacityExceeded:
+        except (CapacityExceeded, StaleLogisticsWrite):
             raise
         except Exception as ex:
             ms = (time.monotonic() - t0) * 1000

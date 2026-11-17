@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-17",
+  "platform": "Windows, Python 3.11.9",
+  "baseline_commit": "5152792f8180702f421e340887853018a8722fa6",
+  "baseline": {
+    "redis_version": "7.4.12",
+    "before_sqlite": {
+      "old_http": 200,
+      "new_http": 200,
+      "case_order": "DEMO1001",
+      "case_pointer_preserved": false,
+      "redis_pointer_preserved": false,
+      "old_receipt_written": true
+    },
+    "before_redis_receipt": {
+      "old_http": 200,
+      "new_http": 200,
+      "case_order": "DEMO1002",
+      "case_pointer_preserved": true,
+      "redis_pointer_preserved": false,
+      "old_receipt_written": true
+    }
+  },
+  "guarded": {
+    "redis_version": "7.4.12",
+    "before_sqlite": {
+      "old_http": 409,
+      "new_http": 200,
+      "case_order": "DEMO1002",
+      "case_pointer_preserved": true,
+      "redis_pointer_preserved": true,
+      "old_receipt_written": false
+    },
+    "before_redis_receipt": {
+      "old_http": 503,
+      "new_http": 200,
+      "case_order": "DEMO1002",
+      "case_pointer_preserved": true,
+      "redis_pointer_preserved": true,
+      "old_receipt_written": false
+    }
+  }
+}

@@ -79,7 +79,7 @@ async def variant(name, redis_url, redis_name, redis_port, root):
                 original_commit = memory.commit_turn
                 injected = False
 
-                async def commit_with_outage(user, conversation, client_id, message, response, *args, state=None):
+                async def commit_with_outage(user, conversation, client_id, message, response, *args, state=None, lease=None):
                     nonlocal injected
                     if client_id == "confirm" and state is not None and not injected:
                         injected = True
@@ -87,7 +87,8 @@ async def variant(name, redis_url, redis_name, redis_port, root):
                         assert case and case["state"] == "ticket_unknown"
                         assert remote_count(remote_db) == 1
                         docker("stop", redis_name)  # The remote HTTP service has already committed.
-                    return await original_commit(user, conversation, client_id, message, response, *args, state=state)
+                    return await original_commit(user, conversation, client_id, message, response, *args,
+                                                 state=state, lease=lease)
 
                 with patch.object(memory, "commit_turn", commit_with_outage), \
                      patch.object(api, "_memory", memory), patch.object(api, "_orchestrator", orchestrator), \

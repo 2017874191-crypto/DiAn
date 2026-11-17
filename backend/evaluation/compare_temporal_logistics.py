@@ -51,7 +51,7 @@ class Memory:
     async def get_conversation_state(self, user, conv):
         return self.states.get((user, conv), {}).copy()
 
-    async def commit_turn(self, user, conv, key, message, response, *_args, state=None):
+    async def commit_turn(self, user, conv, key, message, response, *_args, state=None, lease=None):
         if state is not None and self.fail_next_final:
             self.fail_next_final = False
             raise RuntimeError("injected: final receipt lost")

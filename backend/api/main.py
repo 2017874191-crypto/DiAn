@@ -30,6 +30,7 @@ from pydantic import BaseModel, Field
 from redis.exceptions import RedisError
 from core.concurrency import Capacity, CapacityExceeded, ConversationBusyError, LeaseLostError
 from core.llm_utils import configure_model_capacities, model_capacities, model_scope
+from core.logistics import StaleLogisticsWrite
 from core.performance import collect_performance, measure_stage, performance_snapshot
 
 load_dotenv(pathlib.Path(_ROOT) / '.env')
@@ -427,7 +428,7 @@ async def _run_chat(req, started):
         return reply
 
     try:
-        async with _memory.conversation(req.user_id, conv_id):
+        async with _memory.conversation(req.user_id, conv_id) as lease:
             receipt = await _memory.get_turn_receipt(req.user_id, conv_id, client_id)
             if receipt:
                 if receipt["message"] != req.message:
@@ -437,8 +438,12 @@ async def _run_chat(req, started):
                     return render(previous)
             # 1. 读取记忆上下文
             with measure_stage("memory_read"):
+                service = _logistics_service()
+                revision = await asyncio.to_thread(service.get_revision, req.user_id, conv_id) if service else None
                 mem_ctx = await _memory.get_context(req.user_id, conv_id, query=req.message)
                 mem_ctx.state = await _restore_logistics_state(req.user_id, conv_id, getattr(mem_ctx, "state", {}))
+                if lease is not None and not await lease.owned():
+                    raise LeaseLostError("读取上下文期间会话锁已失效，请重新查询案件状态")
 
             # 2. 构建编排请求（含对话历史，用于意图识别上下文）
             history = [
@@ -461,6 +466,7 @@ async def _run_chat(req, started):
                 intent_group=intent_result.intent_group,
                 urgency=intent_result.urgency,
                 intent_confidence=intent_result.confidence,
+                logistics_revision=revision,
                 conversation_state=getattr(mem_ctx, "state", {}),
             )
             orch_req.client_request_id = client_id
@@ -472,7 +478,7 @@ async def _run_chat(req, started):
                     intent=intent_result.intent.value, agent_type="unknown", escalated=False,
                     latency_ms=(time.monotonic() - started) * 1000,
                     status="failed", retryable=False, error_code="tool_outcome_unknown")
-                await _memory.commit_turn(req.user_id, conv_id, client_id, req.message, marker.model_dump())
+                await _memory.commit_turn(req.user_id, conv_id, client_id, req.message, marker.model_dump(), lease=lease)
             orch_req.before_unsafe_tool = before_unsafe_tool
 
             # 3. 执行
@@ -506,35 +512,40 @@ async def _run_chat(req, started):
                 logistics_case=await _case_snapshot(req.user_id, conv_id, orch_req.conversation_state),
             )
             await _memory.commit_turn(req.user_id, conv_id, client_id, req.message, response.model_dump(),
-                                      _orchestrator.get_tool_trace(result.request_id), state=orch_req.conversation_state)
+                                      _orchestrator.get_tool_trace(result.request_id),
+                                      state=orch_req.conversation_state, lease=lease)
             if response.status != "failed" and _profile_updater is not None:
                 _profile_updater.submit(req.user_id, conv_id)
             return render(response)
     except RedisError as ex:
         raise HTTPException(503, "会话存储暂不可用；请先核对执行结果，再使用相同 client_request_id 重试") from ex
+    except StaleLogisticsWrite as ex:
+        raise HTTPException(409, str(ex)) from ex
     except (ConversationBusyError, LeaseLostError) as ex:
         raise HTTPException(503, str(ex)) from ex
 
 
-async def _case_snapshot(user_id, conv_id, state):
-    from core.logistics import case_view
+def _logistics_service():
     from agents.agent_orchestrator import AgentType
     agents = getattr(_orchestrator, "_pool", {}).get(AgentType.LOGISTICS)
-    if not agents or not hasattr(agents[0], "service"):
+    return getattr(agents[0], "service", None) if agents else None
+
+
+async def _case_snapshot(user_id, conv_id, state):
+    from core.logistics import case_view
+
+    service = _logistics_service()
+    if service is None:
         return None
-    service = agents[0].service
     case = await asyncio.to_thread(service.get_active_case, user_id, conv_id)
     return case_view(case) if case and case.get("case_id") else None
 
 
 async def _restore_logistics_state(user_id, conv_id, state):
     """Use the owned business pointer when Redis state is absent or stale."""
-    from agents.agent_orchestrator import AgentType
-
-    agents = getattr(_orchestrator, "_pool", {}).get(AgentType.LOGISTICS)
-    if not agents or not hasattr(agents[0], "service"):
+    service = _logistics_service()
+    if service is None:
         return state or {}
-    service = agents[0].service
     case = await asyncio.to_thread(service.get_active_case, user_id, conv_id)
     if not case:
         return state or {}

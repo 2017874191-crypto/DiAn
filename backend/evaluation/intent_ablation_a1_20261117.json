@@ -1,0 +1,2014 @@
+{
+  "session": "20261117-161239-129ce3",
+  "scope": "DiAn dev cases only, 5 rotated rounds, local-ngram, simulated logistics, observed chat request usage",
+  "semantic_review": "pending_human_review",
+  "schedule": [
+    {
+      "round": 1,
+      "group": "rules_only",
+      "started_utc": "2026-11-17T08:12:39.8442069+00:00",
+      "finished_utc": "2026-11-17T08:13:12.3164754+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_failure": 9,
+        "flow_pass_semantic_pending": 21
+      }
+    },
+    {
+      "round": 1,
+      "group": "llm_rules",
+      "started_utc": "2026-11-17T08:13:14.4423072+00:00",
+      "finished_utc": "2026-11-17T08:15:58.8683610+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 1,
+      "group": "full",
+      "started_utc": "2026-11-17T08:16:00.8503472+00:00",
+      "finished_utc": "2026-11-17T08:18:37.5006459+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 1,
+      "group": "full_off",
+      "started_utc": "2026-11-17T08:18:39.5836279+00:00",
+      "finished_utc": "2026-11-17T08:21:22.8353251+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 2,
+      "group": "llm_rules",
+      "started_utc": "2026-11-17T08:21:24.8815649+00:00",
+      "finished_utc": "2026-11-17T08:24:06.9934004+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 2,
+      "group": "full",
+      "started_utc": "2026-11-17T08:24:08.8753607+00:00",
+      "finished_utc": "2026-11-17T08:26:53.7931436+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 2,
+      "group": "full_off",
+      "started_utc": "2026-11-17T08:26:55.7682585+00:00",
+      "finished_utc": "2026-11-17T08:29:41.2366599+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 2,
+      "group": "rules_only",
+      "started_utc": "2026-11-17T08:29:43.2978106+00:00",
+      "finished_utc": "2026-11-17T08:30:15.5798915+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_failure": 9,
+        "flow_pass_semantic_pending": 21
+      }
+    },
+    {
+      "round": 3,
+      "group": "full",
+      "started_utc": "2026-11-17T08:30:17.5525370+00:00",
+      "finished_utc": "2026-11-17T08:33:01.0524165+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 3,
+      "group": "full_off",
+      "started_utc": "2026-11-17T08:33:03.1716991+00:00",
+      "finished_utc": "2026-11-17T08:35:58.9786006+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_pass_semantic_pending": 25,
+        "model_or_service_failure": 4,
+        "flow_failure": 1
+      }
+    },
+    {
+      "round": 3,
+      "group": "rules_only",
+      "started_utc": "2026-11-17T08:36:01.0009474+00:00",
+      "finished_utc": "2026-11-17T08:36:33.3747862+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_failure": 9,
+        "flow_pass_semantic_pending": 21
+      }
+    },
+    {
+      "round": 3,
+      "group": "llm_rules",
+      "started_utc": "2026-11-17T08:36:35.2669517+00:00",
+      "finished_utc": "2026-11-17T08:39:53.8126195+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_pass_semantic_pending": 29,
+        "model_or_service_failure": 1
+      }
+    },
+    {
+      "round": 4,
+      "group": "full_off",
+      "started_utc": "2026-11-17T08:39:55.8128936+00:00",
+      "finished_utc": "2026-11-17T08:42:32.7075003+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_pass_semantic_pending": 29,
+        "environment_failure": 1
+      }
+    },
+    {
+      "round": 4,
+      "group": "rules_only",
+      "started_utc": "2026-11-17T08:42:34.8877930+00:00",
+      "finished_utc": "2026-11-17T08:43:07.5582206+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_failure": 9,
+        "flow_pass_semantic_pending": 21
+      }
+    },
+    {
+      "round": 4,
+      "group": "llm_rules",
+      "started_utc": "2026-11-17T08:43:09.5409923+00:00",
+      "finished_utc": "2026-11-17T08:45:53.1177716+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 4,
+      "group": "full",
+      "started_utc": "2026-11-17T08:45:57.8856642+00:00",
+      "finished_utc": "2026-11-17T08:48:40.1548325+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 5,
+      "group": "rules_only",
+      "started_utc": "2026-11-17T08:48:42.1177800+00:00",
+      "finished_utc": "2026-11-17T08:49:14.3395001+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_failure": 9,
+        "flow_pass_semantic_pending": 21
+      }
+    },
+    {
+      "round": 5,
+      "group": "llm_rules",
+      "started_utc": "2026-11-17T08:49:16.2881927+00:00",
+      "finished_utc": "2026-11-17T08:52:10.0199210+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_pass_semantic_pending": 27,
+        "model_or_service_failure": 3
+      }
+    },
+    {
+      "round": 5,
+      "group": "full",
+      "started_utc": "2026-11-17T08:52:12.1960954+00:00",
+      "finished_utc": "2026-11-17T08:55:14.7319501+00:00",
+      "exit_code": 0,
+      "summary": {
+        "flow_pass_semantic_pending": 30
+      }
+    },
+    {
+      "round": 5,
+      "group": "full_off",
+      "started_utc": "2026-11-17T08:55:16.7765600+00:00",
+      "finished_utc": "2026-11-17T08:58:09.8845467+00:00",
+      "exit_code": 1,
+      "summary": {
+        "flow_pass_semantic_pending": 29,
+        "flow_failure": 1
+      }
+    }
+  ],
+  "intent_mode_provenance": {
+    "schema": 1,
+    "dataset_sha256": "bfe297d2044b343f4ce5d3961eaed5b37883710bc42fc2a604f951322602bbf4",
+    "case_ids": [
+      "DIAN-001",
+      "DIAN-002",
+      "DIAN-003",
+      "DIAN-004",
+      "DIAN-005",
+      "DIAN-006",
+      "DIAN-017",
+      "DIAN-018",
+      "DIAN-019",
+      "DIAN-020",
+      "DIAN-023",
+      "DIAN-024",
+      "DIAN-025",
+      "DIAN-026",
+      "DIAN-027",
+      "DIAN-028",
+      "DIAN-029",
+      "DIAN-030",
+      "DIAN-035",
+      "DIAN-036",
+      "DIAN-037",
+      "DIAN-038",
+      "DIAN-041",
+      "DIAN-042",
+      "DIAN-043",
+      "DIAN-044",
+      "DIAN-045",
+      "DIAN-046",
+      "DIAN-047",
+      "DIAN-048"
+    ],
+    "runner": {
+      "source_sha256": "5f4aa53c85258ea96492a162b5c0ef728f89b93fb492c404891403ad7a4acec6",
+      "dependencies_sha256": "c57985c46ce607f584add2b095b6a56130e4434a15370cf3404680f6cb151cd1",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1",
+      "git_commit": "8b30f95e09db8714e2896315dc590b010fad1579"
+    },
+    "target": {
+      "runtime": {
+        "build": {
+          "source_sha256": "5f4aa53c85258ea96492a162b5c0ef728f89b93fb492c404891403ad7a4acec6",
+          "dependencies_sha256": "ecb951f52a5b435dff96116b7fbebc327359f2ffc3fa2d4ed76d11b0b0d2420c",
+          "python": "3.12.16",
+          "system": "Linux",
+          "architecture": "x86_64",
+          "sqlite": "3.46.1"
+        },
+        "fixtures_sha256": "11f4f61d00c2e6d4ef6f62076c7da00986b736e6f20872fa4939fe4b25fb9077",
+        "policy_sha256": "e1810fb7e7a0455892c567eeb35d0451d0491219963cc00b9f40301ed201753b",
+        "skills_sha256": "6622f37e9b7f095663b44015b0e3a8dfb1fa3b421670dd6d85399adf4c518825",
+        "tools_sha256": "91bd8f321b05d8f821cb609e51d2b775700b85082244670562905d8afc9bd9a7",
+        "configuration": {
+          "model": "deepseek-v4-pro",
+          "model_endpoint_sha256": "4817a95a15d5a81e5eea1a1c12f1af30eb9e5b7ed80317e7b8be775a407cbf0f",
+          "intent_embedding": true,
+          "logistics_embedding": true,
+          "embedding_provider": "local",
+          "remote_embedding_available": false,
+          "embedding_model": "BAAI/bge-m3",
+          "ticket_provider": "sqlite",
+          "temporal_logistics": false,
+          "external_mcp": false,
+          "authentication": false,
+          "intent_timeout_s": 15.0,
+          "agent_timeout_s": 25.0,
+          "composer_timeout_s": 8.0,
+          "composer_temperature": 0.1,
+          "composer_max_tokens": 1000,
+          "model_timeout_s": 30.0,
+          "chat_timeout_s": 50.0,
+          "chat_model_calls": 16,
+          "queue_timeout_s": 2.0,
+          "chat_per_user": 4,
+          "chat_active": 16,
+          "chat_waiting": 32,
+          "logistics_active": 4,
+          "logistics_waiting": 8,
+          "model_active": 8,
+          "model_waiting": 16
+        }
+      },
+      "image_id": "sha256:ed7b18e6c40a8a9afd2fe3a06f82c32102b8ddec6fbfb0ca6e43b0beb4fd1f00"
+    },
+    "controlled_restart": true,
+    "verification_errors": []
+  },
+  "logistics_embedding_provenance": {
+    "schema": 1,
+    "dataset_sha256": "bfe297d2044b343f4ce5d3961eaed5b37883710bc42fc2a604f951322602bbf4",
+    "case_ids": [
+      "DIAN-001",
+      "DIAN-002",
+      "DIAN-003",
+      "DIAN-004",
+      "DIAN-005",
+      "DIAN-006",
+      "DIAN-017",
+      "DIAN-018",
+      "DIAN-019",
+      "DIAN-020",
+      "DIAN-023",
+      "DIAN-024",
+      "DIAN-025",
+      "DIAN-026",
+      "DIAN-027",
+      "DIAN-028",
+      "DIAN-029",
+      "DIAN-030",
+      "DIAN-035",
+      "DIAN-036",
+      "DIAN-037",
+      "DIAN-038",
+      "DIAN-041",
+      "DIAN-042",
+      "DIAN-043",
+      "DIAN-044",
+      "DIAN-045",
+      "DIAN-046",
+      "DIAN-047",
+      "DIAN-048"
+    ],
+    "runner": {
+      "source_sha256": "5f4aa53c85258ea96492a162b5c0ef728f89b93fb492c404891403ad7a4acec6",
+      "dependencies_sha256": "c57985c46ce607f584add2b095b6a56130e4434a15370cf3404680f6cb151cd1",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1",
+      "git_commit": "8b30f95e09db8714e2896315dc590b010fad1579"
+    },
+    "target": {
+      "runtime": {
+        "build": {
+          "source_sha256": "5f4aa53c85258ea96492a162b5c0ef728f89b93fb492c404891403ad7a4acec6",
+          "dependencies_sha256": "ecb951f52a5b435dff96116b7fbebc327359f2ffc3fa2d4ed76d11b0b0d2420c",
+          "python": "3.12.16",
+          "system": "Linux",
+          "architecture": "x86_64",
+          "sqlite": "3.46.1"
+        },
+        "fixtures_sha256": "11f4f61d00c2e6d4ef6f62076c7da00986b736e6f20872fa4939fe4b25fb9077",
+        "policy_sha256": "e1810fb7e7a0455892c567eeb35d0451d0491219963cc00b9f40301ed201753b",
+        "skills_sha256": "6622f37e9b7f095663b44015b0e3a8dfb1fa3b421670dd6d85399adf4c518825",
+        "tools_sha256": "91bd8f321b05d8f821cb609e51d2b775700b85082244670562905d8afc9bd9a7",
+        "configuration": {
+          "intent_mode": "full",
+          "model": "deepseek-v4-pro",
+          "model_endpoint_sha256": "4817a95a15d5a81e5eea1a1c12f1af30eb9e5b7ed80317e7b8be775a407cbf0f",
+          "intent_embedding": true,
+          "embedding_provider": "local",
+          "remote_embedding_available": false,
+          "embedding_model": "BAAI/bge-m3",
+          "ticket_provider": "sqlite",
+          "temporal_logistics": false,
+          "external_mcp": false,
+          "authentication": false,
+          "intent_timeout_s": 15.0,
+          "agent_timeout_s": 25.0,
+          "composer_timeout_s": 8.0,
+          "composer_temperature": 0.1,
+          "composer_max_tokens": 1000,
+          "model_timeout_s": 30.0,
+          "chat_timeout_s": 50.0,
+          "chat_model_calls": 16,
+          "queue_timeout_s": 2.0,
+          "chat_per_user": 4,
+          "chat_active": 16,
+          "chat_waiting": 32,
+          "logistics_active": 4,
+          "logistics_waiting": 8,
+          "model_active": 8,
+          "model_waiting": 16
+        }
+      },
+      "image_id": "sha256:ed7b18e6c40a8a9afd2fe3a06f82c32102b8ddec6fbfb0ca6e43b0beb4fd1f00"
+    },
+    "controlled_restart": true,
+    "verification_errors": []
+  },
+  "paired_results": {
+    "llm_rules_minus_rules_only": {
+      "paired_cases": 150,
+      "delta": 0.2733333333333333,
+      "descriptive_95pct_family_interval": [
+        -0.01818181818181818,
+        0.551219512195122
+      ],
+      "families": 16
+    },
+    "full_minus_llm_rules": {
+      "paired_cases": 150,
+      "delta": 0.02666666666666667,
+      "descriptive_95pct_family_interval": [
+        0.0,
+        0.06153846153846154
+      ],
+      "families": 16
+    },
+    "full_off_minus_full": {
+      "paired_cases": 150,
+      "delta": -0.04666666666666667,
+      "descriptive_95pct_family_interval": [
+        -0.0962962962962963,
+        0.0
+      ],
+      "families": 16
+    }
+  },
+  "summary": {
+    "rules_only": {
+      "passes_per_round": [
+        21,
+        21,
+        21,
+        21,
+        21
+      ],
+      "total_passes": 105,
+      "total_cases": 150,
+      "unexpected_tickets": 0,
+      "observed_turns": 220,
+      "missing_turn_observations": 0,
+      "median_observed_turn_p95_ms": 297.0,
+      "median_passed_turn_p95_ms": 297.0,
+      "passed_turn_p95_by_round_ms": [
+        313.0,
+        297.0,
+        297.0,
+        297.0,
+        297.0
+      ],
+      "intent_embedding_sources": {
+        "disabled": 220
+      },
+      "llm_usage_by_distinct_observed_request": {
+        "calls": 0,
+        "errors": 0,
+        "usage_reported_calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "llm_rules": {
+      "passes_per_round": [
+        30,
+        30,
+        29,
+        30,
+        27
+      ],
+      "total_passes": 146,
+      "total_cases": 150,
+      "unexpected_tickets": 0,
+      "observed_turns": 223,
+      "missing_turn_observations": 0,
+      "median_observed_turn_p95_ms": 9078.0,
+      "median_passed_turn_p95_ms": 8969.0,
+      "passed_turn_p95_by_round_ms": [
+        9078.0,
+        8969.0,
+        11281.0,
+        8937.0,
+        8250.0
+      ],
+      "intent_embedding_sources": {
+        "disabled": 223
+      },
+      "llm_usage_by_distinct_observed_request": {
+        "calls": 261,
+        "errors": 20,
+        "usage_reported_calls": 241,
+        "input_tokens": 33669,
+        "output_tokens": 15280
+      }
+    },
+    "full": {
+      "passes_per_round": [
+        30,
+        30,
+        30,
+        30,
+        30
+      ],
+      "total_passes": 150,
+      "total_cases": 150,
+      "unexpected_tickets": 0,
+      "observed_turns": 225,
+      "missing_turn_observations": 0,
+      "median_observed_turn_p95_ms": 8812.0,
+      "median_passed_turn_p95_ms": 8812.0,
+      "passed_turn_p95_by_round_ms": [
+        8468.0,
+        9610.0,
+        9078.0,
+        8812.0,
+        8000.0
+      ],
+      "intent_embedding_sources": {
+        "local-ngram": 225
+      },
+      "llm_usage_by_distinct_observed_request": {
+        "calls": 257,
+        "errors": 7,
+        "usage_reported_calls": 250,
+        "input_tokens": 30671,
+        "output_tokens": 15993
+      }
+    },
+    "full_off": {
+      "passes_per_round": [
+        30,
+        30,
+        25,
+        29,
+        29
+      ],
+      "total_passes": 143,
+      "total_cases": 150,
+      "unexpected_tickets": 0,
+      "observed_turns": 223,
+      "missing_turn_observations": 0,
+      "median_observed_turn_p95_ms": 9031.0,
+      "median_passed_turn_p95_ms": 8890.0,
+      "passed_turn_p95_by_round_ms": [
+        9031.0,
+        8890.0,
+        8375.0,
+        8563.0,
+        9359.0
+      ],
+      "intent_embedding_sources": {
+        "disabled-logistics": 171,
+        "local-ngram": 52
+      },
+      "llm_usage_by_distinct_observed_request": {
+        "calls": 257,
+        "errors": 10,
+        "usage_reported_calls": 247,
+        "input_tokens": 29954,
+        "output_tokens": 15841
+      }
+    }
+  },
+  "per_round": {
+    "rules_only": [
+      {
+        "round": 1,
+        "summary": {
+          "flow_failure": 9,
+          "flow_pass_semantic_pending": 21
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 21,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 297.0,
+        "passed_turn_p95_ms": 313.0,
+        "intent_embedding_sources": {
+          "disabled": 44
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 0,
+          "errors": 0,
+          "usage_reported_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-001",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-002",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-003",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-004",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-005",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-006",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-017",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-018",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "summary": {
+          "flow_failure": 9,
+          "flow_pass_semantic_pending": 21
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 21,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 297.0,
+        "passed_turn_p95_ms": 297.0,
+        "intent_embedding_sources": {
+          "disabled": 44
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 0,
+          "errors": 0,
+          "usage_reported_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-001",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-002",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-003",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-004",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-005",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-006",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-017",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-018",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "summary": {
+          "flow_failure": 9,
+          "flow_pass_semantic_pending": 21
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 21,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 296.0,
+        "passed_turn_p95_ms": 297.0,
+        "intent_embedding_sources": {
+          "disabled": 44
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 0,
+          "errors": 0,
+          "usage_reported_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-001",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-002",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-003",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-004",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-005",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-006",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-017",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-018",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          }
+        ]
+      },
+      {
+        "round": 4,
+        "summary": {
+          "flow_failure": 9,
+          "flow_pass_semantic_pending": 21
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 21,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 297.0,
+        "passed_turn_p95_ms": 297.0,
+        "intent_embedding_sources": {
+          "disabled": 44
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 0,
+          "errors": 0,
+          "usage_reported_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-001",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-002",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-003",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-004",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-005",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-006",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-017",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-018",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          }
+        ]
+      },
+      {
+        "round": 5,
+        "summary": {
+          "flow_failure": 9,
+          "flow_pass_semantic_pending": 21
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 21,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 297.0,
+        "passed_turn_p95_ms": 297.0,
+        "intent_embedding_sources": {
+          "disabled": 44
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 0,
+          "errors": 0,
+          "usage_reported_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-001",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-002",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-003",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-004",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-005",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-006",
+            "family": "retail-damaged",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-017",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-018",
+            "family": "retail-not-received-augmented",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          },
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 0
+          }
+        ]
+      }
+    ],
+    "llm_rules": [
+      {
+        "round": 1,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 9078.0,
+        "passed_turn_p95_ms": 9078.0,
+        "intent_embedding_sources": {
+          "disabled": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 6994,
+          "output_tokens": 3256
+        },
+        "failures": []
+      },
+      {
+        "round": 2,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 8969.0,
+        "passed_turn_p95_ms": 8969.0,
+        "intent_embedding_sources": {
+          "disabled": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 7116,
+          "output_tokens": 3287
+        },
+        "failures": []
+      },
+      {
+        "round": 3,
+        "summary": {
+          "flow_pass_semantic_pending": 29,
+          "model_or_service_failure": 1
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 29,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 11281.0,
+        "passed_turn_p95_ms": 11281.0,
+        "intent_embedding_sources": {
+          "disabled": 44
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 13,
+          "usage_reported_calls": 39,
+          "input_tokens": 6029,
+          "output_tokens": 2656
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError",
+              "APIConnectionError"
+            ],
+            "llm_error_count": 2
+          }
+        ]
+      },
+      {
+        "round": 4,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 8937.0,
+        "passed_turn_p95_ms": 8937.0,
+        "intent_embedding_sources": {
+          "disabled": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 8383,
+          "output_tokens": 3391
+        },
+        "failures": []
+      },
+      {
+        "round": 5,
+        "summary": {
+          "flow_pass_semantic_pending": 27,
+          "model_or_service_failure": 3
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 27,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 10281.0,
+        "passed_turn_p95_ms": 8250.0,
+        "intent_embedding_sources": {
+          "disabled": 44
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 53,
+          "errors": 7,
+          "usage_reported_calls": 46,
+          "input_tokens": 5147,
+          "output_tokens": 2690
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-023",
+            "family": "retail-shipping-cost",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError",
+              "APIConnectionError"
+            ],
+            "llm_error_count": 2
+          },
+          {
+            "case_id": "DIAN-024",
+            "family": "retail-shipping-cost",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError",
+              "APIConnectionError",
+              "APIConnectionError"
+            ],
+            "llm_error_count": 3
+          },
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError",
+              "APIConnectionError"
+            ],
+            "llm_error_count": 2
+          }
+        ]
+      }
+    ],
+    "full": [
+      {
+        "round": 1,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 8468.0,
+        "passed_turn_p95_ms": 8468.0,
+        "intent_embedding_sources": {
+          "local-ngram": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 7091,
+          "output_tokens": 3208
+        },
+        "failures": []
+      },
+      {
+        "round": 2,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 9610.0,
+        "passed_turn_p95_ms": 9610.0,
+        "intent_embedding_sources": {
+          "local-ngram": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 5146,
+          "output_tokens": 3418
+        },
+        "failures": []
+      },
+      {
+        "round": 3,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 9078.0,
+        "passed_turn_p95_ms": 9078.0,
+        "intent_embedding_sources": {
+          "local-ngram": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 49,
+          "errors": 0,
+          "usage_reported_calls": 49,
+          "input_tokens": 5833,
+          "output_tokens": 3126
+        },
+        "failures": []
+      },
+      {
+        "round": 4,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 8812.0,
+        "passed_turn_p95_ms": 8812.0,
+        "intent_embedding_sources": {
+          "local-ngram": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 8005,
+          "output_tokens": 3273
+        },
+        "failures": []
+      },
+      {
+        "round": 5,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 8000.0,
+        "passed_turn_p95_ms": 8000.0,
+        "intent_embedding_sources": {
+          "local-ngram": 45
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 7,
+          "usage_reported_calls": 45,
+          "input_tokens": 4596,
+          "output_tokens": 2968
+        },
+        "failures": []
+      }
+    ],
+    "full_off": [
+      {
+        "round": 1,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 9031.0,
+        "passed_turn_p95_ms": 9031.0,
+        "intent_embedding_sources": {
+          "disabled-logistics": 35,
+          "local-ngram": 10
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 5991,
+          "output_tokens": 3263
+        },
+        "failures": []
+      },
+      {
+        "round": 2,
+        "summary": {
+          "flow_pass_semantic_pending": 30
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 30,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 8890.0,
+        "passed_turn_p95_ms": 8890.0,
+        "intent_embedding_sources": {
+          "disabled-logistics": 36,
+          "local-ngram": 9
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 52,
+          "errors": 0,
+          "usage_reported_calls": 52,
+          "input_tokens": 6320,
+          "output_tokens": 3390
+        },
+        "failures": []
+      },
+      {
+        "round": 3,
+        "summary": {
+          "flow_pass_semantic_pending": 25,
+          "model_or_service_failure": 4,
+          "flow_failure": 1
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 25,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 10469.0,
+        "passed_turn_p95_ms": 8375.0,
+        "intent_embedding_sources": {
+          "disabled-logistics": 32,
+          "local-ngram": 12
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 50,
+          "errors": 9,
+          "usage_reported_calls": 41,
+          "input_tokens": 5396,
+          "output_tokens": 2558
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-019",
+            "family": "retail-routine-tracking",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError"
+            ],
+            "llm_error_count": 1
+          },
+          {
+            "case_id": "DIAN-020",
+            "family": "retail-routine-tracking",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError",
+              "APIConnectionError"
+            ],
+            "llm_error_count": 2
+          },
+          {
+            "case_id": "DIAN-023",
+            "family": "retail-shipping-cost",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError",
+              "APIConnectionError"
+            ],
+            "llm_error_count": 2
+          },
+          {
+            "case_id": "DIAN-024",
+            "family": "retail-shipping-cost",
+            "status": "model_or_service_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "model_or_service_failure"
+            ],
+            "llm_errors": [
+              "APIConnectionError",
+              "APIConnectionError",
+              "APIConnectionError"
+            ],
+            "llm_error_count": 3
+          },
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 1
+          }
+        ]
+      },
+      {
+        "round": 4,
+        "summary": {
+          "flow_pass_semantic_pending": 29,
+          "environment_failure": 1
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 29,
+        "unexpected_tickets": 0,
+        "observed_turns": 45,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 8563.0,
+        "passed_turn_p95_ms": 8563.0,
+        "intent_embedding_sources": {
+          "disabled-logistics": 35,
+          "local-ngram": 10
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 49,
+          "errors": 0,
+          "usage_reported_calls": 49,
+          "input_tokens": 5089,
+          "output_tokens": 3077
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-026",
+            "family": "abcd-shipping-missing",
+            "status": "environment_failure",
+            "failed_turn": 1,
+            "environment_category": "fixture_close_transport",
+            "failed_checks": [],
+            "llm_errors": [],
+            "llm_error_count": 0
+          }
+        ]
+      },
+      {
+        "round": 5,
+        "summary": {
+          "flow_pass_semantic_pending": 29,
+          "flow_failure": 1
+        },
+        "cases_total": 30,
+        "flow_pass_cases": 29,
+        "unexpected_tickets": 0,
+        "observed_turns": 44,
+        "missing_turn_observations": 0,
+        "observed_turn_p95_ms": 10688.0,
+        "passed_turn_p95_ms": 9359.0,
+        "intent_embedding_sources": {
+          "disabled-logistics": 33,
+          "local-ngram": 11
+        },
+        "llm_usage_by_distinct_observed_request": {
+          "calls": 54,
+          "errors": 1,
+          "usage_reported_calls": 53,
+          "input_tokens": 7158,
+          "output_tokens": 3553
+        },
+        "failures": [
+          {
+            "case_id": "DIAN-025",
+            "family": "abcd-shipping-missing",
+            "status": "flow_failure",
+            "failed_turn": 0,
+            "environment_category": null,
+            "failed_checks": [
+              "case_state",
+              "case_issue",
+              "agent",
+              "required_tool_missing",
+              "required_tool_missing",
+              "required_tool_missing"
+            ],
+            "llm_errors": [],
+            "llm_error_count": 1
+          }
+        ]
+      }
+    ]
+  }
+}

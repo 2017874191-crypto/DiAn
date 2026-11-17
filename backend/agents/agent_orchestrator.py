@@ -27,7 +27,7 @@ from collections import deque
 from datetime import datetime
 from dataclasses import dataclass, field, replace
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from anthropic import AsyncAnthropic
 
@@ -203,6 +203,12 @@ class Request:
     unsafe_tool_calls: set = field(default_factory=set, repr=False)
     conversation_state: Optional[Dict[str, Any]] = None
     intent_model_failed: bool = False
+    context_loader: Optional[Callable[[], Awaitable[str]]] = field(default=None, repr=False, compare=False)
+
+    async def prepare_model_context(self) -> None:
+        if self.context_loader is not None:
+            self.context = await self.context_loader()
+            self.context_loader = None
 
 
 @dataclass
@@ -1060,6 +1066,7 @@ class AgentOrchestrator:
         """
         t0 = time.monotonic()
         agent_types = decision.agent_types
+        await req.prepare_model_context()
         tasks = [self._execute(req, at) for at in agent_types]
         responses = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -1342,9 +1349,11 @@ class AgentOrchestrator:
 
     async def _execute(self, req: Request, agent_type: AgentType) -> AgentResponse:
         """执行 Agent，失败时降级到 GeneralAgent。"""
+        selected_type = agent_type
         agent = self._best_agent(agent_type)
         if agent is None:
-            agent = self._best_agent(AgentType.GENERAL)
+            selected_type = AgentType.GENERAL
+            agent = self._best_agent(selected_type)
         if agent is None:
             return AgentResponse(
                 agent_type=AgentType.GENERAL,
@@ -1354,6 +1363,8 @@ class AgentOrchestrator:
                 error_code="agent_unavailable",
             )
 
+        if selected_type not in (AgentType.LOGISTICS, AgentType.ESCALATION):
+            await req.prepare_model_context()
         response = await agent.handle(req)
 
         # 已尝试副作用操作后，不让兜底 Agent 再次执行可能相同的业务动作。
@@ -1366,6 +1377,7 @@ class AgentOrchestrator:
             fallback = self._best_agent(AgentType.GENERAL)
             if fallback:
                 original = response
+                await req.prepare_model_context()
                 response = await fallback.handle(req)
                 response.tools_used = list(dict.fromkeys(original.tools_used + response.tools_used))
                 response.tool_traces = original.tool_traces + [{

@@ -321,40 +321,31 @@ class MemoryManager:
         raw = await self._redis.get(self._state_key(user_id, conv_id))
         return json.loads(raw) if raw else {}
 
-    async def get_context(self, user_id: str, conv_id: str, query: str = "") -> MemoryContext:
-        """
-        构建完整的记忆上下文。
-
-        query 用于从情景记忆中检索语义相关的历史片段。
-        """
-        # 1. 工作记忆（当前会话最近消息）
+    async def get_context(self, user_id: str, conv_id: str, query: str = "", *,
+                          include_background: bool = True) -> MemoryContext:
+        """读取意图和业务状态所需的上下文，可选择同时装载模型背景。"""
         user_id = self._safe_text(user_id)
         conv_id = self._safe_text(conv_id)
-        query = self._safe_text(query)
-
         recent = await self._get_working_memory(user_id, conv_id)
-
-        # 2. 情景记忆（跨会话语义检索）
-        history = await self._search_episodic(
-            user_id,
-            conv_id,
-            query or (recent[-1].content if recent else ""),
-        )
-
-        # 3. 用户画像
-        profile = await self._get_profile(user_id)
-
-        # 4. 会话摘要（如果已压缩过）
-        summary = await self._redis.get(self._summary_key(user_id, conv_id)) or ""
         state_raw = await self._redis.get(self._state_key(user_id, conv_id))
-
-        return MemoryContext(
-            recent_messages=recent,
-            relevant_history=history,
-            user_profile=profile,
-            summary=summary,
+        context = MemoryContext(
+            recent_messages=recent, relevant_history=[], user_profile={}, summary="",
             state=json.loads(state_raw) if state_raw else {},
         )
+        if include_background:
+            await self.load_background(context, user_id, conv_id, query)
+        return context
+
+    async def load_background(self, context: MemoryContext, user_id: str, conv_id: str, query: str) -> None:
+        """补齐生成回复需要的摘要、历史和画像。"""
+        user_id = self._safe_text(user_id)
+        conv_id = self._safe_text(conv_id)
+        recent = context.recent_messages
+        context.relevant_history = await self._search_episodic(
+            user_id, conv_id, self._safe_text(query) or (recent[-1].content if recent else ""),
+        )
+        context.user_profile = await self._get_profile(user_id)
+        context.summary = await self._redis.get(self._summary_key(user_id, conv_id)) or ""
 
     # ── 压缩（防止 context 爆炸）─────────────────────────────────────────────
 

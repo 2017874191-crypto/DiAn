@@ -53,7 +53,7 @@ async def variant(name, redis_url, redis_name, redis_port, root):
     memory._redis = redis_client
     memory._request_locks = KeyedLocks()
 
-    async def context(user_id, conv_id, query=""):
+    async def context(user_id, conv_id, **_):
         return SimpleNamespace(state=await memory.get_conversation_state(user_id, conv_id),
                                recent_messages=[], to_prompt_text=lambda: "")
 

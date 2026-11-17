@@ -444,7 +444,7 @@ async def _run_chat(req, started):
             with measure_stage("memory_read"):
                 service = _logistics_service()
                 revision = await asyncio.to_thread(service.get_revision, req.user_id, conv_id) if service else None
-                mem_ctx = await _memory.get_context(req.user_id, conv_id, query=req.message)
+                mem_ctx = await _memory.get_context(req.user_id, conv_id, include_background=False)
                 mem_ctx.state = await _restore_logistics_state(req.user_id, conv_id, getattr(mem_ctx, "state", {}))
                 if lease is not None and not await lease.owned():
                     raise LeaseLostError("读取上下文期间会话锁已失效，请重新查询案件状态")
@@ -457,13 +457,18 @@ async def _run_chat(req, started):
 
             with measure_stage("intent"):
                 intent_result = await _orchestrator.recognize_intent(req.message, history=history)
-            full_context = mem_ctx.to_prompt_text()
+
+            async def load_prompt_context():
+                with measure_stage("memory_background"):
+                    await _memory.load_background(mem_ctx, req.user_id, conv_id, req.message)
+                    if lease is not None and not await lease.owned():
+                        raise LeaseLostError("读取回复背景期间会话锁已失效，请重新查询案件状态")
+                    return mem_ctx.to_prompt_text()
 
             orch_req = OrcReq(
                 message=req.message,
                 user_id=req.user_id,
                 conv_id=conv_id,
-                context=full_context,
                 history=history,
                 entities=intent_result.entities,
                 intent=intent_result.intent,
@@ -473,6 +478,7 @@ async def _run_chat(req, started):
                 intent_model_failed=getattr(intent_result, "llm_failed", False),
                 logistics_revision=revision,
                 conversation_state=getattr(mem_ctx, "state", {}),
+                context_loader=load_prompt_context,
             )
             orch_req.client_request_id = client_id
 

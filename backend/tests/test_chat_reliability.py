@@ -197,6 +197,75 @@ async def test_timed_out_logistics_write_keeps_its_slot_and_conversation_lock(se
 
 
 @pytest.mark.asyncio
+async def test_background_is_skipped_for_fixed_logistics_and_loaded_for_model_fallback(services, tmp_path, monkeypatch):
+    memory, orch, model, http = services
+    monkeypatch.setenv("DIAN_LOGISTICS_DB", str(tmp_path / "cases.sqlite3"))
+    monkeypatch.setenv("DIAN_TICKET_PROVIDER", "sqlite")
+    monkeypatch.setenv("DIAN_TEMPORAL_LOGISTICS", "false")
+    agent = LogisticsAgent(model, "test-model")
+    orch._pool[AgentType.LOGISTICS] = [agent]
+    memory._query_episodic.return_value = {"documents": [["历史片段"] * memory.HISTORY_TOP_K]}
+    memory._get_profile.return_value = {"name": "profile-fixture"}
+
+    request = {**body("包裹丢件，订单号 DEMO1001"), "user_id": "demo-user"}
+    response = await http.post("/chat", json=request)
+    assert response.status_code == 200
+    assert response.json()["logistics_case"]["state"] == "awaiting_confirmation"
+    assert "memory_background" not in response.json()["performance"]["stages_ms"]
+    memory._query_episodic.assert_not_awaited()
+    memory._get_profile.assert_not_awaited()
+    model.messages.create.assert_not_awaited()
+
+    monkeypatch.setattr(agent, "_call_llm", AsyncMock(side_effect=RuntimeError("fixture: read-only logistics failure")))
+    response = await http.post("/chat", json={**request, "conv_id": "fallback"})
+    assert response.status_code == 200 and response.json()["agent_type"] == "general"
+    assert "memory_background" in response.json()["performance"]["stages_ms"]
+    memory._query_episodic.assert_awaited_once()
+    memory._get_profile.assert_awaited_once()
+    messages = model.messages.create.await_args.kwargs["messages"]
+    assert "历史片段" in messages[0]["content"] and "profile-fixture" in messages[0]["content"]
+
+
+@pytest.mark.asyncio
+async def test_parallel_model_agents_share_one_full_background_read(services):
+    memory, orch, model, http = services
+    memory._query_episodic.return_value = {"documents": [["历史片段"] * memory.HISTORY_TOP_K]}
+    memory._get_profile.return_value = {"name": "profile-fixture"}
+    await memory._redis.set(memory._summary_key("u", "c"), "已有摘要")
+    await memory.commit_turn("u", "c", "previous", "上一轮用户文本", {"status": "success", "response": "已记录"})
+
+    response = await http.post("/chat", json=body("登录失败而且被多扣了钱，怎么退款？"))
+    assert response.status_code == 200
+    assert set(response.json()["agent_types"]) == {"technical", "billing"}
+    history = orch.recognize_intent.await_args.kwargs["history"]
+    assert history[0]["content"] == "上一轮用户文本"
+    memory._query_episodic.assert_awaited_once()
+    memory._get_profile.assert_awaited_once()
+    backgrounds = [call.kwargs["messages"][0]["content"] for call in model.messages.create.await_args_list
+                   if call.kwargs["messages"][0]["content"].startswith("[背景信息]")]
+    assert len(backgrounds) == 2
+    for background in backgrounds:
+        assert all(value in background for value in ("历史片段", "profile-fixture", "已有摘要", "上一轮用户文本"))
+
+
+@pytest.mark.asyncio
+async def test_background_read_checks_lease_before_model_and_receipt(services):
+    memory, _, model, http = services
+
+    async def take_over(_user_id):
+        [lease_key] = await memory._redis.keys("lock:conversation:*")
+        await memory._redis.set(lease_key, "fixture-next-owner", ex=10)
+        return {}
+
+    memory._get_profile.side_effect = take_over
+    response = await http.post("/chat", json=body())
+    assert response.status_code == 503
+    assert "读取回复背景期间会话锁已失效" in response.json()["detail"]
+    model.messages.create.assert_not_awaited()
+    assert await memory.get_turn_receipt("u", "c", "one") is None
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("queue_timeout, chat_timeout, expected_status", [(.35, 2, 429), (2, .35, 504)])
 async def test_chat_bounds_active_waiting_and_authenticated_user_admission(
     services, monkeypatch, queue_timeout, chat_timeout, expected_status,
@@ -526,7 +595,7 @@ async def test_http_timing_includes_memory_commit_and_metrics_work_without_extra
     original_commit = memory.commit_turn
 
     async def delayed_commit(*args, **kwargs):
-        await asyncio.sleep(.025)
+        await asyncio.sleep(.05)
         return await original_commit(*args, **kwargs)
 
     monkeypatch.setattr(memory, "commit_turn", delayed_commit)

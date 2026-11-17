@@ -36,3 +36,5 @@ python -m pytest -q tests/test_intent_fault_ablation.py
 ```
 
 本轮验证了已选案例对固定故障的行为。供应商真实故障、更多含蓄物流表述、回答语义及生产性能需要独立证据。已掌握的共同缺口是意图模型断连后对 `DIAN-025` 的澄清或业务接续。
+
+本机后端全量 264 项通过。公开产物记录 45 个意图故障组合和六个独立结案故障组合，含模型调用阶段、HTTP 状态、SQLite 行数和原始配置身份摘要。[固定故障结果](../evaluation/intent_fault_ablation.json)

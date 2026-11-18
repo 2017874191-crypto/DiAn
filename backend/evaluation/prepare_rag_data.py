@@ -17,12 +17,16 @@ SEED = "dian-a3-v1"
 
 
 def write_json(path, value):
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_bytes((json.dumps(value, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
 
 
 def freeze(folder, corpus, queries, source):
     folder.mkdir(parents=True, exist_ok=True)
     payloads = {"corpus.json": corpus, "queries.json": queries}
+    for name, data in payloads.items():
+        path = folder / name
+        if path.exists() and json.loads(path.read_text(encoding="utf-8")) != data:
+            raise FileExistsError(f"Snapshot differs at {path}; use a new output directory")
     for name, data in payloads.items():
         write_json(folder / name, data)
     manifest = {

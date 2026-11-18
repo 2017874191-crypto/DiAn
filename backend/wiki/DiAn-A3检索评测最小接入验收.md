@@ -39,7 +39,7 @@
 python -m pip install -r requirements-rag-eval.txt
 python -m evaluation.prepare_rag_data --download
 python -m pytest -q tests/test_rag_evaluation.py tests/test_tool_manager.py tests/test_knowledge_base.py
-python -m evaluation.compare_rag --rounds 1 --limit 8 --output data/rag-a3/smoke.json
+python -m evaluation.compare_rag --env-file .env --rounds 1 --limit 8 --output data/rag-a3/smoke.json
 ```
 
-公开实验初步验证后，可使用新的输出路径运行 `--rounds 5 --limit 30`。模型及向量检索配置由报告记录。修改业务草稿会改变快照，应保留版本与复核记录。
+公开实验初步验证后，可使用新的输出路径运行 `--rounds 5 --limit 30`。显式 `--env-file` 只在评测进程内覆盖继承的变量，未指定时沿用环境变量优先的加载顺序。模型及向量检索配置由报告记录。修改业务草稿会改变快照，应保留版本与复核记录。准备器拒绝覆盖内容不同的已有语料或标注，修订时使用新的目录。

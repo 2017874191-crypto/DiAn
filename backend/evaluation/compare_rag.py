@@ -45,8 +45,10 @@ async def run_arm(kb, query, arm, settings, top_k=3):
     searches = []
 
     async def search(params, _context):
-        searches.append({"query_sha256": sha256(params["query"].encode()), "top_k": params["top_k"]})
-        return await kb.search_async(params["query"], params["top_k"])
+        items = await kb.search_async(params["query"], params["top_k"])
+        searches.append({"query_sha256": sha256(params["query"].encode()), "top_k": params["top_k"],
+                         "returned_ids": [item["document_id"] for item in items]})
+        return items
 
     async def original_only(text, n=3):
         return [text]
@@ -127,7 +129,9 @@ async def compare(args):
     if args.limit > len(queries):
         raise ValueError("--limit exceeds frozen query count")
     queries = queries[:args.limit]
-    load_dotenv(ROOT / ".env")
+    if args.env_file is not None and not args.env_file.is_file():
+        raise FileNotFoundError(args.env_file)
+    load_dotenv(args.env_file or ROOT / ".env", override=args.env_file is not None)
     api_key = os.getenv("ANTHROPIC_API_KEY", "")
     if not api_key:
         raise ValueError("Configure ANTHROPIC_API_KEY for live rewrite/rerank")
@@ -155,6 +159,7 @@ async def compare(args):
             "code_commit": git_commit(ROOT), "build": build_identity(ROOT), "rounds": args.rounds,
             "selected_query_ids": [query["id"] for query in queries],
             "model": settings["model"], "model_endpoint_sha256": value_digest(settings.get("base_url", "default")),
+            "configuration_source": "explicit_env_file" if args.env_file else "environment_then_local_dotenv",
             "embedding": {"name": "Chroma default all-MiniLM-L6-v2",
                           "model_files": {p.name: sha256(p.read_bytes()) for p in Path(embedding.DOWNLOAD_PATH).rglob("*") if p.is_file()}},
             "index_distance": "Chroma default l2",
@@ -183,6 +188,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", type=Path, default=ROOT / "data/rag-a3/miracl")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--env-file", type=Path, help="Explicit evaluation-only settings, overriding inherited variables")
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--limit", type=int, default=30)
     args = parser.parse_args()

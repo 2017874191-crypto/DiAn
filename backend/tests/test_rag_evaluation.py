@@ -22,8 +22,11 @@ def test_graded_metrics_deduplicate_and_account_for_unjudged_documents():
 def test_snapshot_rejects_tampering_and_invented_evidence(tmp_path):
     corpus, queries = business_snapshot()
     freeze(tmp_path, corpus, queries, {})
+    assert b"\r\n" not in (tmp_path / "corpus.json").read_bytes()
     queries[0]["evidence"][0]["quote"] = "this text is absent"
     with pytest.raises(ValueError, match="Evidence"):
+        freeze(tmp_path / "invalid", corpus, queries, {})
+    with pytest.raises(FileExistsError, match="new output directory"):
         freeze(tmp_path, corpus, queries, {})
     corpus, queries = business_snapshot()
     freeze(tmp_path, corpus, queries, {})

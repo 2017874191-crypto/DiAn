@@ -8,4 +8,5 @@
 
 # Preserve frozen dataset and fixture byte hashes across Windows/Linux.
 backend/evaluation/datasets/dian_logistics_v1/** -text
+backend/evaluation/datasets/dian_rag_v1/*.json -text
 backend/config/logistics/*.json -text

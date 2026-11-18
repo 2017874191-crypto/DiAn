@@ -11,17 +11,58 @@ from statistics import mean, median
 from unittest.mock import patch
 
 import chromadb
+import httpx
+from anthropic import AsyncAnthropic
 from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
-from dotenv import load_dotenv
+from dotenv import dotenv_values, load_dotenv
 
 from core.llm_utils import model_scope
-from core.performance import collect_performance, performance_snapshot
+from core.performance import collect_performance, performance_snapshot, record_event
 from evaluation.prepare_rag_data import ROOT, validate, write_json
 from evaluation.provenance import build_identity, git_commit, sha256, value_digest
 from tooling.knowledge_base import KnowledgeBase
 from tooling.tool_manager import MCPToolManager, Tool
 
 ARMS = ("single", "rewrite", "rerank", "full", "budget_single", "budget_rerank")
+
+
+def model_settings(env_file=None):
+    path = env_file or ROOT / ".env"
+    if env_file is not None and not path.is_file():
+        raise FileNotFoundError(path)
+    values = dotenv_values(path) if path.is_file() else os.environ
+    if not values.get("ANTHROPIC_API_KEY"):
+        raise ValueError("Selected model configuration requires ANTHROPIC_API_KEY")
+    settings = {
+        "api_key": values["ANTHROPIC_API_KEY"],
+        "base_url": values.get("ANTHROPIC_BASE_URL") or "https://api.anthropic.com",
+        "model": values.get("ANTHROPIC_MODEL") or "claude-3-5-sonnet-20241022",
+    }
+    source = {
+        "kind": "explicit_env_file" if env_file else "project_dotenv" if path.is_file() else "environment",
+        "shadowed_environment_fields": [
+            field for field in ("ANTHROPIC_API_KEY", "ANTHROPIC_BASE_URL", "ANTHROPIC_MODEL")
+            if path.is_file() and os.getenv(field) and os.getenv(field) != values.get(field)
+        ],
+    }
+    return settings, source
+
+
+async def trace_model_transport(event, _info):
+    names = {
+        "connection.connect_tcp.complete": "model_tcp_connected",
+        "connection.connect_tcp.failed": "model_tcp_failed",
+        "connection.start_tls.complete": "model_direct_tls_connected",
+        "connection.start_tls.failed": "model_direct_tls_failed",
+        "proxy.start_tls.complete": "model_proxy_tls_connected",
+        "proxy.start_tls.failed": "model_proxy_tls_failed",
+    }
+    if event in names:
+        record_event(names[event])
+
+
+async def attach_transport_trace(request):
+    request.extensions["trace"] = trace_model_transport
 
 
 def metrics(ranked, qrels, k):
@@ -40,8 +81,8 @@ def metrics(ranked, qrels, k):
     }
 
 
-async def run_arm(kb, query, arm, settings, top_k=3):
-    manager = MCPToolManager(**settings)
+async def run_arm(kb, query, arm, settings, top_k=3, *, template=None):
+    manager = template.fork() if template is not None else MCPToolManager(**settings)
     searches = []
 
     async def search(params, _context):
@@ -90,7 +131,8 @@ async def run_arm(kb, query, arm, settings, top_k=3):
                 error = type(exc).__name__
             perf = performance_snapshot()
     finally:
-        await manager._client.close()
+        if template is None:
+            await manager._client.close()
     ids = [item["document_id"] for item in data]
     return {
         "query_id": query["id"], "arm": arm, "error": error,
@@ -98,6 +140,7 @@ async def run_arm(kb, query, arm, settings, top_k=3):
         "ranked_ids": ids, "reranked": reranked, "searches": searches,
         "metrics": {str(k): metrics(ids, query["qrels"], k) for k in (1, 3)},
         "model_calls": perf.get("llm_calls", []),
+        "transport_events": perf.get("events", {}),
     }
 
 
@@ -129,15 +172,8 @@ async def compare(args):
     if args.limit > len(queries):
         raise ValueError("--limit exceeds frozen query count")
     queries = queries[:args.limit]
-    if args.env_file is not None and not args.env_file.is_file():
-        raise FileNotFoundError(args.env_file)
+    settings, config_source = model_settings(args.env_file)
     load_dotenv(args.env_file or ROOT / ".env", override=args.env_file is not None)
-    api_key = os.getenv("ANTHROPIC_API_KEY", "")
-    if not api_key:
-        raise ValueError("Configure ANTHROPIC_API_KEY for live rewrite/rerank")
-    settings = {"api_key": api_key, "model": os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")}
-    if os.getenv("ANTHROPIC_BASE_URL"):
-        settings["base_url"] = os.environ["ANTHROPIC_BASE_URL"]
     embedding = ONNXMiniLM_L6_V2()
     client = chromadb.EphemeralClient(settings=chromadb.Settings(anonymized_telemetry=False))
     collection = client.create_collection("rag-a3-" + os.urandom(8).hex(), embedding_function=embedding)
@@ -159,7 +195,10 @@ async def compare(args):
             "code_commit": git_commit(ROOT), "build": build_identity(ROOT), "rounds": args.rounds,
             "selected_query_ids": [query["id"] for query in queries],
             "model": settings["model"], "model_endpoint_sha256": value_digest(settings.get("base_url", "default")),
-            "configuration_source": "explicit_env_file" if args.env_file else "environment_then_local_dotenv",
+            "configuration_source": config_source,
+            "model_transport": {"network": args.network, "shared_client": True, "sdk_retries": 0,
+                                "connect_timeout_s": 5, "read_timeout_s": 30,
+                                "keepalive_expiry_s": 30, "max_connections": 4},
             "embedding": {"name": "Chroma default all-MiniLM-L6-v2",
                           "model_files": {p.name: sha256(p.read_bytes()) for p in Path(embedding.DOWNLOAD_PATH).rglob("*") if p.is_file()}},
             "index_distance": "Chroma default l2",
@@ -167,15 +206,23 @@ async def compare(args):
             "cold_cache": True, "unjudged_policy": "score zero for metrics; report fraction separately",
             "complete": False, "rows": [],
         }
-        for round_index in range(args.rounds):
-            for query_index, query in enumerate(queries):
-                shift = (round_index + query_index) % len(ARMS)
-                for arm in ARMS[shift:] + ARMS[:shift]:
-                    row = await run_arm(kb, query, arm, settings)
-                    result["rows"].append({"round": round_index + 1, **row})
-                    # Keep completed arms if an evaluation is interrupted.
-                    write_json(args.output, result)
-                print(f"round {round_index + 1}, query {query_index + 1}/{len(queries)}", flush=True)
+        async with AsyncAnthropic(
+            api_key=settings["api_key"], base_url=settings["base_url"], max_retries=0,
+            http_client=httpx.AsyncClient(
+                trust_env=args.network == "system", timeout=httpx.Timeout(30, connect=5),
+                limits=httpx.Limits(max_connections=4, max_keepalive_connections=4, keepalive_expiry=30),
+                event_hooks={"request": [attach_transport_trace]},
+            ),
+        ) as model_client:
+            template = MCPToolManager(**settings, client=model_client)
+            for round_index in range(args.rounds):
+                for query_index, query in enumerate(queries):
+                    shift = (round_index + query_index) % len(ARMS)
+                    for arm in ARMS[shift:] + ARMS[:shift]:
+                        row = await run_arm(kb, query, arm, settings, template=template)
+                        result["rows"].append({"round": round_index + 1, **row})
+                        write_json(args.output, result)
+                    print(f"round {round_index + 1}, query {query_index + 1}/{len(queries)}", flush=True)
         result["summary"] = summarize(result["rows"])
         result["complete"] = True
         write_json(args.output, result)
@@ -189,6 +236,8 @@ def main():
     parser.add_argument("--dataset", type=Path, default=ROOT / "data/rag-a3/miracl")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--env-file", type=Path, help="Explicit evaluation-only settings, overriding inherited variables")
+    parser.add_argument("--network", choices=("direct", "system"), default="direct",
+                        help="Evaluation model transport, direct by default; system uses environment and OS proxies")
     parser.add_argument("--rounds", type=int, default=5)
     parser.add_argument("--limit", type=int, default=30)
     args = parser.parse_args()

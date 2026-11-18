@@ -5,7 +5,8 @@ import httpx
 import pytest
 from anthropic import AsyncAnthropic
 
-from evaluation.compare_rag import ARMS, metrics, run_arm
+from evaluation.compare_rag import ARMS, metrics, model_settings, run_arm, trace_model_transport
+from core.performance import collect_performance, performance_snapshot
 from evaluation.prepare_rag_data import ROOT, business_snapshot, freeze, public_subset, validate
 
 
@@ -90,3 +91,71 @@ async def test_ablation_uses_production_model_methods_without_sending_gold(monke
         assert row["metrics"]["3"]["recall"] == 0
         assert all(call["status"] == "success" for call in row["model_calls"])
     assert len(sent) == 5
+
+
+def test_project_model_configuration_is_atomic_and_does_not_use_stale_inherited_values(tmp_path, monkeypatch):
+    import evaluation.compare_rag as evaluation
+    monkeypatch.setattr(evaluation, "ROOT", tmp_path)
+    settings_file = tmp_path / ".env"
+    settings_file.write_text(
+        "ANTHROPIC_API_KEY=file-key\nANTHROPIC_BASE_URL=http://model.fixture\nANTHROPIC_MODEL=file-model\n",
+        encoding="utf-8",
+    )
+    for name in ("ANTHROPIC_API_KEY", "ANTHROPIC_BASE_URL", "ANTHROPIC_MODEL"):
+        monkeypatch.setenv(name, "stale-value")
+    settings, source = model_settings()
+    assert settings == {"api_key": "file-key", "base_url": "http://model.fixture", "model": "file-model"}
+    assert source["kind"] == "project_dotenv" and len(source["shadowed_environment_fields"]) == 3
+    assert model_settings(settings_file)[1]["kind"] == "explicit_env_file"
+    # A partial file must not silently mix another provider's inherited credential.
+    settings_file.write_text("ANTHROPIC_MODEL=partial\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="Selected model configuration"):
+        model_settings()
+    settings_file.unlink()
+    settings, source = model_settings()
+    assert settings["api_key"] == "stale-value" and source["kind"] == "environment"
+    with pytest.raises(FileNotFoundError):
+        model_settings(settings_file)
+
+
+@pytest.mark.asyncio
+async def test_shared_evaluation_client_survives_arms_and_keeps_tool_statistics_isolated():
+    from tooling.tool_manager import MCPToolManager
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json={
+            "id": "msg_local", "type": "message", "role": "assistant", "model": "fixture",
+            "content": [{"type": "text", "text": "[1,0,2,3,4]"}], "stop_reason": "end_turn",
+            "usage": {"input_tokens": 1, "output_tokens": 1},
+        })
+
+    class Search:
+        async def search_async(self, _query, count):
+            return [{"document_id": str(index), "title": "source", "content": "text", "chunk": 0}
+                    for index in range(min(count, 5))]
+
+    settings = {"api_key": "local-only", "base_url": "http://model.fixture", "model": "fixture"}
+    async with AsyncAnthropic(api_key="local-only", base_url=settings["base_url"], max_retries=0,
+                              http_client=httpx.AsyncClient(transport=httpx.MockTransport(respond))) as client:
+        template = MCPToolManager(**settings, client=client)
+        for arm in ("rerank", "budget_rerank"):
+            row = await run_arm(Search(), {"id": "q", "query": "question", "qrels": {"1": 1}},
+                                arm, settings, template=template)
+            assert row["error"] is None and row["reranked"]
+            assert row["model_calls"][0]["status"] == "success"
+            assert not client.is_closed()
+            assert template._tools == {} and template._cache == {}
+        assert len(requests) == 2
+    assert client.is_closed()
+
+
+@pytest.mark.asyncio
+async def test_transport_diagnostics_record_failure_phase_without_exception_contents():
+    with collect_performance():
+        await trace_model_transport("proxy.start_tls.failed", {"exception": RuntimeError("sk-sensitive")})
+        await trace_model_transport("connection.start_tls.complete", {})
+        diagnostic = performance_snapshot()
+    assert diagnostic["events"] == {"model_proxy_tls_failed": 1, "model_direct_tls_connected": 1}
+    assert "sk-sensitive" not in json.dumps(diagnostic)

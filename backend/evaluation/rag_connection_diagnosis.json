@@ -1,0 +1,300 @@
+{
+  "scope": "local diagnostic observations before the RAG connection fix",
+  "date": "2026-11-18",
+  "model": "deepseek-v4-pro",
+  "anthropic_sdk": "0.40.0",
+  "httpx": "0.28.1",
+  "configuration_failure": {
+    "source": "inherited old endpoint",
+    "observed_dns_error": "gaierror",
+    "winerror": 11001
+  },
+  "summary": {
+    "system_proxy_shared": {
+      "attempts": 6,
+      "successes": 6
+    },
+    "system_proxy_fresh": {
+      "attempts": 6,
+      "successes": 4
+    },
+    "direct_fresh": {
+      "attempts": 8,
+      "successes": 8
+    }
+  },
+  "system_proxy_observations": [
+    {
+      "attempt": 0,
+      "group": "shared",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.187,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "system_proxy_loopback"
+        }
+      ]
+    },
+    {
+      "attempt": 1,
+      "group": "shared",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.438,
+      "events": []
+    },
+    {
+      "attempt": 2,
+      "group": "shared",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.328,
+      "events": []
+    },
+    {
+      "attempt": 3,
+      "group": "shared",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.062,
+      "events": []
+    },
+    {
+      "attempt": 4,
+      "group": "shared",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 0.797,
+      "events": []
+    },
+    {
+      "attempt": 5,
+      "group": "shared",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.406,
+      "events": []
+    },
+    {
+      "attempt": 0,
+      "group": "fresh",
+      "status": "error",
+      "chain": [
+        {
+          "type": "APIConnectionError",
+          "errno": null
+        },
+        {
+          "type": "ConnectError",
+          "errno": null
+        },
+        {
+          "type": "ConnectError",
+          "errno": null
+        }
+      ],
+      "elapsed": 5.032,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "system_proxy_loopback"
+        },
+        {
+          "event": "proxy.start_tls.failed",
+          "type": "ConnectError",
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "attempt": 1,
+      "group": "fresh",
+      "status": "error",
+      "chain": [
+        {
+          "type": "APIConnectionError",
+          "errno": null
+        },
+        {
+          "type": "ConnectError",
+          "errno": null
+        },
+        {
+          "type": "ConnectError",
+          "errno": null
+        }
+      ],
+      "elapsed": 5.016,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "system_proxy_loopback"
+        },
+        {
+          "event": "proxy.start_tls.failed",
+          "type": "ConnectError",
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "group": "fresh",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.656,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "system_proxy_loopback"
+        }
+      ]
+    },
+    {
+      "attempt": 3,
+      "group": "fresh",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.094,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "system_proxy_loopback"
+        }
+      ]
+    },
+    {
+      "attempt": 4,
+      "group": "fresh",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 0.891,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "system_proxy_loopback"
+        }
+      ]
+    },
+    {
+      "attempt": 5,
+      "group": "fresh",
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.141,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "system_proxy_loopback"
+        }
+      ]
+    }
+  ],
+  "direct_observations": [
+    {
+      "attempt": 0,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.75,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    },
+    {
+      "attempt": 1,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 2.0,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    },
+    {
+      "attempt": 2,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 2.406,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    },
+    {
+      "attempt": 3,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 2.188,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    },
+    {
+      "attempt": 4,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 1.953,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    },
+    {
+      "attempt": 5,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 2.172,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    },
+    {
+      "attempt": 6,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 2.156,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    },
+    {
+      "attempt": 7,
+      "status": "success",
+      "stop": "end_turn",
+      "elapsed": 2.0,
+      "events": [
+        {
+          "event": "connection.connect_tcp.complete",
+          "peer_route": "origin"
+        }
+      ]
+    }
+  ],
+  "cdn_tls_probe": {
+    "addresses_tested": 15,
+    "successes": 13,
+    "timeout_seconds": 7,
+    "certificate_verification": true
+  },
+  "limitations": "Sequential samples; historic errors lack transport traces; proxy service itself is outside this repository"
+}

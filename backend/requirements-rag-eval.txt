@@ -1,0 +1,2 @@
+# Optional data import dependency, compatible with the project's NumPy 1.x.
+pyarrow==19.0.1

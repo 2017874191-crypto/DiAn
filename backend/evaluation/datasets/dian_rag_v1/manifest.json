@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "source": {
+    "dataset": "DiAn local demonstration knowledge",
+    "review_status": "pending_human_review",
+    "source_files": {
+      "tooling/knowledge_base.py": "51b59ac4fe6f44d9211d5260e8cfec822823dfd34f97b8739e92fd61e8786254",
+      "config/logistics/knowledge.json": "597bd70aeb4ee115a412393427f8bcdd01e17297fad99d79016e5dbbfaf01c4c"
+    }
+  },
+  "documents": 9,
+  "queries": 30,
+  "files": {
+    "corpus.json": "73e44fbc092ed66187fffc17adf4577588732db52627abf293786e08d82f1781",
+    "queries.json": "56742ae16f4cf1f391742875b6ab1dc511946afd519a240dcb8ed008c5eb2973"
+  }
+}

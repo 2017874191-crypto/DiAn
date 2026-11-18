@@ -123,6 +123,7 @@ npm test
 - [DiAn 开发文档](backend/wiki/DiAn开发文档.md)
 - [规则与消融验收记录](backend/wiki/DiAn-P2规则与消融验收记录.md)
 - [物流上下文消融与按需读取验收](backend/wiki/DiAn-A2物流上下文消融验收.md)
+- [公开检索数据与业务证据草稿](backend/wiki/DiAn-A3检索评测最小接入验收.md)
 - [故障追踪与物流向量开关验收记录](backend/wiki/DiAn-P3故障追踪与物流向量开关验收记录.md)
 
 ### 意图识别的实验基线

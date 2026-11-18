@@ -1,0 +1,635 @@
+[
+  {
+    "id": "DIAN-RAG-001",
+    "query": "购买几天内可以无理由退款？",
+    "family_id": "退款政策",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "quote": "购买后 7 天内可以申请无理由退款"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "购买后 7 天内可以申请无理由退款"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-002",
+    "query": "退款申请要审核多久？",
+    "family_id": "退款政策",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "quote": "1-3 个工作日内审核"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "1-3 个工作日内审核"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-003",
+    "query": "已经发货想退款，下一步是什么？",
+    "family_id": "退款政策",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "quote": "需要先完成退货流程才能退款"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "需要先完成退货流程才能退款"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-004",
+    "query": "有哪些订单状态？",
+    "family_id": "订单查询",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "quote": "待支付、已支付、已发货、运输中、已签收、已完成"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "待支付、已支付、已发货、运输中、已签收、已完成"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-005",
+    "query": "发货超过七天没收到，该找谁？",
+    "family_id": "订单查询",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "quote": "可以联系客服申请查件"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "可以联系客服申请查件"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-006",
+    "query": "刚发货，轨迹通常多久更新？",
+    "family_id": "订单查询",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "quote": "发货后 24 小时内更新"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "发货后 24 小时内更新"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-007",
+    "query": "忘记密码怎么重置？",
+    "family_id": "账户安全",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "quote": "绑定的手机号或邮箱重置"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "绑定的手机号或邮箱重置"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-008",
+    "query": "客服让我把密码发过去，可以给吗？",
+    "family_id": "账户安全",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "quote": "客服人员不会索要用户密码"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "客服人员不会索要用户密码"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-009",
+    "query": "怎样开启额外的登录保护？",
+    "family_id": "账户安全",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "quote": "安全设置中开启两步验证"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "安全设置中开启两步验证"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-010",
+    "query": "登录出现401，该检查什么？",
+    "family_id": "技术故障排查",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "quote": "表示认证失败，请检查用户名密码"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "表示认证失败，请检查用户名密码"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-011",
+    "query": "应用一直崩溃，先怎么排查？",
+    "family_id": "技术故障排查",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "quote": "清除缓存后重启应用"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "清除缓存后重启应用"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-012",
+    "query": "遇到500错误该怎么办？",
+    "family_id": "技术故障排查",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "quote": "这是服务端问题，请稍后重试"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "这是服务端问题，请稍后重试"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-013",
+    "query": "一百积分能抵多少钱？",
+    "family_id": "会员与积分",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "quote": "100 积分 = 1 元"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "100 积分 = 1 元"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-014",
+    "query": "金卡会员的消费门槛是多少？",
+    "family_id": "会员与积分",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "quote": "金卡会员（累计消费 5000 元）"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "金卡会员（累计消费 5000 元）"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-015",
+    "query": "积分多久会过期？",
+    "family_id": "会员与积分",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "quote": "积分有效期为 1 年"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "积分有效期为 1 年"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-016",
+    "query": "加急配送需要多久、多少钱？",
+    "family_id": "配送说明",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "quote": "加急配送：1-2 个工作日送达，运费 15 元"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "加急配送：1-2 个工作日送达，运费 15 元"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-017",
+    "query": "标准配送满足什么条件免运费？",
+    "family_id": "配送说明",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "quote": "免运费（订单满 99 元）"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "免运费（订单满 99 元）"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-018",
+    "query": "订单已经发货，还能改地址吗？",
+    "family_id": "配送说明",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "quote": "请在发货前联系客服"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "请在发货前联系客服"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-019",
+    "query": "轨迹停滞就能判定丢件吗？",
+    "family_id": "疑似丢件核查演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "quote": "轨迹停滞仅作为疑似异常，不直接认定丢件"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "轨迹停滞仅作为疑似异常，不直接认定丢件"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-020",
+    "query": "疑似丢件还能做什么核查？",
+    "family_id": "疑似丢件核查演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "quote": "可提交人工核查"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "可提交人工核查"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-021",
+    "query": "这份丢件规则是真实承运商政策吗？",
+    "family_id": "疑似丢件核查演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "quote": "仅为演示政策，不代表真实承运商规则"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "仅为演示政策，不代表真实承运商规则"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-022",
+    "query": "显示签收就能证明本人拿到了吗？",
+    "family_id": "签收争议演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "quote": "签收记录不能证明实际收件"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "签收记录不能证明实际收件"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-023",
+    "query": "没有收到但显示签收，可以申请什么核查？",
+    "family_id": "签收争议演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "quote": "可提交签收争议核查"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "可提交签收争议核查"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-024",
+    "query": "签收争议规则属于什么版本？",
+    "family_id": "签收争议演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "quote": "版本 demo-2026-11-v1"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "版本 demo-2026-11-v1"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-025",
+    "query": "破损错发需要提供哪些照片？",
+    "family_id": "破损错发举证演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "quote": "外包装照片、面单照片、商品问题照片"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "外包装照片、面单照片、商品问题照片"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-026",
+    "query": "上传照片后会自动赔偿吗？",
+    "family_id": "破损错发举证演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "quote": "不自动判责赔偿"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "不自动判责赔偿"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-027",
+    "query": "用户说已经提供材料，接下来能提交什么？",
+    "family_id": "破损错发举证演示规则",
+    "split": "development",
+    "answerable": true,
+    "qrels": {
+      "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0": 2
+    },
+    "evidence": [
+      {
+        "doc_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "quote": "可提交人工审核"
+      }
+    ],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": [
+      "可提交人工审核"
+    ]
+  },
+  {
+    "id": "DIAN-RAG-028",
+    "query": "某承运商丢件按保价金额具体赔多少？",
+    "family_id": "unanswerable-28",
+    "split": "development",
+    "answerable": false,
+    "qrels": {},
+    "evidence": [],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": []
+  },
+  {
+    "id": "DIAN-RAG-029",
+    "query": "订单DEMO1001目前的实时位置在哪里？",
+    "family_id": "unanswerable-29",
+    "split": "development",
+    "answerable": false,
+    "qrels": {},
+    "evidence": [],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": []
+  },
+  {
+    "id": "DIAN-RAG-030",
+    "query": "我刚提交的退款申请现在审核通过了吗？",
+    "family_id": "unanswerable-30",
+    "split": "development",
+    "answerable": false,
+    "qrels": {},
+    "evidence": [],
+    "review_status": "pending_human_review",
+    "reviewer_1": null,
+    "reviewer_2": null,
+    "required_facts_draft": []
+  }
+]

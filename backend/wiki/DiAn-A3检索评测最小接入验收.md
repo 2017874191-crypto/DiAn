@@ -67,4 +67,4 @@ python -m evaluation.compare_rag --env-file .env --rounds 1 --limit 8 --output d
 
 专项测试 `tests/test_rag_evaluation.py`、`tests/test_tool_manager.py`、`tests/test_knowledge_base.py` 本机共 15 项通过。新增测试验证分级相关性、重复与未判断片段、快照篡改、证据引用、覆盖保护、确定抽样和模型输入隔离。
 
-本轮 Windows 本机完整后端回归 `python -m pytest -q tests` 为 288 项通过、1 条现有依赖警告，耗时 287.01 秒。2026-11-18 交付时 GitHub HTTPS 推送持续连接超时，代码及实验记录已在本地提交，远端同步和相应 CI 待恢复连接后完成。
+本轮 Windows 本机完整后端回归 `python -m pytest -q tests` 为 288 项通过、1 条现有依赖警告，耗时 287.01 秒。2026-11-18 GitHub HTTPS 推送多次超时，经重试后已同步代码及实验记录。CI 结果以对应提交的 GitHub Actions 为准。

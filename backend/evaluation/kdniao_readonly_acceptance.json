@@ -1,0 +1,878 @@
+{
+  "schema": 1,
+  "scope": "KDniao 8002 external query and authenticated ASGI chat with local order bindings",
+  "direct_probe": {
+    "http_status": 200,
+    "success": true,
+    "state": "0",
+    "trace_count": 0,
+    "reason": "暂无轨迹信息",
+    "latency_ms": 828.0
+  },
+  "initial_chat": {
+    "schema": 1,
+    "code_commit": "d525cef938f804d75fbf2a77acb375e6c6fd8d42",
+    "build": {
+      "source_sha256": "58b3e43d110071544e3254f958d2a5d0bfd42fc240f361359f1ce68c372fc3ea",
+      "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1"
+    },
+    "scope": "Live KDniao 8002 and live models via actual ASGI chat, local ownership binding",
+    "redis": "fakeredis",
+    "business_database": "Temporary SQLite",
+    "rows": [
+      {
+        "scenario": "authorized",
+        "http_status": 200,
+        "response": {
+          "conv_id": "authorized",
+          "request_id": "10000d27-7e56-4ed8-b09e-8267d0531c13",
+          "response": "已为你查询订单号 **LIVE1001** 的物流轨迹，结果如下：\n\n目前物流接口已受理，但**暂未查询到任何物流轨迹**。这只能说明系统当前没有可展示的轨迹记录，不能据此判断包裹是丢件、运输中还是已签收。\n\n建议你：\n1. 稍后（如几小时或次日）再查询一次，物流信息通常需要一定时间同步；\n2. 若下单时间已较久仍无轨迹，可联系发货方确认是否已实际发货并生成运单号。\n\n需要我帮你继续查看其他订单吗？",
+          "intent": "logistics",
+          "intent_group": "query",
+          "task_goal": "status_lookup",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.99,
+          "escalated": false,
+          "latency_ms": 7578.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [
+              "LIVE1001"
+            ],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.736,
+          "intent_source_scores": {
+            "llm": 0.98,
+            "embedding": 0.20628424925175873,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1672.0,
+              "memory_background": 0.0,
+              "agent_execution": 5891.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1656.0,
+                "input_tokens": 386,
+                "output_tokens": 47,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2265.0,
+                "input_tokens": 2263,
+                "output_tokens": 51,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 3235.0,
+                "input_tokens": 146,
+                "output_tokens": 127,
+                "cache_read_input_tokens": 2304,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 7156.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 2795,
+              "output_tokens": 225,
+              "cache_read_input_tokens": 2688,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "external_calls": 1,
+        "tool_trace": {
+          "request_id": "10000d27-7e56-4ed8-b09e-8267d0531c13",
+          "timestamp": "2026-11-19T17:42:06.796681",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "query_authorized_tracking",
+              "tool_use_id": "call_00_TVfqcz9NRCEs2lxmnLCA8388",
+              "input": {
+                "order_id": "LIVE1001"
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 375.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "kdniao",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 5891.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "scenario": "same_request_replay",
+        "http_status": 200,
+        "response": {
+          "conv_id": "authorized",
+          "request_id": "10000d27-7e56-4ed8-b09e-8267d0531c13",
+          "response": "已为你查询订单号 **LIVE1001** 的物流轨迹，结果如下：\n\n目前物流接口已受理，但**暂未查询到任何物流轨迹**。这只能说明系统当前没有可展示的轨迹记录，不能据此判断包裹是丢件、运输中还是已签收。\n\n建议你：\n1. 稍后（如几小时或次日）再查询一次，物流信息通常需要一定时间同步；\n2. 若下单时间已较久仍无轨迹，可联系发货方确认是否已实际发货并生成运单号。\n\n需要我帮你继续查看其他订单吗？",
+          "intent": "logistics",
+          "intent_group": "query",
+          "task_goal": "status_lookup",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.99,
+          "escalated": false,
+          "latency_ms": 7578.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [
+              "LIVE1001"
+            ],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.736,
+          "intent_source_scores": {
+            "llm": 0.98,
+            "embedding": 0.20628424925175873,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1672.0,
+              "memory_background": 0.0,
+              "agent_execution": 5891.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1656.0,
+                "input_tokens": 386,
+                "output_tokens": 47,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2265.0,
+                "input_tokens": 2263,
+                "output_tokens": 51,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 3235.0,
+                "input_tokens": 146,
+                "output_tokens": 127,
+                "cache_read_input_tokens": 2304,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 7156.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 2795,
+              "output_tokens": 225,
+              "cache_read_input_tokens": 2688,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "external_calls": 0,
+        "tool_trace": {
+          "request_id": "10000d27-7e56-4ed8-b09e-8267d0531c13",
+          "timestamp": "2026-11-19T17:42:06.796681",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "query_authorized_tracking",
+              "tool_use_id": "call_00_TVfqcz9NRCEs2lxmnLCA8388",
+              "input": {
+                "order_id": "LIVE1001"
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 375.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "kdniao",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 5891.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "scenario": "unbound_subject",
+        "http_status": 200,
+        "response": {
+          "conv_id": "other",
+          "request_id": "361991c0-7d51-447b-a3b3-99df8a542b24",
+          "response": "我帮你查了订单号 LIVE1001 的物流轨迹，但系统返回「订单不存在或当前用户无权查询」，所以暂时无法提供该订单的物流信息。\n\n可能的原因有几种：\n1. 订单号输入有误，请核对后重试；\n2. 该订单未绑定到当前登录账号，或查询权限受限；\n3. 订单尚未产生物流记录。\n\n建议你：\n- 先确认订单号是否准确；\n- 在官方订单中心查看该订单是否已绑定到当前账号，并核对物流单号；\n- 如确认无误仍查不到，可联系人工客服进一步核验订单归属。\n\n需要我帮你确认其他订单吗？",
+          "intent": "logistics",
+          "intent_group": "query",
+          "task_goal": "status_lookup",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.99,
+          "escalated": true,
+          "latency_ms": 4641.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [
+              "LIVE1001"
+            ],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.736,
+          "intent_source_scores": {
+            "llm": 0.98,
+            "embedding": 0.20628424925175873,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 0.0,
+              "memory_background": 0.0,
+              "agent_execution": 4625.0
+            },
+            "llm_calls": [
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1312.0,
+                "input_tokens": 87,
+                "output_tokens": 51,
+                "cache_read_input_tokens": 2176,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 3313.0,
+                "input_tokens": 47,
+                "output_tokens": 143,
+                "cache_read_input_tokens": 2304,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 2,
+              "errors": 0,
+              "latency_ms": 4625.0,
+              "usage_reported_calls": 2,
+              "input_tokens": 134,
+              "output_tokens": 194,
+              "cache_read_input_tokens": 4480,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "external_calls": 0,
+        "tool_trace": {
+          "request_id": "361991c0-7d51-447b-a3b3-99df8a542b24",
+          "timestamp": "2026-11-19T17:42:11.468491",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "query_authorized_tracking",
+              "tool_use_id": "call_00_o4tY7PjZWeVD40UxDgoN9439",
+              "input": {
+                "order_id": "LIVE1001"
+              },
+              "success": true,
+              "result_success": false,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "订单不存在或当前用户无权查询",
+              "source": "kdniao",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": true,
+          "latency_ms": 4625.0,
+          "status": "success",
+          "retryable": false
+        }
+      }
+    ],
+    "complete": true,
+    "ticket_count": 0,
+    "external_calls": 1
+  },
+  "final_chat": {
+    "schema": 1,
+    "code_commit": "0866c0a8af4a6471f1e23f1afb160ab078d413f3",
+    "build": {
+      "source_sha256": "3041a209b86a26426c7672950dc40963ab101851e4aeffb5d24a458487f118ba",
+      "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1"
+    },
+    "scope": "Live KDniao 8002 and live models via actual ASGI chat, local ownership binding",
+    "redis": "fakeredis",
+    "business_database": "Temporary SQLite",
+    "rows": [
+      {
+        "scenario": "authorized",
+        "http_status": 200,
+        "response": {
+          "conv_id": "authorized",
+          "request_id": "cc5a855f-5d84-40f2-a5b5-09ae37130f1d",
+          "response": "已为你查询订单号 **LIVE1001** 的物流轨迹（来源：快递鸟，查询时间 2026-11-19）。\n\n目前接口已受理，但**暂未查询到任何物流轨迹**，系统没有可展示的运输或签收记录。这只能说明当前没有轨迹数据，不能据此判断是丢件、运输中还是已签收。\n\n建议你：\n1. 稍后再次查询，物流信息可能存在上传延迟；\n2. 若长时间仍无轨迹，可通过官方订单详情页或联系商家核实发货情况。\n\n需要我帮你继续查看其他问题吗？",
+          "intent": "logistics",
+          "intent_group": "query",
+          "task_goal": "status_lookup",
+          "tracking_query": {
+            "success": true,
+            "source": "kdniao",
+            "order_id": "LIVE1001",
+            "query_performed": true,
+            "queried_at": "2026-11-19T09:44:55.807029+00:00",
+            "has_traces": false,
+            "status": "no_tracking",
+            "message": "接口已受理，暂未查询到物流轨迹，不能据此判断丢件、运输中或已签收。",
+            "tracking": {
+              "state": "0",
+              "state_ex": "0",
+              "location": null,
+              "events": [],
+              "latest": null
+            }
+          },
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.99,
+          "escalated": false,
+          "latency_ms": 7922.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [
+              "LIVE1001"
+            ],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.736,
+          "intent_source_scores": {
+            "llm": 0.98,
+            "embedding": 0.20628424925175873,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 15.0,
+              "intent": 2125.0,
+              "memory_background": 0.0,
+              "agent_execution": 5766.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2110.0,
+                "input_tokens": 2,
+                "output_tokens": 47,
+                "cache_read_input_tokens": 768,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2125.0,
+                "input_tokens": 2283,
+                "output_tokens": 51,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 3313.0,
+                "input_tokens": 173,
+                "output_tokens": 127,
+                "cache_read_input_tokens": 2304,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 7548.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 2458,
+              "output_tokens": 225,
+              "cache_read_input_tokens": 3072,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "external_calls": 1,
+        "tool_trace": {
+          "request_id": "cc5a855f-5d84-40f2-a5b5-09ae37130f1d",
+          "timestamp": "2026-11-19T17:44:59.123658",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "query_authorized_tracking",
+              "tool_use_id": "call_00_lgiUSyDf816SCPQswds03391",
+              "input": {
+                "order_id": "LIVE1001"
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 328.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "kdniao",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 5766.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "scenario": "same_request_replay",
+        "http_status": 200,
+        "response": {
+          "conv_id": "authorized",
+          "request_id": "cc5a855f-5d84-40f2-a5b5-09ae37130f1d",
+          "response": "已为你查询订单号 **LIVE1001** 的物流轨迹（来源：快递鸟，查询时间 2026-11-19）。\n\n目前接口已受理，但**暂未查询到任何物流轨迹**，系统没有可展示的运输或签收记录。这只能说明当前没有轨迹数据，不能据此判断是丢件、运输中还是已签收。\n\n建议你：\n1. 稍后再次查询，物流信息可能存在上传延迟；\n2. 若长时间仍无轨迹，可通过官方订单详情页或联系商家核实发货情况。\n\n需要我帮你继续查看其他问题吗？",
+          "intent": "logistics",
+          "intent_group": "query",
+          "task_goal": "status_lookup",
+          "tracking_query": {
+            "success": true,
+            "source": "kdniao",
+            "order_id": "LIVE1001",
+            "query_performed": true,
+            "queried_at": "2026-11-19T09:44:55.807029+00:00",
+            "has_traces": false,
+            "status": "no_tracking",
+            "message": "接口已受理，暂未查询到物流轨迹，不能据此判断丢件、运输中或已签收。",
+            "tracking": {
+              "state": "0",
+              "state_ex": "0",
+              "location": null,
+              "events": [],
+              "latest": null
+            }
+          },
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.99,
+          "escalated": false,
+          "latency_ms": 7922.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [
+              "LIVE1001"
+            ],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.736,
+          "intent_source_scores": {
+            "llm": 0.98,
+            "embedding": 0.20628424925175873,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 15.0,
+              "intent": 2125.0,
+              "memory_background": 0.0,
+              "agent_execution": 5766.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2110.0,
+                "input_tokens": 2,
+                "output_tokens": 47,
+                "cache_read_input_tokens": 768,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2125.0,
+                "input_tokens": 2283,
+                "output_tokens": 51,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 3313.0,
+                "input_tokens": 173,
+                "output_tokens": 127,
+                "cache_read_input_tokens": 2304,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 7548.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 2458,
+              "output_tokens": 225,
+              "cache_read_input_tokens": 3072,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "external_calls": 0,
+        "tool_trace": {
+          "request_id": "cc5a855f-5d84-40f2-a5b5-09ae37130f1d",
+          "timestamp": "2026-11-19T17:44:59.123658",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "query_authorized_tracking",
+              "tool_use_id": "call_00_lgiUSyDf816SCPQswds03391",
+              "input": {
+                "order_id": "LIVE1001"
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 328.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "kdniao",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 5766.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "scenario": "unbound_subject",
+        "http_status": 200,
+        "response": {
+          "conv_id": "other",
+          "request_id": "3a828323-8229-4f9f-90d6-7740e430026f",
+          "response": "我帮你查了订单 LIVE1001 的物流轨迹，但系统提示该订单不存在或当前账号无权查询，因此暂时无法获取物流信息，也无法据此判断包裹状态。\n\n建议你按以下方式确认：\n\n1. 核对订单号是否输入正确（注意区分大小写和数字）。\n2. 确认该订单是否使用当前登录账号下单。\n3. 如订单无误，可前往 App 的「我的订单」页面查看物流详情，或联系人工客服进一步核验订单归属。\n\n如果你能提供下单时间或收货手机号后四位，我可以协助判断下一步该找哪个渠道处理。",
+          "intent": "logistics",
+          "intent_group": "query",
+          "task_goal": "status_lookup",
+          "tracking_query": {
+            "success": false,
+            "source": "local_order_binding",
+            "query_performed": false,
+            "error_code": "order_not_authorized",
+            "error": "订单不存在或当前用户无权查询。尚未调用外部物流接口，不能据此判断物流轨迹。"
+          },
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.99,
+          "escalated": true,
+          "latency_ms": 6500.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [
+              "LIVE1001"
+            ],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.736,
+          "intent_source_scores": {
+            "llm": 0.98,
+            "embedding": 0.20628424925175873,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 0.0,
+              "memory_background": 0.0,
+              "agent_execution": 6500.0
+            },
+            "llm_calls": [
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2453.0,
+                "input_tokens": 107,
+                "output_tokens": 51,
+                "cache_read_input_tokens": 2176,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 4047.0,
+                "input_tokens": 98,
+                "output_tokens": 128,
+                "cache_read_input_tokens": 2304,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 2,
+              "errors": 0,
+              "latency_ms": 6500.0,
+              "usage_reported_calls": 2,
+              "input_tokens": 205,
+              "output_tokens": 179,
+              "cache_read_input_tokens": 4480,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "external_calls": 0,
+        "tool_trace": {
+          "request_id": "3a828323-8229-4f9f-90d6-7740e430026f",
+          "timestamp": "2026-11-19T17:45:05.662343",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "query_authorized_tracking"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "query_authorized_tracking",
+              "tool_use_id": "call_00_KRG78Ww7QPY09Ow52TnO5388",
+              "input": {
+                "order_id": "LIVE1001"
+              },
+              "success": true,
+              "result_success": false,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "订单不存在或当前用户无权查询。尚未调用外部物流接口，不能据此判断物流轨迹。",
+              "source": "local_order_binding",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": true,
+          "latency_ms": 6500.0,
+          "status": "success",
+          "retryable": false
+        }
+      }
+    ],
+    "complete": true,
+    "ticket_count": 0,
+    "external_calls": 1
+  },
+  "total_external_calls": 3,
+  "limitations": [
+    "No trajectory was returned for the authorized shipment; a populated live response remains pending.",
+    "Order ownership is a local server-managed binding, not an external order-management system.",
+    "Redis uses a protocol substitute and the business case database is temporary SQLite.",
+    "Unauthorized assistant prose still offers unnecessary identity-field advice; structured rejection does not authorize a lookup."
+  ]
+}

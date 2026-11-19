@@ -15,9 +15,12 @@ from anthropic import AsyncAnthropic
 
 import api.main as api
 from agents import agent_orchestrator
+from agents.agent_orchestrator import AgentType, Request
 from core import intent_recognizer
 from core.concurrency import Capacity, KeyedLocks
 from core.skill_loader import SkillManager
+from core.llm_utils import model_scope
+from core.performance import collect_performance, performance_snapshot
 from evaluation.compare_rag import attach_transport_trace, model_settings
 from evaluation.prepare_rag_data import ROOT, validate, write_json
 from evaluation.provenance import build_identity, git_commit, sha256
@@ -102,6 +105,20 @@ async def replay(args):
                                 })
                                 write_json(args.output, result)
                                 print(identity, response.status_code, payload.get("agent_types"), flush=True)
+                            result["direct_general_checks"] = []
+                            for identity, message in (
+                                ("enum-explanation", "请列出并解释订单状态，已签收是什么意思？"),
+                                ("record-versus-receipt", "系统有签收记录，是否足以证明我本人收到了？"),
+                                ("preserve-user-statement", "系统显示已签收，但我本人没有拿到，能直接说我已经收货了吗？"),
+                            ):
+                                with collect_performance(), model_scope("evaluation", max_calls=3):
+                                    answer = await orch._pool[AgentType.GENERAL][0].handle(
+                                        Request(message=message, user_id="chat-evidence-user", conv_id=identity))
+                                    result["direct_general_checks"].append({
+                                        "case_id": identity, "message": message, "response": answer.content,
+                                        "success": answer.success, "status": answer.status,
+                                        "tools_used": answer.tools_used, "performance": performance_snapshot(),
+                                    })
                         service = api._logistics_service()
                         with service.connect() as db:
                             result["ticket_count"] = db.execute("SELECT count(*) FROM tickets").fetchone()[0]

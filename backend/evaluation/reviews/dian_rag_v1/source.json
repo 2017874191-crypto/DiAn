@@ -22,6 +22,18 @@
   "files": {
     "reviewer-1.csv": "a65c6b2a3b82dea1623fead82c8e81496b3ff4cfb2398d062e40b08e3f281cbd",
     "reviewer-2.csv": "a65c6b2a3b82dea1623fead82c8e81496b3ff4cfb2398d062e40b08e3f281cbd",
-    "README.md": "a3eef7af783f69a74b53441b14b3e16b35f233aa9f7d7e4ead06f229b94e25a9"
+    "README.md": "26accca428d6fd2c2a219bfc01f9c9bd3b60b26b244cfd46fd3ee737ddc3b5a0",
+    "codex-initial-review.csv": "27b0b880db1d58ad25e352d1ca55638fbe7c74649283cdb4cf9d4182b3475cce",
+    "codex-review-notes.md": "4354376ba0eca9a4bc1ec1e6954b98d26880a9a6818a24bf0febaefb70cdf2bc"
+  },
+  "assisted_review": {
+    "status": "completed",
+    "file": "codex-initial-review.csv",
+    "reviewer": "Codex",
+    "method": "Model-assisted initial review informed by original drafts and complete frozen corpus",
+    "independent_human_reviews": 0,
+    "answerable": 25,
+    "uncertain": 2,
+    "unanswerable": 3
   }
 }

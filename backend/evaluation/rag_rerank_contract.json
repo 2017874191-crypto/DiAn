@@ -1,0 +1,3015 @@
+{
+  "schema": 1,
+  "scope": "public development subset, paired ranking-output contract experiment",
+  "code_commit": "b436ec8f0f83207a316f2fc96e29eb50822836f7",
+  "build": {
+    "source_sha256": "21c2a61af3a1a309b50d31d577652c4f9594b1ea10cc1c4c8adfac7da3f9c9db",
+    "dependencies_sha256": "bf4f1fc4a631105acdfbea07f9b64e02e203b90bb4fdd0cfb7aace2b0a467ffa",
+    "python": "3.11.9",
+    "system": "Windows",
+    "architecture": "AMD64",
+    "sqlite": "3.45.1"
+  },
+  "dataset_manifest": {
+    "schema": 1,
+    "source": {
+      "dataset": "miracl/miracl",
+      "language": "zh",
+      "upstream_split": "train",
+      "revision": "ad2acf33f265b8fba92e5096c9d2cf569a82b067",
+      "url": "https://huggingface.co/datasets/miracl/miracl/resolve/ad2acf33f265b8fba92e5096c9d2cf569a82b067/zh/train/0000.parquet",
+      "sha256": "56798d5cbc601a6f1fa8df72f37ef37c4f26911e0cbc42d5b26d04cc43731f1e",
+      "seed": "dian-a3-v1",
+      "selection": "first N by sha256(seed + query_id); union of their positive and negative passages",
+      "scope": "shared judged-pool subset; unjudged cross-query passages remain unjudged",
+      "dataset_card_license": "Apache-2.0",
+      "text_origin": "Chinese Wikipedia passages"
+    },
+    "documents": 299,
+    "queries": 30,
+    "files": {
+      "corpus.json": "d1e46d4b9c088f581a60f39732e54d40c8f40d12b302fb5792b8aa768e39b71c",
+      "queries.json": "1b08accc36aae420b807ba27a3756ba7de3c25c5e18a2ba7c6da2e04c4a88e2a"
+    }
+  },
+  "dataset_manifest_sha256": "bb42e6f46bb2811a98865d25ff7c106386dab10a02bb1f4e8bc84b3e7f00b4b8",
+  "model": "deepseek-v4-pro",
+  "model_endpoint_sha256": "ea7317d8ad8d16a0c41546bee4303d2df82d7717218756462e46678a1dd12dc9",
+  "configuration_source": {
+    "kind": "project_dotenv",
+    "shadowed_environment_fields": [
+      "ANTHROPIC_BASE_URL"
+    ]
+  },
+  "rounds": 3,
+  "selected_query_ids": [
+    "6848799#0",
+    "2958414#0",
+    "7278041#0",
+    "595540#0",
+    "334679#0",
+    "3425282#0",
+    "740457#0",
+    "5182332#0"
+  ],
+  "embedding": {
+    "name": "Chroma default all-MiniLM-L6-v2",
+    "model_files": {
+      "onnx.tar.gz": "913d7300ceae3b2dbc2c50d1de4baacab4be7b9380491c27fab7418616a16ec3",
+      "config.json": "b567c7d5a55b636c95186aaf993f9a8920842b7e05a9e703e68b23cab2c3a670",
+      "model.onnx": "4f148ba8ae9c2c7fbee4af2b132db8d06c6a6545b47fc83bbb98c3d22b8393e6",
+      "special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+      "tokenizer.json": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0",
+      "tokenizer_config.json": "7702051bbc4953b94d47fa1d61b42ed4cbb3c71b501a8dd7183a823f8bea1f20",
+      "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  },
+  "model_transport": {
+    "network": "direct",
+    "shared_client": true,
+    "sdk_retries": 0
+  },
+  "controls": {
+    "candidate_pool": 5,
+    "top_k": 3,
+    "temperature": 0,
+    "max_tokens": 2048,
+    "prompt_only_change": true,
+    "parser_shared": true,
+    "alternating_order": true,
+    "rewrite": false,
+    "per_arm_model_budget": 1
+  },
+  "complete": true,
+  "rows": [
+    {
+      "round": 1,
+      "query_id": "6848799#0",
+      "arm": "legacy",
+      "reranked": false,
+      "candidate_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0",
+        "3536631#1",
+        "3536631#0"
+      ],
+      "candidate_sha256": "47ce926a039859794c30d24d0b5aee60d06b0a033efc66911e8c23c5a9c9d8a9",
+      "ranked_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "de59fa3b1e66a900cd56c9a846ce9b3382f03554d52b4ccc2d91d2c724e7be45",
+      "response_text": "[]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1016.0,
+            "input_tokens": 119,
+            "output_tokens": 1,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "model_tcp_connected": 1,
+          "model_direct_tls_connected": 1,
+          "rag_rerank_fallback_empty_order": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1016.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 119,
+          "output_tokens": 1,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "6848799#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0",
+        "3536631#1",
+        "3536631#0"
+      ],
+      "candidate_sha256": "47ce926a039859794c30d24d0b5aee60d06b0a033efc66911e8c23c5a9c9d8a9",
+      "ranked_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "c1a7f9eab614c1f8a57c19c3ba9f6d4d9eb78d797516dc4dea4d5ea753da13e4",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1063.0,
+            "input_tokens": 678,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1063.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 678,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "2958414#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1",
+        "7639955#2",
+        "3631660#24"
+      ],
+      "candidate_sha256": "c4bbf717ba43bfbe0446bc63389845419a4e53d085948f7ff3dede369fe778cd",
+      "ranked_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "fa20b4b78a6b212b1f94f124f4b761cf162632d712778e2f828ef819808be253",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1047.0,
+            "input_tokens": 711,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1047.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 711,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "2958414#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1",
+        "7639955#2",
+        "3631660#24"
+      ],
+      "candidate_sha256": "c4bbf717ba43bfbe0446bc63389845419a4e53d085948f7ff3dede369fe778cd",
+      "ranked_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "7f1ccf9f64de9df6e818ce401872c6751422e985a01288a966480ed6d8401e17",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1000.0,
+            "input_tokens": 25,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1000.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 25,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "7278041#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2",
+        "1367770#0",
+        "5465792#41"
+      ],
+      "candidate_sha256": "41330d1cc34e22ee269f58dae02842d9fbcde83079c4a3842ab10b8439a0e8cc",
+      "ranked_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "28ae7b74732f91e724c1fcfeae56ab432a48a34e061e5f4ce2280257ec6dc2e7",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1094.0,
+            "input_tokens": 14,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1094.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 14,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "7278041#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2",
+        "1367770#0",
+        "5465792#41"
+      ],
+      "candidate_sha256": "41330d1cc34e22ee269f58dae02842d9fbcde83079c4a3842ab10b8439a0e8cc",
+      "ranked_ids": [
+        "7560494#1",
+        "7572643#1",
+        "1367770#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "9125c19d7aa4bbb7703bdff2fc62913ea47c023d3177ec2d72f5cbaa34bbf82f",
+      "response_text": "[0, 1, 3, 2, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 891.0,
+            "input_tokens": 700,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 891.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 700,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "595540#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "5921748#6",
+        "26508#47",
+        "2894247#1",
+        "4507669#2",
+        "3297566#2"
+      ],
+      "candidate_sha256": "cf4af4739d1fc57dca4ec089cdbd2e31a58f54eb5505deb4c2907fdfe5a54478",
+      "ranked_ids": [
+        "2894247#1",
+        "5921748#6",
+        "4507669#2"
+      ],
+      "metrics": {
+        "recall": 0.25,
+        "ndcg": 0.23463936301137822,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "365300ab886bd59851d940db307d9c402fcaf4ce92176154eab6b912e30e80ca",
+      "response_text": "[2, 0, 3, 1, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 937.0,
+            "input_tokens": 634,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 937.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 634,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "595540#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "5921748#6",
+        "26508#47",
+        "2894247#1",
+        "4507669#2",
+        "3297566#2"
+      ],
+      "candidate_sha256": "cf4af4739d1fc57dca4ec089cdbd2e31a58f54eb5505deb4c2907fdfe5a54478",
+      "ranked_ids": [
+        "2894247#1",
+        "5921748#6",
+        "4507669#2"
+      ],
+      "metrics": {
+        "recall": 0.25,
+        "ndcg": 0.23463936301137822,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "2964bcf28c749fbd26d93a325036967b41cce2d57f9d2b74f7d2466814825988",
+      "response_text": "[2, 0, 3, 1, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 953.0,
+            "input_tokens": 76,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 953.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 76,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "334679#0",
+      "arm": "legacy",
+      "reranked": false,
+      "candidate_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2",
+        "322242#2",
+        "90469#8"
+      ],
+      "candidate_sha256": "291597971418f08cc560b9c03f858162193b82a5e7b10a009bd459d7f33857cc",
+      "ranked_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "fce56760027c003a50d353037de604bd4dd2d27bf7e2aa7640ec72669f5bfc79",
+      "response_text": "```json\n[]\n```",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 938.0,
+            "input_tokens": 101,
+            "output_tokens": 5,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_fallback_empty_order": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 938.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 101,
+          "output_tokens": 5,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "334679#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2",
+        "322242#2",
+        "90469#8"
+      ],
+      "candidate_sha256": "291597971418f08cc560b9c03f858162193b82a5e7b10a009bd459d7f33857cc",
+      "ranked_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "77d38782929274d579644dc058d9b214b56439c934df60666558d3185bb3c26c",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1000.0,
+            "input_tokens": 659,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1000.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 659,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "3425282#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "18501#12",
+        "183250#9",
+        "746377#9",
+        "78913#58",
+        "334679#0"
+      ],
+      "candidate_sha256": "752f612584bc6ad02d19819e1c6850efdd6b6d14d0207493de1f13bebc35e304",
+      "ranked_ids": [
+        "746377#9",
+        "18501#12",
+        "183250#9"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.6131471927654584,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "6b7480e53ca87be514c2d371ba253bf72164989bccd4ff660cdb0361c2bf2156",
+      "response_text": "[2, 0, 1, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 954.0,
+            "input_tokens": 680,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 954.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 680,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "3425282#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "18501#12",
+        "183250#9",
+        "746377#9",
+        "78913#58",
+        "334679#0"
+      ],
+      "candidate_sha256": "752f612584bc6ad02d19819e1c6850efdd6b6d14d0207493de1f13bebc35e304",
+      "ranked_ids": [
+        "746377#9",
+        "18501#12",
+        "183250#9"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.6131471927654584,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "1906e383bcea2afd8b2a186242fa6c9c8891eabcfca1b7b70fc03a2e1bd2bb16",
+      "response_text": "[2, 0, 1, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1062.0,
+            "input_tokens": 122,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1062.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 122,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "740457#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "7639955#2",
+        "164834#10",
+        "1629838#0",
+        "1473006#6",
+        "248138#14"
+      ],
+      "candidate_sha256": "30f0363d1682bd58da7d734b81b0b1728096acb01ab4673c38b1cbfe547fbc01",
+      "ranked_ids": [
+        "248138#14",
+        "7639955#2",
+        "164834#10"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.6666666666666666
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "47528c63ae74f745ac1c56291cea34cb7f2ab29b48c75de3d797d0455a8f6566",
+      "response_text": "[4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 953.0,
+            "input_tokens": 103,
+            "output_tokens": 3,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_repaired": 1,
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 953.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 103,
+          "output_tokens": 3,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "740457#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "7639955#2",
+        "164834#10",
+        "1629838#0",
+        "1473006#6",
+        "248138#14"
+      ],
+      "candidate_sha256": "30f0363d1682bd58da7d734b81b0b1728096acb01ab4673c38b1cbfe547fbc01",
+      "ranked_ids": [
+        "248138#14",
+        "7639955#2",
+        "164834#10"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.6666666666666666
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "b12e987a1deef8faf065b878dcfc7d9f86c36b8759ab20402851858ab20b0ca8",
+      "response_text": "[4, 0, 1, 2, 3]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1187.0,
+            "input_tokens": 661,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1187.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 661,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "5182332#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "140682#0",
+        "3536631#1",
+        "6324117#4",
+        "1863413#0",
+        "26508#47"
+      ],
+      "candidate_sha256": "e417e341e5ce82951c3873eefa50aad06ddbf293b3454a8685580a40bd0b235f",
+      "ranked_ids": [
+        "140682#0",
+        "1863413#0",
+        "26508#47"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "97eba9dd0e7045b2c0914d6685371e634fe404ef20d5b936f9afb38c4ae353f1",
+      "response_text": "[0, 3, 4, 2, 1]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1125.0,
+            "input_tokens": 660,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1125.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 660,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "query_id": "5182332#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "140682#0",
+        "3536631#1",
+        "6324117#4",
+        "1863413#0",
+        "26508#47"
+      ],
+      "candidate_sha256": "e417e341e5ce82951c3873eefa50aad06ddbf293b3454a8685580a40bd0b235f",
+      "ranked_ids": [
+        "1863413#0",
+        "26508#47",
+        "140682#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "19630628934f1bd08584c694ca776206154cdbffd0f18a2ece6750afda1e514e",
+      "response_text": "[3, 4, 0, 1, 2]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 938.0,
+            "input_tokens": 102,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 938.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 102,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "6848799#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0",
+        "3536631#1",
+        "3536631#0"
+      ],
+      "candidate_sha256": "47ce926a039859794c30d24d0b5aee60d06b0a033efc66911e8c23c5a9c9d8a9",
+      "ranked_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "c1a7f9eab614c1f8a57c19c3ba9f6d4d9eb78d797516dc4dea4d5ea753da13e4",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1125.0,
+            "input_tokens": 38,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1125.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 38,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "6848799#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0",
+        "3536631#1",
+        "3536631#0"
+      ],
+      "candidate_sha256": "47ce926a039859794c30d24d0b5aee60d06b0a033efc66911e8c23c5a9c9d8a9",
+      "ranked_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "de59fa3b1e66a900cd56c9a846ce9b3382f03554d52b4ccc2d91d2c724e7be45",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 579.0,
+            "input_tokens": 119,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 579.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 119,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "2958414#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1",
+        "7639955#2",
+        "3631660#24"
+      ],
+      "candidate_sha256": "c4bbf717ba43bfbe0446bc63389845419a4e53d085948f7ff3dede369fe778cd",
+      "ranked_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "7f1ccf9f64de9df6e818ce401872c6751422e985a01288a966480ed6d8401e17",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 937.0,
+            "input_tokens": 25,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 937.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 25,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "2958414#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1",
+        "7639955#2",
+        "3631660#24"
+      ],
+      "candidate_sha256": "c4bbf717ba43bfbe0446bc63389845419a4e53d085948f7ff3dede369fe778cd",
+      "ranked_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "fa20b4b78a6b212b1f94f124f4b761cf162632d712778e2f828ef819808be253",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 969.0,
+            "input_tokens": 71,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 969.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 71,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "7278041#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2",
+        "1367770#0",
+        "5465792#41"
+      ],
+      "candidate_sha256": "41330d1cc34e22ee269f58dae02842d9fbcde83079c4a3842ab10b8439a0e8cc",
+      "ranked_ids": [
+        "7560494#1",
+        "7572643#1",
+        "1367770#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "9125c19d7aa4bbb7703bdff2fc62913ea47c023d3177ec2d72f5cbaa34bbf82f",
+      "response_text": "[0, 1, 3, 2, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1063.0,
+            "input_tokens": 60,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1063.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 60,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "7278041#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2",
+        "1367770#0",
+        "5465792#41"
+      ],
+      "candidate_sha256": "41330d1cc34e22ee269f58dae02842d9fbcde83079c4a3842ab10b8439a0e8cc",
+      "ranked_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "28ae7b74732f91e724c1fcfeae56ab432a48a34e061e5f4ce2280257ec6dc2e7",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 937.0,
+            "input_tokens": 14,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 937.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 14,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "595540#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "5921748#6",
+        "26508#47",
+        "2894247#1",
+        "4507669#2",
+        "3297566#2"
+      ],
+      "candidate_sha256": "cf4af4739d1fc57dca4ec089cdbd2e31a58f54eb5505deb4c2907fdfe5a54478",
+      "ranked_ids": [
+        "2894247#1",
+        "5921748#6",
+        "4507669#2"
+      ],
+      "metrics": {
+        "recall": 0.25,
+        "ndcg": 0.23463936301137822,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "2964bcf28c749fbd26d93a325036967b41cce2d57f9d2b74f7d2466814825988",
+      "response_text": "[2, 0, 3, 1, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 922.0,
+            "input_tokens": 76,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 922.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 76,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "595540#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "5921748#6",
+        "26508#47",
+        "2894247#1",
+        "4507669#2",
+        "3297566#2"
+      ],
+      "candidate_sha256": "cf4af4739d1fc57dca4ec089cdbd2e31a58f54eb5505deb4c2907fdfe5a54478",
+      "ranked_ids": [
+        "2894247#1",
+        "5921748#6",
+        "4507669#2"
+      ],
+      "metrics": {
+        "recall": 0.25,
+        "ndcg": 0.23463936301137822,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "365300ab886bd59851d940db307d9c402fcaf4ce92176154eab6b912e30e80ca",
+      "response_text": "[2, 0, 3, 1, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 672.0,
+            "input_tokens": 122,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 672.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 122,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "334679#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2",
+        "322242#2",
+        "90469#8"
+      ],
+      "candidate_sha256": "291597971418f08cc560b9c03f858162193b82a5e7b10a009bd459d7f33857cc",
+      "ranked_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "77d38782929274d579644dc058d9b214b56439c934df60666558d3185bb3c26c",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1172.0,
+            "input_tokens": 19,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1172.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 19,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "334679#0",
+      "arm": "legacy",
+      "reranked": false,
+      "candidate_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2",
+        "322242#2",
+        "90469#8"
+      ],
+      "candidate_sha256": "291597971418f08cc560b9c03f858162193b82a5e7b10a009bd459d7f33857cc",
+      "ranked_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "fce56760027c003a50d353037de604bd4dd2d27bf7e2aa7640ec72669f5bfc79",
+      "response_text": "[]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 609.0,
+            "input_tokens": 101,
+            "output_tokens": 1,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_fallback_empty_order": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 609.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 101,
+          "output_tokens": 1,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "3425282#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "18501#12",
+        "183250#9",
+        "746377#9",
+        "78913#58",
+        "334679#0"
+      ],
+      "candidate_sha256": "752f612584bc6ad02d19819e1c6850efdd6b6d14d0207493de1f13bebc35e304",
+      "ranked_ids": [
+        "746377#9",
+        "18501#12",
+        "183250#9"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.6131471927654584,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "1906e383bcea2afd8b2a186242fa6c9c8891eabcfca1b7b70fc03a2e1bd2bb16",
+      "response_text": "[2, 0, 1, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 828.0,
+            "input_tokens": 122,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 828.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 122,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "3425282#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "18501#12",
+        "183250#9",
+        "746377#9",
+        "78913#58",
+        "334679#0"
+      ],
+      "candidate_sha256": "752f612584bc6ad02d19819e1c6850efdd6b6d14d0207493de1f13bebc35e304",
+      "ranked_ids": [
+        "746377#9",
+        "18501#12",
+        "183250#9"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.6131471927654584,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "6b7480e53ca87be514c2d371ba253bf72164989bccd4ff660cdb0361c2bf2156",
+      "response_text": "[2, 0, 1, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1079.0,
+            "input_tokens": 40,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1079.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 40,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "740457#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "7639955#2",
+        "164834#10",
+        "1629838#0",
+        "1473006#6",
+        "248138#14"
+      ],
+      "candidate_sha256": "30f0363d1682bd58da7d734b81b0b1728096acb01ab4673c38b1cbfe547fbc01",
+      "ranked_ids": [
+        "248138#14",
+        "7639955#2",
+        "164834#10"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.6666666666666666
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "b12e987a1deef8faf065b878dcfc7d9f86c36b8759ab20402851858ab20b0ca8",
+      "response_text": "[4, 0, 1, 2, 3]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 922.0,
+            "input_tokens": 21,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 922.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 21,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "740457#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "7639955#2",
+        "164834#10",
+        "1629838#0",
+        "1473006#6",
+        "248138#14"
+      ],
+      "candidate_sha256": "30f0363d1682bd58da7d734b81b0b1728096acb01ab4673c38b1cbfe547fbc01",
+      "ranked_ids": [
+        "248138#14",
+        "7639955#2",
+        "164834#10"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.6666666666666666
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "47528c63ae74f745ac1c56291cea34cb7f2ab29b48c75de3d797d0455a8f6566",
+      "response_text": "[4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 984.0,
+            "input_tokens": 103,
+            "output_tokens": 3,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_repaired": 1,
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 984.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 103,
+          "output_tokens": 3,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "5182332#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "140682#0",
+        "3536631#1",
+        "6324117#4",
+        "1863413#0",
+        "26508#47"
+      ],
+      "candidate_sha256": "e417e341e5ce82951c3873eefa50aad06ddbf293b3454a8685580a40bd0b235f",
+      "ranked_ids": [
+        "1863413#0",
+        "26508#47",
+        "140682#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "19630628934f1bd08584c694ca776206154cdbffd0f18a2ece6750afda1e514e",
+      "response_text": "[3, 4, 0, 1, 2]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1094.0,
+            "input_tokens": 102,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1094.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 102,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "query_id": "5182332#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "140682#0",
+        "3536631#1",
+        "6324117#4",
+        "1863413#0",
+        "26508#47"
+      ],
+      "candidate_sha256": "e417e341e5ce82951c3873eefa50aad06ddbf293b3454a8685580a40bd0b235f",
+      "ranked_ids": [
+        "140682#0",
+        "1863413#0",
+        "26508#47"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "97eba9dd0e7045b2c0914d6685371e634fe404ef20d5b936f9afb38c4ae353f1",
+      "response_text": "[0, 3, 4, 2, 1]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 640.0,
+            "input_tokens": 20,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 640.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 20,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "6848799#0",
+      "arm": "legacy",
+      "reranked": false,
+      "candidate_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0",
+        "3536631#1",
+        "3536631#0"
+      ],
+      "candidate_sha256": "47ce926a039859794c30d24d0b5aee60d06b0a033efc66911e8c23c5a9c9d8a9",
+      "ranked_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "de59fa3b1e66a900cd56c9a846ce9b3382f03554d52b4ccc2d91d2c724e7be45",
+      "response_text": "[]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 875.0,
+            "input_tokens": 119,
+            "output_tokens": 1,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_fallback_empty_order": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 875.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 119,
+          "output_tokens": 1,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "6848799#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0",
+        "3536631#1",
+        "3536631#0"
+      ],
+      "candidate_sha256": "47ce926a039859794c30d24d0b5aee60d06b0a033efc66911e8c23c5a9c9d8a9",
+      "ranked_ids": [
+        "6263356#9",
+        "984601#0",
+        "3314042#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "c1a7f9eab614c1f8a57c19c3ba9f6d4d9eb78d797516dc4dea4d5ea753da13e4",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 969.0,
+            "input_tokens": 38,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 969.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 38,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "2958414#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1",
+        "7639955#2",
+        "3631660#24"
+      ],
+      "candidate_sha256": "c4bbf717ba43bfbe0446bc63389845419a4e53d085948f7ff3dede369fe778cd",
+      "ranked_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "fa20b4b78a6b212b1f94f124f4b761cf162632d712778e2f828ef819808be253",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 954.0,
+            "input_tokens": 71,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 954.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 71,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "2958414#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1",
+        "7639955#2",
+        "3631660#24"
+      ],
+      "candidate_sha256": "c4bbf717ba43bfbe0446bc63389845419a4e53d085948f7ff3dede369fe778cd",
+      "ranked_ids": [
+        "5836#0",
+        "1086255#0",
+        "5383148#1"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "7f1ccf9f64de9df6e818ce401872c6751422e985a01288a966480ed6d8401e17",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 672.0,
+            "input_tokens": 25,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 672.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 25,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "7278041#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2",
+        "1367770#0",
+        "5465792#41"
+      ],
+      "candidate_sha256": "41330d1cc34e22ee269f58dae02842d9fbcde83079c4a3842ab10b8439a0e8cc",
+      "ranked_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "28ae7b74732f91e724c1fcfeae56ab432a48a34e061e5f4ce2280257ec6dc2e7",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 891.0,
+            "input_tokens": 14,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 891.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 14,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "7278041#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "7560494#1",
+        "7572643#1",
+        "7639955#2",
+        "1367770#0",
+        "5465792#41"
+      ],
+      "candidate_sha256": "41330d1cc34e22ee269f58dae02842d9fbcde83079c4a3842ab10b8439a0e8cc",
+      "ranked_ids": [
+        "7560494#1",
+        "7572643#1",
+        "1367770#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "9125c19d7aa4bbb7703bdff2fc62913ea47c023d3177ec2d72f5cbaa34bbf82f",
+      "response_text": "[0, 1, 3, 2, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 703.0,
+            "input_tokens": 60,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 703.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 60,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "595540#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "5921748#6",
+        "26508#47",
+        "2894247#1",
+        "4507669#2",
+        "3297566#2"
+      ],
+      "candidate_sha256": "cf4af4739d1fc57dca4ec089cdbd2e31a58f54eb5505deb4c2907fdfe5a54478",
+      "ranked_ids": [
+        "2894247#1",
+        "5921748#6",
+        "4507669#2"
+      ],
+      "metrics": {
+        "recall": 0.25,
+        "ndcg": 0.23463936301137822,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "365300ab886bd59851d940db307d9c402fcaf4ce92176154eab6b912e30e80ca",
+      "response_text": "[2, 0, 3, 1, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 516.0,
+            "input_tokens": 122,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 516.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 122,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "595540#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "5921748#6",
+        "26508#47",
+        "2894247#1",
+        "4507669#2",
+        "3297566#2"
+      ],
+      "candidate_sha256": "cf4af4739d1fc57dca4ec089cdbd2e31a58f54eb5505deb4c2907fdfe5a54478",
+      "ranked_ids": [
+        "2894247#1",
+        "5921748#6",
+        "4507669#2"
+      ],
+      "metrics": {
+        "recall": 0.25,
+        "ndcg": 0.23463936301137822,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "2964bcf28c749fbd26d93a325036967b41cce2d57f9d2b74f7d2466814825988",
+      "response_text": "[2, 0, 3, 1, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 922.0,
+            "input_tokens": 76,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 922.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 76,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "334679#0",
+      "arm": "legacy",
+      "reranked": false,
+      "candidate_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2",
+        "322242#2",
+        "90469#8"
+      ],
+      "candidate_sha256": "291597971418f08cc560b9c03f858162193b82a5e7b10a009bd459d7f33857cc",
+      "ranked_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "fce56760027c003a50d353037de604bd4dd2d27bf7e2aa7640ec72669f5bfc79",
+      "response_text": "[]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 843.0,
+            "input_tokens": 101,
+            "output_tokens": 1,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_fallback_empty_order": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 843.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 101,
+          "output_tokens": 1,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "334679#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2",
+        "322242#2",
+        "90469#8"
+      ],
+      "candidate_sha256": "291597971418f08cc560b9c03f858162193b82a5e7b10a009bd459d7f33857cc",
+      "ranked_ids": [
+        "1817593#1",
+        "5465792#41",
+        "186201#2"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "77d38782929274d579644dc058d9b214b56439c934df60666558d3185bb3c26c",
+      "response_text": "[0, 1, 2, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1000.0,
+            "input_tokens": 19,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1000.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 19,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "3425282#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "18501#12",
+        "183250#9",
+        "746377#9",
+        "78913#58",
+        "334679#0"
+      ],
+      "candidate_sha256": "752f612584bc6ad02d19819e1c6850efdd6b6d14d0207493de1f13bebc35e304",
+      "ranked_ids": [
+        "746377#9",
+        "18501#12",
+        "183250#9"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.6131471927654584,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "6b7480e53ca87be514c2d371ba253bf72164989bccd4ff660cdb0361c2bf2156",
+      "response_text": "[2, 0, 1, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 937.0,
+            "input_tokens": 40,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 937.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 40,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "3425282#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "18501#12",
+        "183250#9",
+        "746377#9",
+        "78913#58",
+        "334679#0"
+      ],
+      "candidate_sha256": "752f612584bc6ad02d19819e1c6850efdd6b6d14d0207493de1f13bebc35e304",
+      "ranked_ids": [
+        "746377#9",
+        "18501#12",
+        "183250#9"
+      ],
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.6131471927654584,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.3065735963827292,
+        "unjudged_fraction": 0.3333333333333333
+      },
+      "prompt_sha256": "1906e383bcea2afd8b2a186242fa6c9c8891eabcfca1b7b70fc03a2e1bd2bb16",
+      "response_text": "[2, 0, 1, 3, 4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1079.0,
+            "input_tokens": 122,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1079.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 122,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "740457#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "7639955#2",
+        "164834#10",
+        "1629838#0",
+        "1473006#6",
+        "248138#14"
+      ],
+      "candidate_sha256": "30f0363d1682bd58da7d734b81b0b1728096acb01ab4673c38b1cbfe547fbc01",
+      "ranked_ids": [
+        "248138#14",
+        "7639955#2",
+        "164834#10"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.6666666666666666
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "47528c63ae74f745ac1c56291cea34cb7f2ab29b48c75de3d797d0455a8f6566",
+      "response_text": "[4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 969.0,
+            "input_tokens": 103,
+            "output_tokens": 3,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_repaired": 1,
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 969.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 103,
+          "output_tokens": 3,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "740457#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "7639955#2",
+        "164834#10",
+        "1629838#0",
+        "1473006#6",
+        "248138#14"
+      ],
+      "candidate_sha256": "30f0363d1682bd58da7d734b81b0b1728096acb01ab4673c38b1cbfe547fbc01",
+      "ranked_ids": [
+        "248138#14",
+        "7639955#2",
+        "164834#10"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 0.6666666666666666
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "b12e987a1deef8faf065b878dcfc7d9f86c36b8759ab20402851858ab20b0ca8",
+      "response_text": "[4, 0, 1, 2, 3]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 922.0,
+            "input_tokens": 21,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 922.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 21,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "5182332#0",
+      "arm": "current",
+      "reranked": true,
+      "candidate_ids": [
+        "140682#0",
+        "3536631#1",
+        "6324117#4",
+        "1863413#0",
+        "26508#47"
+      ],
+      "candidate_sha256": "e417e341e5ce82951c3873eefa50aad06ddbf293b3454a8685580a40bd0b235f",
+      "ranked_ids": [
+        "140682#0",
+        "1863413#0",
+        "26508#47"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "97eba9dd0e7045b2c0914d6685371e634fe404ef20d5b936f9afb38c4ae353f1",
+      "response_text": "[0, 3, 4, 2, 1]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1047.0,
+            "input_tokens": 20,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 640,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1047.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 20,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 640,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "query_id": "5182332#0",
+      "arm": "legacy",
+      "reranked": true,
+      "candidate_ids": [
+        "140682#0",
+        "3536631#1",
+        "6324117#4",
+        "1863413#0",
+        "26508#47"
+      ],
+      "candidate_sha256": "e417e341e5ce82951c3873eefa50aad06ddbf293b3454a8685580a40bd0b235f",
+      "ranked_ids": [
+        "1863413#0",
+        "26508#47",
+        "140682#0"
+      ],
+      "metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.0,
+        "ndcg": 0.0,
+        "unjudged_fraction": 1.0
+      },
+      "prompt_sha256": "19630628934f1bd08584c694ca776206154cdbffd0f18a2ece6750afda1e514e",
+      "response_text": "[3, 4, 0, 1, 2]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1266.0,
+            "input_tokens": 102,
+            "output_tokens": 15,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1266.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 102,
+          "output_tokens": 15,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    }
+  ],
+  "summary": {
+    "legacy": {
+      "cases": 24,
+      "model_calls": 24,
+      "model_errors": 0,
+      "accepted": 19,
+      "complete_without_repair": 16,
+      "events": {
+        "model_tcp_connected": 1,
+        "model_direct_tls_connected": 1,
+        "rag_rerank_fallback_empty_order": 5,
+        "rag_rerank_accepted": 19,
+        "rag_rerank_repaired": 3
+      },
+      "mean_recall_at_3": 0.15625,
+      "mean_ndcg_at_3": 0.14429501901994574
+    },
+    "current": {
+      "cases": 24,
+      "model_calls": 24,
+      "model_errors": 0,
+      "accepted": 24,
+      "complete_without_repair": 24,
+      "events": {
+        "rag_rerank_accepted": 24
+      },
+      "mean_recall_at_3": 0.15625,
+      "mean_ndcg_at_3": 0.14429501901994574
+    }
+  },
+  "verification": {
+    "same_manifest_as_connection_replay": true,
+    "same_embedding_files": true,
+    "same_candidate_ids_as_previous_rerank": true,
+    "paired_candidate_sha256_equal": true,
+    "legacy_template_matches_cc107f2_source": true,
+    "current_all_indices_valid_without_repair": true,
+    "limitations": [
+      "Eight development questions repeated three times; no independent held-out quality conclusion.",
+      "Historic seven responses unavailable; fresh reproduction identifies an observed failure mechanism.",
+      "Independent diagnostic and paired runs share candidate IDs; one question has a differing full prompt hash across runs. Only within-run pairs are asserted byte-identical in candidate input.",
+      "Forced ranking of unrelated candidates does not establish answerability or sufficient evidence."
+    ]
+  }
+}

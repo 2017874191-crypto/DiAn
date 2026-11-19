@@ -48,3 +48,5 @@ python -m evaluation.compare_rag --rounds 3 --limit 8 --output data/rag-a3/conne
 模型回复成功与重排解析通过分别统计。本轮 `rerank` 组 24 次请求中 7 次输出未通过原有重排接受条件，已走原排序回退，逐条列在公开结果的 `connection_acceptance.ranking_output_fallbacks`。完整组和深召回重排组各 24 次实际重排通过。连接验收通过，重排输出契约继续需要独立分析。
 
 [脱敏连接诊断](../evaluation/rag_connection_diagnosis.json)记录共享代理 6/6、新建代理 4/6、新建直连 8/8 的请求，以及实际失败阶段。[三轮逐组复跑](../evaluation/rag_connection_fixed.json)保存 120 次模型调用、传输事件、七条解析回退和检索指标。八题重复运行仍是开发侧验证，业务草稿继续待人工复核。
+
+后续[重排输出契约修复验收](DiAn-A3重排输出契约修复验收.md)完成了空数组复现、提示词配对与六组集成验证。旧结果作为当时的观测保留，新一轮完整索引输出通过率提高，相关性指标没有观察到提升。

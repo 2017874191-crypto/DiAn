@@ -42,7 +42,7 @@ python -m pytest -q tests/test_rag_evaluation.py tests/test_tool_manager.py test
 python -m evaluation.compare_rag --env-file .env --rounds 1 --limit 8 --output data/rag-a3/smoke.json
 ```
 
-公开实验初步验证后，可使用新的输出路径运行 `--rounds 5 --limit 30`。当前评测默认选择项目 `.env` 中的模型配置并直连，可通过 `--env-file` 指定其他文件，或通过 `--network system` 使用系统代理。后续修复见[模型连接故障修复验收](DiAn-A3模型连接故障修复验收.md)。模型及向量检索配置由报告记录。修改业务草稿会改变快照，应保留版本与复核记录。准备器拒绝覆盖内容不同的已有语料或标注，修订时使用新的目录。
+公开实验初步验证后，可使用新的输出路径运行 `--rounds 5 --limit 30`。当前评测默认选择项目 `.env` 中的模型配置并直连，可通过 `--env-file` 指定其他文件，或通过 `--network system` 使用系统代理。后续修复见[模型连接故障修复验收](DiAn-A3模型连接故障修复验收.md)与[重排输出契约修复验收](DiAn-A3重排输出契约修复验收.md)。模型及向量检索配置由报告记录。修改业务草稿会改变快照，应保留版本与复核记录。准备器拒绝覆盖内容不同的已有语料或标注，修订时使用新的目录。
 
 ## 2026-11-18 最小运行结果
 

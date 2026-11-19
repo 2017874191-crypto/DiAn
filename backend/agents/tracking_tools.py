@@ -21,7 +21,11 @@ def build_tracking_tools(provider=None):
     return {"query_authorized_tracking": AgentToolSpec(
         name="query_authorized_tracking",
         description="只读查询当前用户已绑定订单的外部物流轨迹；输入订单号。回复注明来源和查询时间。"
-                    "归属拒绝时尚未查询外部接口，不能推断物流状态。不能查询退款、账户状态或执行业务操作。",
+                    "归属拒绝只做了本地校验，尚未查询外部接口，不得称已查物流；仅建议核对订单号、账号或由服务端核实归属，"
+                    "不得索取电话尾号等无法解除归属限制的信息。超时只表示未取得结果，不能推断物流状态，"
+                    "请用户稍后主动发起新查询，不得承诺或提议后台自动重试、定时查询。"
+                    "模拟或历史回放必须注明 query_mode 对应来源，不得称本次真实查询，未提供 queried_at 不得编造查询时间。"
+                    "不能查询退款、账户状态或执行业务操作。",
         input_schema={"type": "object", "properties": {"order_id": {"type": "string", "minLength": 1}},
                       "required": ["order_id"], "additionalProperties": False},
         handler=lookup, allowed_agents=("general",), capabilities=("status_lookup:logistics",),

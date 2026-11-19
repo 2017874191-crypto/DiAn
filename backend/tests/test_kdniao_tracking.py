@@ -66,7 +66,9 @@ def test_tracking_and_failure_outcomes_preserve_source_without_mock_fallback():
     def timeout(request):
         raise httpx.ReadTimeout("fixture", request=request)
     provider = KdniaoTrackingProvider("fixture-id", "fixture-key", ORDERS, transport=httpx.MockTransport(timeout))
-    assert "超时" in provider.query_logistics("owner", "TEST1001")["error"]
+    result = provider.query_logistics("owner", "TEST1001")
+    assert "超时" in result["error"] and result["error_code"] == "tracking_timeout"
+    assert result["query_performed"] is True and result["queried_at"]
 
 
 @pytest.mark.asyncio

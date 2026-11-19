@@ -23,7 +23,8 @@ class KdniaoTrackingProvider:
         if order is None:
             return {"success": False, "source": "local_order_binding", "query_performed": False,
                     "error_code": "order_not_authorized",
-                    "error": "订单不存在或当前用户无权查询。尚未调用外部物流接口，不能据此判断物流轨迹。"}
+                    "error": "订单不存在或当前用户无权查询。尚未调用外部物流接口，不能据此判断物流轨迹。"
+                             "请核对订单号及登录账号；需要由服务端核实订单归属，聊天补充电话尾号不能解除此限制。"}
         params = {"LogisticCode": order["tracking_no"], "CustomerName": order.get("customer_name", ""),
                   "Sort": 1}
         if order.get("shipper_code"):
@@ -31,6 +32,7 @@ class KdniaoTrackingProvider:
         payload = json.dumps(params, ensure_ascii=False, separators=(",", ":"))
         signature = base64.b64encode(hashlib.md5(
             (payload + self.api_key).encode("utf-8")).hexdigest().encode("ascii")).decode("ascii")
+        queried_at = datetime.now(timezone.utc).isoformat()
         try:
             with httpx.Client(timeout=httpx.Timeout(10, connect=5), trust_env=False,
                               transport=self.transport) as client:
@@ -40,7 +42,10 @@ class KdniaoTrackingProvider:
             response.raise_for_status()
             data = response.json()
         except httpx.TimeoutException:
-            return {"success": False, "source": "kdniao", "error": "物流接口查询超时，请稍后主动查询"}
+            return {"success": False, "source": "kdniao", "error_code": "tracking_timeout",
+                    "query_performed": True, "queried_at": queried_at,
+                    "error": "物流接口查询超时，未取得物流结果，不能据此判断物流状态。请稍后主动发起新查询；"
+                             "当前没有后台自动重试或定时查询能力。"}
         except (httpx.HTTPError, ValueError):
             return {"success": False, "source": "kdniao", "error": "物流接口暂不可用，请稍后主动查询"}
         if not isinstance(data, dict) or data.get("Success") is not True:
@@ -63,7 +68,7 @@ class KdniaoTrackingProvider:
         return {
             "success": True, "source": "kdniao", "order_id": order_id,
             "query_performed": True,
-            "queried_at": datetime.now(timezone.utc).isoformat(),
+            "queried_at": queried_at,
             "has_traces": bool(events), "status": "tracking_found" if events else "no_tracking",
             "message": ("查询到物流轨迹，系统签收记录不证明用户实际收到。"
                         if events else "接口已受理，暂未查询到物流轨迹，不能据此判断丢件、运输中或已签收。"),

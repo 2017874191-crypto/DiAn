@@ -1,4 +1,4 @@
-"""One authorized external tracking query via /chat, then receipt replay and ownership denial."""
+"""Verify tracking via /chat with live, recorded-response or simulated-timeout transport."""
 import argparse
 import asyncio
 import json
@@ -6,6 +6,7 @@ import logging
 import os
 import secrets
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
@@ -74,16 +75,39 @@ class RecordedTrackingProvider(KdniaoTrackingProvider):
         return result
 
 
-async def verify(output, response_fixture=None):
+class TimeoutTransport(RecordedTransport):
+    def __init__(self):
+        super().__init__(None)
+
+    def handle_request(self, request):
+        self.calls += 1
+        raise httpx.ReadTimeout("Simulated carrier read timeout", request=request)
+
+
+class TimeoutTrackingProvider(KdniaoTrackingProvider):
+    def query_logistics(self, user_id, order_id):
+        result = super().query_logistics(user_id, order_id)
+        if result["source"] == "kdniao":
+            result.update(source="simulated_kdniao_timeout", query_mode="simulated_timeout",
+                          query_performed=False, queried_at=None,
+                          simulated_at=datetime.now(timezone.utc).isoformat())
+            result["error"] = "本次为模拟超时验证，未向快递鸟发起实际请求。" + result["error"]
+        return result
+
+
+async def verify(output, response_fixture=None, simulate_timeout=False):
     cfg = dotenv_values(ROOT / ".env")
     fixture = json.loads(response_fixture.read_text(encoding="utf-8")) if response_fixture else None
     orders = ([{"user_id": "recorded-owner", "order_id": "LIVE1001",
-                "tracking_no": fixture["response"]["LogisticCode"]}] if fixture
+                "tracking_no": fixture["response"]["LogisticCode"] if fixture else "fixture-number"}]
+              if fixture or simulate_timeout
               else json.loads(Path(cfg["KDNIAO_ORDER_BINDINGS"]).read_text(encoding="utf-8")))
     owner, order_id = orders[0]["user_id"], orders[0]["order_id"]
-    settings, _ = model_settings()
-    transport = RecordedTransport(fixture["response"]) if fixture else CountedTransport()
-    provider = (RecordedTrackingProvider("fixture-id", "fixture-key", orders, transport=transport)
+    settings, model_source = model_settings()
+    transport = (TimeoutTransport() if simulate_timeout else
+                 RecordedTransport(fixture["response"]) if fixture else CountedTransport())
+    provider = (TimeoutTrackingProvider("fixture-id", "fixture-key", orders, transport=transport)
+                if simulate_timeout else RecordedTrackingProvider("fixture-id", "fixture-key", orders, transport=transport)
                 if fixture else KdniaoTrackingProvider(cfg["KDNIAO_EBUSINESS_ID"], cfg["KDNIAO_API_KEY"], orders,
                                                        transport=transport))
     _, corpus, _ = validate(ROOT / "evaluation/datasets/dian_rag_v1")
@@ -94,8 +118,11 @@ async def verify(output, response_fixture=None):
     memory._query_episodic = AsyncMock(return_value={})
     memory._get_profile = AsyncMock(return_value={})
     result = {"schema": 1, "code_commit": git_commit(ROOT), "build": build_identity(ROOT),
-              "scope": ("User-supplied KDniao response replay with live models through ASGI chat" if fixture
+              "scope": ("Simulated carrier read timeout with live models through ASGI chat" if simulate_timeout else
+                        "User-supplied KDniao response replay with live models through ASGI chat" if fixture
                         else "Live KDniao 8002 and live models via actual ASGI chat, local ownership binding"),
+              "model": settings["model"], "model_configuration_source": model_source,
+              "model_endpoint_sha256": sha256(settings["base_url"].encode()),
               "redis": "fakeredis", "business_database": "Temporary SQLite", "rows": [], "complete": False}
     if fixture:
         result["response_fixture"] = {"sha256": sha256(response_fixture.read_bytes()),
@@ -132,12 +159,14 @@ async def verify(output, response_fixture=None):
                             ):
                                 before = transport.calls
                                 external_before = transport.external_calls
+                                started = time.monotonic()
                                 response = await http.post("/chat", headers={"Authorization": "Bearer " + token},
                                     json={"message": f"查询物流轨迹，订单号{order_id}", "user_id": owner,
                                           "conv_id": conv, "client_request_id": "read-tracking"})
                                 payload = response.json()
                                 result["rows"].append({
                                     "scenario": label, "http_status": response.status_code, "response": payload,
+                                    "elapsed_ms": round((time.monotonic() - started) * 1000, 1),
                                     "external_calls": transport.external_calls - external_before,
                                     "provider_calls": transport.calls - before,
                                     "tool_trace": orch.get_tool_trace(payload.get("request_id", "")),
@@ -150,18 +179,39 @@ async def verify(output, response_fixture=None):
         await memory._redis.aclose()
     result["external_calls"] = transport.external_calls
     result["provider_calls"] = transport.calls
+    authorized, replay, denied = result["rows"]
+    result["checks"] = {
+        "http_ok": all(row["http_status"] == 200 for row in result["rows"]),
+        "one_authorized_provider_attempt": authorized["provider_calls"] == 1,
+        "identical_receipt_replay": authorized["response"] == replay["response"] and replay["provider_calls"] == 0,
+        "unbound_subject_rejected_locally": denied["provider_calls"] == 0 and
+            (denied["response"].get("tracking_query") or {}).get("error_code") == "order_not_authorized",
+        "no_tickets": result["ticket_count"] == 0,
+    }
+    if simulate_timeout:
+        tracking = authorized["response"].get("tracking_query") or {}
+        result["checks"].update(
+            no_carrier_requests=result["external_calls"] == 0,
+            simulated_timeout_returned=tracking.get("source") == "simulated_kdniao_timeout" and
+                tracking.get("success") is False and tracking.get("error_code") == "tracking_timeout" and
+                tracking.get("query_performed") is False and tracking.get("queried_at") is None,
+        )
     result["complete"] = True
     write_json(output, result)
+    if not all(result["checks"].values()):
+        raise RuntimeError("Tracking chat verification failed; inspect report checks")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--response-fixture", type=Path, help="Replay an explicitly sourced saved response, no carrier calls")
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--response-fixture", type=Path, help="Replay an explicitly sourced saved response, no carrier calls")
+    modes.add_argument("--simulate-timeout", action="store_true", help="Inject a carrier read timeout, no carrier calls")
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(level=logging.ERROR)
-    asyncio.run(verify(args.output, args.response_fixture))
+    asyncio.run(verify(args.output, args.response_fixture, args.simulate_timeout))
 
 
 if __name__ == "__main__":

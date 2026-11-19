@@ -1,0 +1,672 @@
+{
+  "schema": 1,
+  "code_commit": "8ab984f5c22b1738db0bc3ff959f8f103b4931e8",
+  "build": {
+    "source_sha256": "731cbd33348cc6e80c659eb9338f57d2f0cb50947a17729dd7d2b3593e77f0a5",
+    "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+    "python": "3.11.9",
+    "system": "Windows",
+    "architecture": "AMD64",
+    "sqlite": "3.45.1"
+  },
+  "scope": "User-supplied KDniao response replay with live models through ASGI chat",
+  "redis": "fakeredis",
+  "business_database": "Temporary SQLite",
+  "rows": [
+    {
+      "scenario": "authorized",
+      "http_status": 200,
+      "response": {
+        "conv_id": "authorized",
+        "request_id": "bcd627a2-95a4-4486-8582-2b5931e23aee",
+        "response": "订单 LIVE1001 的物流轨迹如下（来源：用户提供的历史物流响应回放，非本次实时查询）：\n\n**最新状态**：快件领取成功（成都市，2026-11-16 18:09:02）\n\n**关键节点**：\n1. 2026-11-14 17:58 顺丰速运已收取快件（武汉市）\n2. 2026-11-15 03:19 已发往成都\n3. 2026-11-16 07:28 到达成都派送网点\n4. 2026-11-16 08:13 快件正在派送\n5. 2026-11-16 08:42 快件已交接合作点，待领取\n6. 2026-11-16 18:09 快件领取成功\n\n需要说明的是，系统显示\"领取成功\"仅代表有签收/领取记录，不能直接证明收件人本人实际收到。如果你确认没有收到该快件，请告诉我，我可以帮你进一步判断下一步处理方式。",
+        "intent": "logistics",
+        "intent_group": "query",
+        "task_goal": "status_lookup",
+        "tracking_query": {
+          "success": true,
+          "source": "user_supplied_kdniao_response",
+          "order_id": "LIVE1001",
+          "query_performed": false,
+          "queried_at": null,
+          "has_traces": true,
+          "status": "tracking_found",
+          "message": "以下为用户提供的历史物流响应回放，非本次实时查询。签收记录不能证明本人实际收到。",
+          "tracking": {
+            "state": "3",
+            "state_ex": "302",
+            "location": "成都市",
+            "events": [
+              {
+                "at": "2026-11-16 18:09:02",
+                "description": "快件领取成功",
+                "location": "成都市",
+                "state": "302"
+              },
+              {
+                "at": "2026-11-16 08:42:51",
+                "description": "快件已交接合作点，待领取（电话、地址已移除）",
+                "location": "成都市",
+                "state": "211"
+              },
+              {
+                "at": "2026-11-16 08:13:14",
+                "description": "快件正在派送（派件员姓名、电话已移除）",
+                "location": "成都市",
+                "state": "202"
+              },
+              {
+                "at": "2026-11-16 07:28:39",
+                "description": "到达成都派送网点（地址已移除）",
+                "location": "成都市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-16 05:07:21",
+                "description": "离开转运中心，发往派送网点（网点已脱敏）",
+                "location": "成都市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-16 05:05:14",
+                "description": "完成分拣，准备发往派送网点（网点已脱敏）",
+                "location": "成都市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-15 23:09:41",
+                "description": "到达成都转运中心（网点已脱敏）",
+                "location": "成都市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-15 15:20:20",
+                "description": "车辆临近重庆，距离下一站约410KM（描述已脱敏）",
+                "location": "重庆市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 09:20:21",
+                "description": "车辆临近恩施，距离下一站约749KM（描述已脱敏）",
+                "location": "恩施",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 03:19:05",
+                "description": "快件开始长途运输，两站距离1199KM",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 03:19:04",
+                "description": "已发往成都（网点已脱敏）",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 01:00:29",
+                "description": "完成分拣，准备发往成都（网点已脱敏）",
+                "location": "武汉市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-15 00:00:46",
+                "description": "到达转运中心（网点已脱敏）",
+                "location": "武汉市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-14 19:45:45",
+                "description": "离开网点，正在发往转运中心（网点已脱敏）",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-14 19:18:17",
+                "description": "完成分拣，准备发往转运中心（网点已脱敏）",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-14 17:58:14",
+                "description": "顺丰速运已收取快件（描述已脱敏）",
+                "location": "武汉市",
+                "state": "1"
+              }
+            ],
+            "latest": {
+              "at": "2026-11-16 18:09:02",
+              "description": "快件领取成功",
+              "location": "成都市",
+              "state": "302"
+            },
+            "chronology_verified": true
+          },
+          "query_mode": "response_replay",
+          "replayed_at": "2026-11-19T10:23:00.364398+00:00"
+        },
+        "agent_type": "general",
+        "agent_types": [
+          "general"
+        ],
+        "primary_agent": "general",
+        "supporting_agents": [],
+        "tools_used": [
+          "query_authorized_tracking"
+        ],
+        "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+        "routing_confidence": 0.99,
+        "escalated": false,
+        "latency_ms": 6188.0,
+        "knowledge_used": false,
+        "entities": {
+          "order_id": [
+            "LIVE1001"
+          ],
+          "tracking_no": [],
+          "product": [],
+          "date": [],
+          "amount": [],
+          "error_code": []
+        },
+        "intent_confidence": 0.736,
+        "intent_source_scores": {
+          "llm": 0.98,
+          "embedding": 0.20628424925175873,
+          "pattern": 0.5
+        },
+        "intent_embedding_source": "local-ngram",
+        "status": "success",
+        "retryable": false,
+        "error_code": null,
+        "performance": {
+          "stages_ms": {
+            "memory_read": 0.0,
+            "intent": 1594.0,
+            "memory_background": 0.0,
+            "agent_execution": 4578.0
+          },
+          "llm_calls": [
+            {
+              "stage": "intent",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 1594.0,
+              "input_tokens": 2,
+              "output_tokens": 44,
+              "cache_read_input_tokens": 768,
+              "cache_creation_input_tokens": 0
+            },
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 968.0,
+              "input_tokens": 107,
+              "output_tokens": 51,
+              "cache_read_input_tokens": 2176,
+              "cache_creation_input_tokens": 0
+            },
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 3594.0,
+              "input_tokens": 994,
+              "output_tokens": 230,
+              "cache_read_input_tokens": 2304,
+              "cache_creation_input_tokens": 0
+            }
+          ],
+          "events": {},
+          "llm": {
+            "calls": 3,
+            "errors": 0,
+            "latency_ms": 6156.0,
+            "usage_reported_calls": 3,
+            "input_tokens": 1103,
+            "output_tokens": 325,
+            "cache_read_input_tokens": 5248,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "logistics_case": null
+      },
+      "external_calls": 0,
+      "provider_calls": 1,
+      "tool_trace": {
+        "request_id": "bcd627a2-95a4-4486-8582-2b5931e23aee",
+        "timestamp": "2026-11-19T18:23:03.957154",
+        "intent": "logistics",
+        "primary_agent": "general",
+        "supporting_agents": [],
+        "tools_used": [
+          "query_authorized_tracking"
+        ],
+        "tool_calls": [
+          {
+            "agent_type": "general",
+            "tool_name": "query_authorized_tracking",
+            "tool_use_id": "call_00_e9gt0T71My6QhnM6ugTW8214",
+            "input": {
+              "order_id": "LIVE1001"
+            },
+            "success": true,
+            "result_success": true,
+            "latency_ms": 0.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "source": "user_supplied_kdniao_response",
+            "mcp_server": null,
+            "mcp_tool": null,
+            "retry_safe": true
+          }
+        ],
+        "escalated": false,
+        "latency_ms": 4562.0,
+        "status": "success",
+        "retryable": false
+      }
+    },
+    {
+      "scenario": "same_request_replay",
+      "http_status": 200,
+      "response": {
+        "conv_id": "authorized",
+        "request_id": "bcd627a2-95a4-4486-8582-2b5931e23aee",
+        "response": "订单 LIVE1001 的物流轨迹如下（来源：用户提供的历史物流响应回放，非本次实时查询）：\n\n**最新状态**：快件领取成功（成都市，2026-11-16 18:09:02）\n\n**关键节点**：\n1. 2026-11-14 17:58 顺丰速运已收取快件（武汉市）\n2. 2026-11-15 03:19 已发往成都\n3. 2026-11-16 07:28 到达成都派送网点\n4. 2026-11-16 08:13 快件正在派送\n5. 2026-11-16 08:42 快件已交接合作点，待领取\n6. 2026-11-16 18:09 快件领取成功\n\n需要说明的是，系统显示\"领取成功\"仅代表有签收/领取记录，不能直接证明收件人本人实际收到。如果你确认没有收到该快件，请告诉我，我可以帮你进一步判断下一步处理方式。",
+        "intent": "logistics",
+        "intent_group": "query",
+        "task_goal": "status_lookup",
+        "tracking_query": {
+          "success": true,
+          "source": "user_supplied_kdniao_response",
+          "order_id": "LIVE1001",
+          "query_performed": false,
+          "queried_at": null,
+          "has_traces": true,
+          "status": "tracking_found",
+          "message": "以下为用户提供的历史物流响应回放，非本次实时查询。签收记录不能证明本人实际收到。",
+          "tracking": {
+            "state": "3",
+            "state_ex": "302",
+            "location": "成都市",
+            "events": [
+              {
+                "at": "2026-11-16 18:09:02",
+                "description": "快件领取成功",
+                "location": "成都市",
+                "state": "302"
+              },
+              {
+                "at": "2026-11-16 08:42:51",
+                "description": "快件已交接合作点，待领取（电话、地址已移除）",
+                "location": "成都市",
+                "state": "211"
+              },
+              {
+                "at": "2026-11-16 08:13:14",
+                "description": "快件正在派送（派件员姓名、电话已移除）",
+                "location": "成都市",
+                "state": "202"
+              },
+              {
+                "at": "2026-11-16 07:28:39",
+                "description": "到达成都派送网点（地址已移除）",
+                "location": "成都市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-16 05:07:21",
+                "description": "离开转运中心，发往派送网点（网点已脱敏）",
+                "location": "成都市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-16 05:05:14",
+                "description": "完成分拣，准备发往派送网点（网点已脱敏）",
+                "location": "成都市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-15 23:09:41",
+                "description": "到达成都转运中心（网点已脱敏）",
+                "location": "成都市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-15 15:20:20",
+                "description": "车辆临近重庆，距离下一站约410KM（描述已脱敏）",
+                "location": "重庆市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 09:20:21",
+                "description": "车辆临近恩施，距离下一站约749KM（描述已脱敏）",
+                "location": "恩施",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 03:19:05",
+                "description": "快件开始长途运输，两站距离1199KM",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 03:19:04",
+                "description": "已发往成都（网点已脱敏）",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-15 01:00:29",
+                "description": "完成分拣，准备发往成都（网点已脱敏）",
+                "location": "武汉市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-15 00:00:46",
+                "description": "到达转运中心（网点已脱敏）",
+                "location": "武汉市",
+                "state": "204"
+              },
+              {
+                "at": "2026-11-14 19:45:45",
+                "description": "离开网点，正在发往转运中心（网点已脱敏）",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-14 19:18:17",
+                "description": "完成分拣，准备发往转运中心（网点已脱敏）",
+                "location": "武汉市",
+                "state": "2"
+              },
+              {
+                "at": "2026-11-14 17:58:14",
+                "description": "顺丰速运已收取快件（描述已脱敏）",
+                "location": "武汉市",
+                "state": "1"
+              }
+            ],
+            "latest": {
+              "at": "2026-11-16 18:09:02",
+              "description": "快件领取成功",
+              "location": "成都市",
+              "state": "302"
+            },
+            "chronology_verified": true
+          },
+          "query_mode": "response_replay",
+          "replayed_at": "2026-11-19T10:23:00.364398+00:00"
+        },
+        "agent_type": "general",
+        "agent_types": [
+          "general"
+        ],
+        "primary_agent": "general",
+        "supporting_agents": [],
+        "tools_used": [
+          "query_authorized_tracking"
+        ],
+        "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+        "routing_confidence": 0.99,
+        "escalated": false,
+        "latency_ms": 6188.0,
+        "knowledge_used": false,
+        "entities": {
+          "order_id": [
+            "LIVE1001"
+          ],
+          "tracking_no": [],
+          "product": [],
+          "date": [],
+          "amount": [],
+          "error_code": []
+        },
+        "intent_confidence": 0.736,
+        "intent_source_scores": {
+          "llm": 0.98,
+          "embedding": 0.20628424925175873,
+          "pattern": 0.5
+        },
+        "intent_embedding_source": "local-ngram",
+        "status": "success",
+        "retryable": false,
+        "error_code": null,
+        "performance": {
+          "stages_ms": {
+            "memory_read": 0.0,
+            "intent": 1594.0,
+            "memory_background": 0.0,
+            "agent_execution": 4578.0
+          },
+          "llm_calls": [
+            {
+              "stage": "intent",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 1594.0,
+              "input_tokens": 2,
+              "output_tokens": 44,
+              "cache_read_input_tokens": 768,
+              "cache_creation_input_tokens": 0
+            },
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 968.0,
+              "input_tokens": 107,
+              "output_tokens": 51,
+              "cache_read_input_tokens": 2176,
+              "cache_creation_input_tokens": 0
+            },
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 3594.0,
+              "input_tokens": 994,
+              "output_tokens": 230,
+              "cache_read_input_tokens": 2304,
+              "cache_creation_input_tokens": 0
+            }
+          ],
+          "events": {},
+          "llm": {
+            "calls": 3,
+            "errors": 0,
+            "latency_ms": 6156.0,
+            "usage_reported_calls": 3,
+            "input_tokens": 1103,
+            "output_tokens": 325,
+            "cache_read_input_tokens": 5248,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "logistics_case": null
+      },
+      "external_calls": 0,
+      "provider_calls": 0,
+      "tool_trace": {
+        "request_id": "bcd627a2-95a4-4486-8582-2b5931e23aee",
+        "timestamp": "2026-11-19T18:23:03.957154",
+        "intent": "logistics",
+        "primary_agent": "general",
+        "supporting_agents": [],
+        "tools_used": [
+          "query_authorized_tracking"
+        ],
+        "tool_calls": [
+          {
+            "agent_type": "general",
+            "tool_name": "query_authorized_tracking",
+            "tool_use_id": "call_00_e9gt0T71My6QhnM6ugTW8214",
+            "input": {
+              "order_id": "LIVE1001"
+            },
+            "success": true,
+            "result_success": true,
+            "latency_ms": 0.0,
+            "cached": false,
+            "reranked": false,
+            "error": "",
+            "source": "user_supplied_kdniao_response",
+            "mcp_server": null,
+            "mcp_tool": null,
+            "retry_safe": true
+          }
+        ],
+        "escalated": false,
+        "latency_ms": 4562.0,
+        "status": "success",
+        "retryable": false
+      }
+    },
+    {
+      "scenario": "unbound_subject",
+      "http_status": 200,
+      "response": {
+        "conv_id": "other",
+        "request_id": "9d497570-dad8-4f98-9b6e-2e3aa6a6d00e",
+        "response": "我帮你查了订单 LIVE1001 的物流轨迹，但系统返回「订单不存在或当前用户无权查询」，因此暂时无法获取物流信息。\n\n这个结果只说明当前账号没有绑定该订单的查询权限，并不代表包裹没有发出或没有物流记录。建议你：\n\n1. 确认订单号是否输入正确；\n2. 确认该订单是否用当前登录账号下单；\n3. 如需继续查询，可在官方订单中心绑定该订单后重试，或联系人工客服协助核验。\n\n请问还需要我帮你查看其他问题吗？",
+        "intent": "logistics",
+        "intent_group": "query",
+        "task_goal": "status_lookup",
+        "tracking_query": {
+          "success": false,
+          "source": "local_order_binding",
+          "query_performed": false,
+          "error_code": "order_not_authorized",
+          "error": "订单不存在或当前用户无权查询。尚未调用外部物流接口，不能据此判断物流轨迹。"
+        },
+        "agent_type": "general",
+        "agent_types": [
+          "general"
+        ],
+        "primary_agent": "general",
+        "supporting_agents": [],
+        "tools_used": [
+          "query_authorized_tracking"
+        ],
+        "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.99, logistics=0.00, technical=0.00, billing=0.00]",
+        "routing_confidence": 0.99,
+        "escalated": true,
+        "latency_ms": 4672.0,
+        "knowledge_used": false,
+        "entities": {
+          "order_id": [
+            "LIVE1001"
+          ],
+          "tracking_no": [],
+          "product": [],
+          "date": [],
+          "amount": [],
+          "error_code": []
+        },
+        "intent_confidence": 0.736,
+        "intent_source_scores": {
+          "llm": 0.98,
+          "embedding": 0.20628424925175873,
+          "pattern": 0.5
+        },
+        "intent_embedding_source": "local-ngram",
+        "status": "success",
+        "retryable": false,
+        "error_code": null,
+        "performance": {
+          "stages_ms": {
+            "memory_read": 0.0,
+            "intent": 0.0,
+            "memory_background": 0.0,
+            "agent_execution": 4672.0
+          },
+          "llm_calls": [
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 1562.0,
+              "input_tokens": 107,
+              "output_tokens": 51,
+              "cache_read_input_tokens": 2176,
+              "cache_creation_input_tokens": 0
+            },
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 3094.0,
+              "input_tokens": 98,
+              "output_tokens": 117,
+              "cache_read_input_tokens": 2304,
+              "cache_creation_input_tokens": 0
+            }
+          ],
+          "events": {},
+          "llm": {
+            "calls": 2,
+            "errors": 0,
+            "latency_ms": 4656.0,
+            "usage_reported_calls": 2,
+            "input_tokens": 205,
+            "output_tokens": 168,
+            "cache_read_input_tokens": 4480,
+            "cache_creation_input_tokens": 0
+          }
+        },
+        "logistics_case": null
+      },
+      "external_calls": 0,
+      "provider_calls": 0,
+      "tool_trace": {
+        "request_id": "9d497570-dad8-4f98-9b6e-2e3aa6a6d00e",
+        "timestamp": "2026-11-19T18:23:08.635444",
+        "intent": "logistics",
+        "primary_agent": "general",
+        "supporting_agents": [],
+        "tools_used": [
+          "query_authorized_tracking"
+        ],
+        "tool_calls": [
+          {
+            "agent_type": "general",
+            "tool_name": "query_authorized_tracking",
+            "tool_use_id": "call_00_bJ2cO86GWI6M9rhOwwgU5673",
+            "input": {
+              "order_id": "LIVE1001"
+            },
+            "success": true,
+            "result_success": false,
+            "latency_ms": 0.0,
+            "cached": false,
+            "reranked": false,
+            "error": "订单不存在或当前用户无权查询。尚未调用外部物流接口，不能据此判断物流轨迹。",
+            "source": "local_order_binding",
+            "mcp_server": null,
+            "mcp_tool": null,
+            "retry_safe": true
+          }
+        ],
+        "escalated": true,
+        "latency_ms": 4672.0,
+        "status": "success",
+        "retryable": false
+      }
+    }
+  ],
+  "complete": true,
+  "response_fixture": {
+    "sha256": "048ae6d527fa1969f2e9e99a7a6c27cedba174d89168bba5c91441bd110f00f1",
+    "provenance": {
+      "origin": "User-supplied KDniao response, not fetched by this replay",
+      "redactions": "Merchant and tracking identifiers replaced; personal names, phone numbers and precise addresses removed from descriptions",
+      "preserved": "16 event timestamps, action codes, city sequence, terminal event and top-level states"
+    }
+  },
+  "ticket_count": 0,
+  "external_calls": 0,
+  "provider_calls": 1
+}

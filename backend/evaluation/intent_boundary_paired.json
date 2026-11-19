@@ -1,0 +1,5564 @@
+{
+  "schema": 1,
+  "candidate_commit": "47b2d68ace3becf9c7fc5663fd8e7042f14b7081",
+  "build": {
+    "source_sha256": "5a6a9d7e9c282d529370ca5219237759e454ad5b77873b9f8a5d553e542289ec",
+    "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+    "python": "3.11.9",
+    "system": "Windows",
+    "architecture": "AMD64",
+    "sqlite": "3.45.1"
+  },
+  "model": "deepseek-v4-pro",
+  "configuration_source": {
+    "kind": "project_dotenv",
+    "shadowed_environment_fields": [
+      "ANTHROPIC_BASE_URL"
+    ]
+  },
+  "model_endpoint_sha256": "efdbb18afca7615955804478fde78bff5e7336dee41fa0844bc1d5f8ec527cbe",
+  "baseline_source_sha256": "8e563faf18b5592aaa78e3ad6c565c256a16102a812eba64985de44db08be476",
+  "candidate_source_sha256": "10529e322b3b9832d1d26ba0a045fa017669ef7d0bd97267bdf0f72c8885c876",
+  "protocol": {
+    "schema": 1,
+    "baseline_commit": "f7571ce",
+    "rounds": 5,
+    "pair_concurrency": 2,
+    "model_retries": 0,
+    "cases": [
+      {
+        "id": "DIAN-007",
+        "group": "exposed_wrong_item",
+        "message": "我订的颜色和实际收到的不一样，订单号 DEMO1003。",
+        "allowed_intents": [
+          "logistics_damaged"
+        ],
+        "allowed_goals": [
+          "policy_question",
+          "case_action",
+          "uncertain"
+        ],
+        "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+      },
+      {
+        "id": "DIAN-008",
+        "group": "exposed_wrong_item",
+        "message": "包裹里的商品不是我下单的那件，订单号 DEMO1003。",
+        "allowed_intents": [
+          "logistics_damaged"
+        ],
+        "allowed_goals": [
+          "policy_question",
+          "case_action",
+          "uncertain"
+        ],
+        "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+      },
+      {
+        "id": "DIAN-011",
+        "group": "exposed_wrong_item",
+        "message": "配送来的商品不符，我要报告这个问题，订单号 DEMO1003。",
+        "allowed_intents": [
+          "logistics_damaged"
+        ],
+        "allowed_goals": [
+          "policy_question",
+          "case_action",
+          "uncertain"
+        ],
+        "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+      },
+      {
+        "id": "DIAN-012",
+        "group": "exposed_wrong_item",
+        "message": "订单号 DEMO1003 的物品发错了，需要我提供什么材料？",
+        "allowed_intents": [
+          "logistics_damaged"
+        ],
+        "allowed_goals": [
+          "policy_question",
+          "case_action",
+          "uncertain"
+        ],
+        "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+      },
+      {
+        "id": "DIAN-033",
+        "group": "exposed_wrong_item",
+        "message": "订单号 DEMO1003 收到的衣服颜色不符合订单，应该是发错了。",
+        "allowed_intents": [
+          "logistics_damaged"
+        ],
+        "allowed_goals": [
+          "policy_question",
+          "case_action",
+          "uncertain"
+        ],
+        "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+      },
+      {
+        "id": "DEV-dispute-a",
+        "group": "boundary_control",
+        "message": "物流页面说已签收，我实际没拿到，想申请签收争议核查。",
+        "allowed_intents": [
+          "logistics_dispute"
+        ],
+        "allowed_goals": [
+          "case_action"
+        ],
+        "reason": "明确签收但未收件的申请"
+      },
+      {
+        "id": "DEV-dispute-b",
+        "group": "boundary_control",
+        "message": "快递被代签后一直没到我手里，请登记核查。",
+        "allowed_intents": [
+          "logistics_dispute"
+        ],
+        "allowed_goals": [
+          "case_action"
+        ],
+        "reason": "代签与实际未收件，要求核查"
+      },
+      {
+        "id": "DEV-wrong-item",
+        "group": "boundary_control",
+        "message": "订的是玻璃杯，拆开发现一把勺子，我要登记错寄。",
+        "allowed_intents": [
+          "logistics_damaged"
+        ],
+        "allowed_goals": [
+          "case_action"
+        ],
+        "reason": "隐含错发，明确申请"
+      },
+      {
+        "id": "DEV-negation",
+        "group": "boundary_control",
+        "message": "货没发错也没破损，只是想查一下物流状态。",
+        "allowed_intents": [
+          "logistics",
+          "order_status",
+          "query"
+        ],
+        "allowed_goals": [
+          "status_lookup"
+        ],
+        "reason": "否认异常，仅查物流"
+      },
+      {
+        "id": "DEV-policy",
+        "group": "boundary_control",
+        "message": "只是想了解签收争议需要怎么处理，暂时不申请核查。",
+        "allowed_intents": [
+          "logistics_dispute",
+          "logistics"
+        ],
+        "allowed_goals": [
+          "policy_question"
+        ],
+        "reason": "咨询主题不能成为案件申请"
+      },
+      {
+        "id": "DIAN-010-goal",
+        "group": "boundary_control",
+        "message": "订单号 DEMO1003 发错货了，应该怎么处理？",
+        "allowed_intents": [
+          "logistics_damaged"
+        ],
+        "allowed_goals": [
+          "uncertain"
+        ],
+        "reason": "按既有任务目标约定先澄清；不沿用原强制建案期望"
+      },
+      {
+        "id": "DEV-refund",
+        "group": "boundary_control",
+        "message": "退款申请现在处理到哪一步了？",
+        "allowed_intents": [
+          "refund"
+        ],
+        "allowed_goals": [
+          "status_lookup"
+        ],
+        "reason": "保留退款实时状态目标，不引入物流案件"
+      }
+    ],
+    "label_source": "Codex-authored development and exposed regression cases; not independently reviewed or blind",
+    "variable": "Only logistics intent definitions and three contrastive examples in existing LLM prompt",
+    "unchanged": [
+      "task-goal rules",
+      "fusion weights",
+      "deterministic logistics issue rules",
+      "confirmation authorization",
+      "tool permissions",
+      "per-request model-call structure"
+    ],
+    "configuration": {
+      "intent_mode": "full",
+      "embedding_provider": "local",
+      "logistics_embedding": false
+    },
+    "acceptance": {
+      "exposed_type_correct_at_least": 20,
+      "exposed_type_attempts": 25,
+      "exposed_type_better_than_baseline": true,
+      "control_joint_correct_at_least_baseline": true,
+      "non_action_controls_classified_as_case_action": 0,
+      "model_errors": 0
+    },
+    "stop": "Five paired rounds, retain every attempt; no retries or tuning on this set after inspecting results. Then one actual ASGI logistics regression. No generalization claim."
+  },
+  "protocol_sha256": "e3a88a17320f3d4d984c1bf0817f40165e573def5e381af019519aa155638b8c",
+  "rows": [
+    {
+      "round": 1,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与订单不符，属于错发问题。",
+      "source_scores": {
+        "llm": 0.96,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1015.999999945052,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1016.0,
+            "input_tokens": 994,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1016.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 994,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈收到的商品颜色与订单不符，属于收货与订单不一致的争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1952.999999979511,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1953.0,
+            "input_tokens": 7,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1953.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户称收到的商品与订单不符，属于物流/履约争议类问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1390.0000000139698,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1390.0,
+            "input_tokens": 6,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1390.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 6,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户报告收到的商品与订单不符，属于配送/签收争议类问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1062.999999965541,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1063.0,
+            "input_tokens": 7,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1063.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "uncertain",
+      "reasoning": "用户表示收到的颜色与所订不符，属于商品错发/不符主题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1937.999999965541,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1938.0,
+            "input_tokens": 995,
+            "output_tokens": 51,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1938.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 995,
+          "output_tokens": 51,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并要报告问题，属于错发/破损类。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1641.0000000614673,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1641.0,
+            "input_tokens": 483,
+            "output_tokens": 62,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1641.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 483,
+          "output_tokens": 62,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户说明订单物品发错，并询问需要提供什么材料，属于错发主题且是了解处理规则。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1420.9999999729916,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1421.0,
+            "input_tokens": 485,
+            "output_tokens": 59,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1421.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 485,
+          "output_tokens": 59,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈收到的商品颜色与订单不符，属于发错货的物流/订单争议。",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1421.9999999040738,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1422.0,
+            "input_tokens": 8,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1422.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户反映订单物品发错，属于物流/履约争议场景。",
+      "source_scores": {
+        "llm": 0.92,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 2516.0000000614673,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 2516.0,
+            "input_tokens": 9,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 2516.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 9,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户已收到商品但颜色与订单不符，属于错发问题。",
+      "source_scores": {
+        "llm": 0.96,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1500.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1500.0,
+            "input_tokens": 484,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1500.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 484,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1468.9999999245629,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1469.0,
+            "input_tokens": 486,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1469.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 486,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户称快递被代签但未收到，并明确要求登记核查，属于签收争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1891.0000000614673,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1891.0,
+            "input_tokens": 389,
+            "output_tokens": 54,
+            "cache_read_input_tokens": 384,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1891.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 389,
+          "output_tokens": 54,
+          "cache_read_input_tokens": 384,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1828.0000000959262,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1828.0,
+            "input_tokens": 394,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 384,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1828.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 394,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 384,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示快递被代签后未收到，并要求登记核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1280.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1281.0,
+            "input_tokens": 481,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1281.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 481,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并申请登记错寄。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1515.999999945052,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1516.0,
+            "input_tokens": 483,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1516.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 483,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确表示只是想查询物流状态，未涉及丢件、破损或签收争议",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1625.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1625.0,
+            "input_tokens": 388,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 384,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1625.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 388,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 384,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确排除破损和错发，仅查询物流状态",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1375.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1375.0,
+            "input_tokens": 480,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1375.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 480,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户描述收到的商品与订单不符，要求登记错寄，属于物流/履约争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1592.9999999934807,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1593.0,
+            "input_tokens": 391,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 384,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1593.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 391,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 384,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1312.999999965541,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1313.0,
+            "input_tokens": 481,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1313.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 481,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "uncertain",
+      "reasoning": "用户反映发错货，属于物流/订单履行争议",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1657.0000000065193,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1641.0,
+            "input_tokens": 8,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1641.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户明确表示订单发错货，属于商品与所订不符的错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 984.000000054948,
+      "intent_correct": true,
+      "goal_correct": false,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 984.0,
+            "input_tokens": 484,
+            "output_tokens": 54,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 984.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 484,
+          "output_tokens": 54,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查，属于了解流程。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1609.000000054948,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1609.0,
+            "input_tokens": 389,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 384,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1609.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 389,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 384,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款主题的状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1546.9999999040738,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1547.0,
+            "input_tokens": 477,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 512,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1547.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 477,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 512,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 1,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1250.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1250.0,
+            "input_tokens": 385,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 384,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1250.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 385,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 384,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反映收到的商品与订单不符，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1672.000000020489,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1672.0,
+            "input_tokens": 6,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1672.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 6,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户表示收到的颜色与所订不符，属于商品错发/不符，匹配 logistics_damaged。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1829.0000000270084,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1829.0,
+            "input_tokens": 99,
+            "output_tokens": 62,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1829.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 62,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "uncertain",
+      "reasoning": "用户表示收到的商品与订单不符，属于错发场景。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1312.999999965541,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1313.0,
+            "input_tokens": 98,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1313.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 98,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反映收到的商品颜色与订单不符，属于收货与订单不一致的争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1890.0000000139698,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1890.0,
+            "input_tokens": 7,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1890.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并主动要求报告问题，属于错发/破损类。",
+      "source_scores": {
+        "llm": 0.98,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 2187.000000034459,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 2187.0,
+            "input_tokens": 99,
+            "output_tokens": 61,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 2187.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 61,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈订单物品发错，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1672.000000020489,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1672.0,
+            "input_tokens": 9,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1672.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 9,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户报告收到的商品与订单不符，属于配送/签收争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1437.999999965541,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1438.0,
+            "input_tokens": 7,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1438.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户说明订单物品发错，并询问需要提供什么材料，属于错发主题且是了解处理规则。",
+      "source_scores": {
+        "llm": 0.96,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1452.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1453.0,
+            "input_tokens": 101,
+            "output_tokens": 59,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1453.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 101,
+          "output_tokens": 59,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1422.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1422.0,
+            "input_tokens": 10,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1422.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 10,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户已收到商品但颜色与订单不符，属于错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1688.0000000819564,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1688.0,
+            "input_tokens": 100,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1688.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1359.9999999860302,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1360.0,
+            "input_tokens": 102,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1360.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 102,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈收到的商品颜色与订单不符，属于发错货的物流/订单争议。",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1655.9999999590218,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1656.0,
+            "input_tokens": 8,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1656.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示快递被代签后未收到，并要求登记核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1577.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1578.0,
+            "input_tokens": 97,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1578.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户描述收到的商品与订单不符，要求登记错寄，属于物流/履约争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1609.000000054948,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1609.0,
+            "input_tokens": 7,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1609.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示快递被代签但未收到，并要求登记核查，属于签收争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1515.0000000139698,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1515.0,
+            "input_tokens": 5,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1515.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并申请登记错寄。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1594.0000000409782,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1594.0,
+            "input_tokens": 99,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1594.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确排除破损和错发，仅查询物流状态",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1452.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1453.0,
+            "input_tokens": 96,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1453.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 96,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查，属于物流争议类政策咨询。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1312.000000034459,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1312.0,
+            "input_tokens": 5,
+            "output_tokens": 56,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1312.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 56,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确表示只是想查询物流状态，属于物流查询意图。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1844.0000000409782,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1844.0,
+            "input_tokens": 4,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1844.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 4,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，属于物流争议主题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1797.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1797.0,
+            "input_tokens": 97,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1797.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户明确表示订单发错货，属于商品与所订不符的错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1530.9999999590218,
+      "intent_correct": true,
+      "goal_correct": false,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1531.0,
+            "input_tokens": 100,
+            "output_tokens": 54,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1531.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 54,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1780.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1781.0,
+            "input_tokens": 1,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1781.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "uncertain",
+      "reasoning": "用户报告发错货，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1140.999999945052,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1141.0,
+            "input_tokens": 8,
+            "output_tokens": 46,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1141.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 46,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 2,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款主题的状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1405.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1391.0,
+            "input_tokens": 93,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1391.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 93,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈收到的商品颜色与订单不符，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1452.999999979511,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1453.0,
+            "input_tokens": 7,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1453.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "uncertain",
+      "reasoning": "用户表示收到的商品与订单不符，属于错发场景。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1702.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1703.0,
+            "input_tokens": 98,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1703.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 98,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "uncertain",
+      "reasoning": "用户表示实际收到的颜色与所订不符，属于商品错发/不符主题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1375.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1360.0,
+            "input_tokens": 99,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1360.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反映收到的商品与订单不符，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1437.999999965541,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1438.0,
+            "input_tokens": 6,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1438.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 6,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户报告收到的商品与订单不符，属于配送/签收争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1594.0000000409782,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1594.0,
+            "input_tokens": 7,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1594.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户明确表示订单物品发错，并询问需要提供什么材料，属于错发主题。",
+      "source_scores": {
+        "llm": 0.96,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1405.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1406.0,
+            "input_tokens": 101,
+            "output_tokens": 55,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1406.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 101,
+          "output_tokens": 55,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并要报告问题，属于错发/破损类物流主题。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1625.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1625.0,
+            "input_tokens": 99,
+            "output_tokens": 64,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1625.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 64,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈订单物品发错，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 2155.999999959022,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 2156.0,
+            "input_tokens": 9,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 2156.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 9,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反映收到的商品颜色与订单不符，属于发错货的物流/订单争议。",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1734.000000054948,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1734.0,
+            "input_tokens": 8,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1734.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1327.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1328.0,
+            "input_tokens": 102,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1328.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 102,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户已收到商品但颜色与订单不符，属于错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1390.999999945052,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1391.0,
+            "input_tokens": 100,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1391.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1516.0000000614673,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1516.0,
+            "input_tokens": 10,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1516.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 10,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户称快递被代签但未收到，并要求登记核查，属于签收争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1390.0000000139698,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1390.0,
+            "input_tokens": 5,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1390.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并申请登记错寄。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1297.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1297.0,
+            "input_tokens": 99,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1297.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示快递被代签后未收到，并要求登记核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1375.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1375.0,
+            "input_tokens": 97,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1375.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户描述收到的商品与订单不符，属于错寄问题，需登记核查。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1452.999999979511,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1453.0,
+            "input_tokens": 7,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1453.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确表示只是想查询物流状态，属于物流查询意图。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1563.0000000819564,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1563.0,
+            "input_tokens": 4,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1563.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 4,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1547.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1547.0,
+            "input_tokens": 97,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1547.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确排除破损和错发，仅查询物流状态。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 905.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 906.0,
+            "input_tokens": 96,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 906.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 96,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，明确暂不申请核查，属于规则咨询。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1530.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1531.0,
+            "input_tokens": 5,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1531.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "uncertain",
+      "reasoning": "用户反馈发错货，属于物流/订单履行争议",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1750.0,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1750.0,
+            "input_tokens": 8,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1750.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款主题的状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1547.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1532.0,
+            "input_tokens": 93,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1532.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 93,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户明确表示订单发错货，属于商品与所订不符的错发问题。",
+      "source_scores": {
+        "llm": 0.96,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1640.999999945052,
+      "intent_correct": true,
+      "goal_correct": false,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1641.0,
+            "input_tokens": 100,
+            "output_tokens": 54,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1641.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 54,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 3,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1657.0000000065193,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1657.0,
+            "input_tokens": 1,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1657.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户指出收到的商品与订单不符，属于物流/履约争议类问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1484.000000054948,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1469.0,
+            "input_tokens": 6,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1469.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 6,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "uncertain",
+      "reasoning": "用户表示实际收到的颜色与所订不符，属于商品错发/不符主题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1530.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1531.0,
+            "input_tokens": 99,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1531.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反映收到的商品颜色与订单不符，属于收货与订单不一致的争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1063.0000000819564,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1063.0,
+            "input_tokens": 7,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1063.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "uncertain",
+      "reasoning": "用户表示收到的商品与订单不符，属于错发主题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1390.999999945052,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1391.0,
+            "input_tokens": 98,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1391.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 98,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈订单物品发错，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1047.000000020489,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1047.0,
+            "input_tokens": 9,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1047.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 9,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符并要报告问题，属于错发/破损类。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1405.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1406.0,
+            "input_tokens": 99,
+            "output_tokens": 55,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1406.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 55,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户说明订单物品发错，并询问需要提供什么材料，属于错发主题且是了解处理规则。",
+      "source_scores": {
+        "llm": 0.96,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1202.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1203.0,
+            "input_tokens": 101,
+            "output_tokens": 59,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1203.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 101,
+          "output_tokens": 59,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户报告收到的商品与订单不符，属于配送/签收争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1547.000000020489,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1547.0,
+            "input_tokens": 7,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1547.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户已收到商品但颜色与订单不符，属于错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1312.999999965541,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1313.0,
+            "input_tokens": 100,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1313.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1327.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1328.0,
+            "input_tokens": 10,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1328.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 10,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反馈收到的商品颜色与订单不符，属于发错货的物流/履约争议。",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1467.9999999934807,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1453.0,
+            "input_tokens": 8,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1453.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1843.9999999245629,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1844.0,
+            "input_tokens": 102,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1844.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 102,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示快递被代签后未收到并请求登记核查，属于签收记录与实际收件有争议。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1422.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1422.0,
+            "input_tokens": 97,
+            "output_tokens": 58,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1422.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 58,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户收到的商品与订单不符，属于错寄问题，需登记核查。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1515.0000000139698,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1515.0,
+            "input_tokens": 7,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1515.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示快递被代签但未收到，并要求登记核查，属于签收争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 984.000000054948,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 984.0,
+            "input_tokens": 5,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 984.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确排除破损和错发，仅查询物流状态",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1530.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1531.0,
+            "input_tokens": 96,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1531.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 96,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并申请登记错寄。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1797.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1797.0,
+            "input_tokens": 99,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1797.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确表示只是想查询物流状态，属于物流查询意图。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1500.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1500.0,
+            "input_tokens": 4,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1500.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 4,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查，属于物流争议类规则咨询。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1391.0000000614673,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1391.0,
+            "input_tokens": 5,
+            "output_tokens": 56,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1391.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 56,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户明确表示订单发错货，属于商品与所订不符的错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1453.0000000959262,
+      "intent_correct": true,
+      "goal_correct": false,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1453.0,
+            "input_tokens": 100,
+            "output_tokens": 54,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1453.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 54,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1545.9999999729916,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1546.0,
+            "input_tokens": 97,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1546.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "uncertain",
+      "reasoning": "用户反馈发错货，属于物流/订单履行争议",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1670.9999999729916,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1671.0,
+            "input_tokens": 8,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1671.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1765.999999945052,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1750.0,
+            "input_tokens": 1,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1750.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 4,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款主题的状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1594.0000000409782,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1578.0,
+            "input_tokens": 93,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1578.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 93,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "uncertain",
+      "reasoning": "用户表示收到的商品与所订不符，属于错发主题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1750.0,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1750.0,
+            "input_tokens": 98,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1750.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 98,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反映收到的商品颜色与订单不符，属于收货内容争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1812.999999965541,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1813.0,
+            "input_tokens": 7,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1813.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的颜色与所订不符，属于商品错发/不符主题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1545.9999999729916,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1546.0,
+            "input_tokens": 99,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1546.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户称收到的商品与订单不符，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1717.9999999934807,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1718.0,
+            "input_tokens": 6,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1718.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 6,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户报告收到的商品与订单不符，属于配送/签收争议类问题",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1266.0000000614673,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1266.0,
+            "input_tokens": 7,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1266.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户明确表示订单物品发错，并询问需要提供什么材料，属于错发主题。",
+      "source_scores": {
+        "llm": 0.96,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1577.999999979511,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1578.0,
+            "input_tokens": 101,
+            "output_tokens": 55,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1578.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 101,
+          "output_tokens": 55,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并要报告问题，属于错发/破损类。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1608.9999999385327,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1609.0,
+            "input_tokens": 99,
+            "output_tokens": 62,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1609.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 62,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户反映订单物品发错，属于物流/履约争议类问题",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.75
+      },
+      "model_failed": false,
+      "latency_ms": 1547.000000020489,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1547.0,
+            "input_tokens": 9,
+            "output_tokens": 47,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1547.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 9,
+          "output_tokens": 47,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户描述收到的商品颜色与订单不符，属于发错货/错发场景，归入物流争议类。",
+      "source_scores": {
+        "llm": 0.92,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1562.999999965541,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1563.0,
+            "input_tokens": 8,
+            "output_tokens": 57,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1563.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 57,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1484.9999999860302,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1485.0,
+            "input_tokens": 102,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1485.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 102,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户已收到商品但颜色与订单不符，属于错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1530.9999999590218,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1531.0,
+            "input_tokens": 100,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1531.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示物流显示已签收但实际未收到，并申请签收争议核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1594.0000000409782,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1594.0,
+            "input_tokens": 10,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1594.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 10,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户称快递被代签但未收到，并明确要求登记核查，属于签收争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1687.000000034459,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1687.0,
+            "input_tokens": 5,
+            "output_tokens": 54,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1687.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 54,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "case_action",
+      "reasoning": "用户明确表示收到的商品与所订不符，并申请登记错寄。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1297.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1297.0,
+            "input_tokens": 99,
+            "output_tokens": 50,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1297.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 99,
+          "output_tokens": 50,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户明确表示快递被代签后未收到，并要求登记核查。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1797.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1797.0,
+            "input_tokens": 97,
+            "output_tokens": 48,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1797.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 48,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "case_action",
+      "reasoning": "用户描述收到的商品与订单不符，要求登记错寄，属于物流/履约争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.0
+      },
+      "model_failed": false,
+      "latency_ms": 1920.9999999729916,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1921.0,
+            "input_tokens": 7,
+            "output_tokens": 52,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1921.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 7,
+          "output_tokens": 52,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确表示只是想查询物流状态，未涉及丢件、破损或签收争议。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1469.0000000409782,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1469.0,
+            "input_tokens": 4,
+            "output_tokens": 51,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1469.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 4,
+          "output_tokens": 51,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1391.0000000614673,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1391.0,
+            "input_tokens": 97,
+            "output_tokens": 49,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1391.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 97,
+          "output_tokens": 49,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics",
+      "goal": "status_lookup",
+      "reasoning": "用户明确排除破损和错发，仅查询物流状态",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1295.9999999729916,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1296.0,
+            "input_tokens": 96,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1296.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 96,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "policy_question",
+      "reasoning": "用户询问签收争议的处理规则，且明确暂不申请核查，属于规则咨询。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1672.000000020489,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1672.0,
+            "input_tokens": 5,
+            "output_tokens": 53,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1672.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 5,
+          "output_tokens": 53,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "logistics_dispute",
+      "goal": "uncertain",
+      "reasoning": "用户反映发错货，属于物流/订单履行争议",
+      "source_scores": {
+        "llm": 0.9,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1563.0000000819564,
+      "intent_correct": false,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1563.0,
+            "input_tokens": 8,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1563.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 8,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款主题的状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1296.9999999040738,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1281.0,
+            "input_tokens": 93,
+            "output_tokens": 45,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1281.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 93,
+          "output_tokens": 45,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "variant": "candidate",
+      "intent": "logistics_damaged",
+      "goal": "policy_question",
+      "reasoning": "用户明确表示订单发错货，属于商品与所订不符的错发问题。",
+      "source_scores": {
+        "llm": 0.95,
+        "embedding": 0.0,
+        "pattern": 0.9
+      },
+      "model_failed": false,
+      "latency_ms": 1405.9999999590218,
+      "intent_correct": true,
+      "goal_correct": false,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1406.0,
+            "input_tokens": 100,
+            "output_tokens": 54,
+            "cache_read_input_tokens": 896,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1406.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 100,
+          "output_tokens": 54,
+          "cache_read_input_tokens": 896,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "round": 5,
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "variant": "baseline",
+      "intent": "refund",
+      "goal": "status_lookup",
+      "reasoning": "用户询问退款申请的处理进度，属于退款状态查询。",
+      "source_scores": {
+        "llm": 0.97,
+        "embedding": 0.6456639979721241,
+        "pattern": 0.5
+      },
+      "model_failed": false,
+      "latency_ms": 1406.0000000754371,
+      "intent_correct": true,
+      "goal_correct": true,
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "intent",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1406.0,
+            "input_tokens": 1,
+            "output_tokens": 44,
+            "cache_read_input_tokens": 768,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {},
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1406.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1,
+          "output_tokens": 44,
+          "cache_read_input_tokens": 768,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "baseline": {
+      "attempts": 60,
+      "intent_correct": 25,
+      "goal_correct": 60,
+      "joint_correct": 25,
+      "model_errors": 0,
+      "wall_p95_ms": 1920.9999999729916,
+      "usage": {
+        "calls": 60,
+        "errors": 0,
+        "input_tokens": 2689,
+        "output_tokens": 2973,
+        "cache_read_input_tokens": 43776,
+        "cache_creation_input_tokens": 0
+      },
+      "by_group": {
+        "boundary_control": {
+          "attempts": 35,
+          "intent_correct": 25,
+          "joint_correct": 25
+        },
+        "exposed_wrong_item": {
+          "attempts": 25,
+          "intent_correct": 0,
+          "joint_correct": 0
+        }
+      }
+    },
+    "candidate": {
+      "attempts": 60,
+      "intent_correct": 60,
+      "goal_correct": 55,
+      "joint_correct": 55,
+      "model_errors": 0,
+      "wall_p95_ms": 1829.0000000270084,
+      "usage": {
+        "calls": 60,
+        "errors": 0,
+        "input_tokens": 11537,
+        "output_tokens": 3064,
+        "cache_read_input_tokens": 48128,
+        "cache_creation_input_tokens": 0
+      },
+      "by_group": {
+        "boundary_control": {
+          "attempts": 35,
+          "intent_correct": 35,
+          "joint_correct": 30
+        },
+        "exposed_wrong_item": {
+          "attempts": 25,
+          "intent_correct": 25,
+          "joint_correct": 25
+        }
+      }
+    }
+  },
+  "checks": {
+    "all_attempts_recorded": true,
+    "one_model_call_each": true,
+    "no_model_errors": true,
+    "exposed_type_threshold": true,
+    "exposed_type_improved": true,
+    "control_joint_no_regression": true,
+    "no_unrequested_action_goal": true
+  },
+  "non_action_controls_classified_as_case_action": 0
+}

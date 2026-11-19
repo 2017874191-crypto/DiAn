@@ -23,7 +23,7 @@ except ModuleNotFoundError:
 import api.main as api
 from agents.agent_orchestrator import (
     AgentOrchestrator, AgentType, BillingAgent, GeneralAgent, LogisticsAgent, TechnicalAgent,
-    ResponseComposer,
+    ResponseComposer, Request,
 )
 from agents.tools import AgentToolSpec
 from evaluation.evaluator import EndToEndEvaluator, QualityScores
@@ -129,6 +129,10 @@ async def test_declared_status_capability_allows_real_tool_execution(services):
         "lookup_status", "查询已授权退款状态", {"type": "object", "properties": {
             "order_id": {"type": "string"}}, "required": ["order_id"]}, lookup,
         capabilities=("status_lookup",))})
+    packet = json.loads(orch._pool[AgentType.BILLING][0]._build_role_packet(
+        Request(
+            message="查询退款状态", user_id="u", conv_id="c", task_goal="status_lookup")))
+    assert packet["verification_fields"]["missing_fields"] == ["order_id"]
     orch.recognize_intent.side_effect = None
     orch.recognize_intent.return_value = IntentResult(
         IntentCategory.REFUND, .95, UrgencyLevel.LOW, "billing", {}, "", 0, task_goal="status_lookup")

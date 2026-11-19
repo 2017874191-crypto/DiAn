@@ -644,6 +644,11 @@ class BillingAgent(BaseAgent):
             req.task_goal == "status_lookup" and not packet["status_lookup_available"]
         ):
             packet["verification_fields"]["missing_fields"] = []
+        elif req.task_goal == "status_lookup":
+            packet["verification_fields"]["missing_fields"] = list(dict.fromkeys(
+                name for tool in self.get_tools().values() if "status_lookup" in tool.capabilities
+                for name in tool.input_schema.get("required", []) if not req.entities.get(name)
+            ))
         return json.dumps(packet, ensure_ascii=False)
 
     def get_tools(self) -> Dict[str, AgentToolSpec]:

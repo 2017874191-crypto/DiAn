@@ -38,6 +38,7 @@ class AgentToolSpec:
     handler: AgentToolHandler
     allowed_agents: Optional[Tuple[str, ...]] = None
     retry_safe: bool = True
+    capabilities: Tuple[str, ...] = ()
 
 
 def make_tool(

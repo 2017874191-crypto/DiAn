@@ -325,6 +325,7 @@ class ChatResponse(BaseModel):
     response:    str
     intent:      str
     intent_group: str = "other"
+    task_goal: Optional[str] = None
     agent_type:  str
     agent_types: List[str] = Field(default_factory=list)
     primary_agent: str = ""
@@ -476,6 +477,7 @@ async def _run_chat(req, started):
                 urgency=intent_result.urgency,
                 intent_confidence=intent_result.confidence,
                 intent_model_failed=getattr(intent_result, "llm_failed", False),
+                task_goal=getattr(intent_result, "task_goal", None),
                 logistics_revision=revision,
                 conversation_state=getattr(mem_ctx, "state", {}),
                 context_loader=load_prompt_context,
@@ -502,6 +504,7 @@ async def _run_chat(req, started):
                 response=result.response,
                 intent=result.intent.value if result.intent else "other",
                 intent_group=orch_req.intent_group,
+                task_goal=orch_req.task_goal,
                 agent_type=result.agent_type.value,
                 agent_types=[agent_type.value for agent_type in result.agent_types],
                 primary_agent=result.primary_agent.value if result.primary_agent else result.agent_type.value,

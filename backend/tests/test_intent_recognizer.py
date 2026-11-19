@@ -3,6 +3,21 @@ import pytest
 from core.intent_recognizer import IntentCategory, IntentRecognizer
 
 
+@pytest.mark.asyncio
+async def test_task_goal_uses_same_intent_call_and_legacy_outputs_remain_valid():
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+    r = make_recognizer()
+    r.model = "fixture"
+    r.client = SimpleNamespace(messages=SimpleNamespace(create=AsyncMock(side_effect=[
+        SimpleNamespace(content=[{"type": "text", "text": '{"intent":"refund","confidence":0.9,"task_goal":"status_lookup"}'}]),
+        SimpleNamespace(content=[{"type": "text", "text": '{"intent":"refund","confidence":0.9}'}]),
+    ])))
+    assert (await r._llm_recognize("退款通过了吗", None))["task_goal"] == "status_lookup"
+    assert (await r._llm_recognize("旧响应", None))["task_goal"] is None
+    assert r.client.messages.create.await_count == 2
+
+
 def make_recognizer(threshold=0.5):
     recognizer = IntentRecognizer.__new__(IntentRecognizer)
     recognizer._embedding_enabled = True

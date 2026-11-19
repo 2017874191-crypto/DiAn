@@ -36,6 +36,9 @@ CASES = [
     ("combined", "登录一直出现401，同时想知道退款申请审核多久？"),
     ("refund-live", "我刚提交的退款申请现在审核通过了吗？"),
     ("shipping-address", "订单已经发货，还能改地址吗？"),
+    ("lookup-tracking", "请查订单DEMO1001当前物流位置。"),
+    ("request-investigation", "订单DEMO1002显示签收但我没有收到，我要申请签收争议核查。"),
+    ("unclear-task", "我没收到，现在该怎么办？"),
 ]
 
 
@@ -93,7 +96,7 @@ async def replay(args):
                                 start = len(search.calls)
                                 started = time.perf_counter()
                                 response = await http.post("/chat", json={
-                                    "message": message, "user_id": "chat-evidence-user",
+                                    "message": message, "user_id": "demo-user" if identity == "request-investigation" else "chat-evidence-user",
                                     "conv_id": identity, "client_request_id": identity,
                                 })
                                 payload = response.json()

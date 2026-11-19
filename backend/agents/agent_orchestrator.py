@@ -204,6 +204,7 @@ class Request:
     conversation_state: Optional[Dict[str, Any]] = None
     intent_model_failed: bool = False
     context_loader: Optional[Callable[[], Awaitable[str]]] = field(default=None, repr=False, compare=False)
+    task_goal: Optional[str] = None
 
     async def prepare_model_context(self) -> None:
         if self.context_loader is not None:
@@ -519,6 +520,8 @@ class BaseAgent:
         """给子 Agent 的确定性输入包；子类可补充领域字段。"""
         packet = {
             "agent_type": self.agent_type.value,
+            "task_goal": req.task_goal,
+            "status_lookup_available": any("status_lookup" in tool.capabilities for tool in self.get_tools().values()),
             "intent": req.intent.value if req.intent else None,
             "intent_group": req.intent_group,
             "urgency": req.urgency.name if req.urgency else None,
@@ -637,6 +640,10 @@ class BillingAgent(BaseAgent):
             "risk_boundary": "不得承诺退款成功、立即到账或直接修改账单",
             "collection_scope": "missing_fields仅用于具体交易核验，政策咨询先依据知识库回答已有规则；没有状态查询工具时引导用户自行查询",
         }
+        if req.task_goal == "policy_question" or (
+            req.task_goal == "status_lookup" and not packet["status_lookup_available"]
+        ):
+            packet["verification_fields"]["missing_fields"] = []
         return json.dumps(packet, ensure_ascii=False)
 
     def get_tools(self) -> Dict[str, AgentToolSpec]:
@@ -968,6 +975,7 @@ class AgentOrchestrator:
             req.intent_confidence = intent_result.confidence
             req.entities = intent_result.entities
             req.intent_model_failed = getattr(intent_result, "llm_failed", False)
+            req.task_goal = getattr(intent_result, "task_goal", None)
 
         # 明确异常表达优先；短回复如单号、举证、确认，接续持久化案件。
         from core.logistics import ISSUES, detect_issue, needs_missing_delivery_clarification
@@ -976,6 +984,9 @@ class AgentOrchestrator:
         continuation = bool(re.fullmatch(r"\s*(?:确认建单|确认创建工单|确认提交工单|重试|继续|(?:订单号?|运单号?|快递单号)\s*[:：#]?\s*[A-Za-z0-9_-]{4,32}|已(?:上传|提供|提交).{0,30}(?:照片|图片|视频)[。！!]?)\s*", req.message))
         if previous.get("logistics_case_id") and re.search(r"确认建单|创建工单|提交工单", req.message):
             continuation = True  # 疑问和否定仍由原案件解释，但不会通过 is_confirmed 授权写操作。
+        if continuation and previous.get("logistics_case_id"):
+            req.task_goal = "case_action"
+        informational = req.task_goal in ("policy_question", "status_lookup")
         # 明确的人工请求不能被模型的物流分类覆盖；先移除常见否定表达。
         handoff_text = re.sub(r"(?:不想|不需要|不用|不要|无需|暂不)(?:转|找)?人工(?:客服)?", "", req.message)
         wants_handoff = any(k in handoff_text for k in ("转人工", "人工客服", "找人工"))
@@ -989,7 +1000,7 @@ class AgentOrchestrator:
             req.intent = IntentCategory.BILLING if re.search(r"运费|配送费用|费用|退款|退费", req.message) else IntentCategory.LOGISTICS
             req.intent_group = "billing" if req.intent == IntentCategory.BILLING else "query"
             req.intent_confidence = max(req.intent_confidence, 0.9)
-        if not explicit_handoff and (issue or (continuation and previous.get("logistics_case_id"))):
+        if not explicit_handoff and not informational and (issue or (continuation and previous.get("logistics_case_id"))):
             req.intent = IntentCategory(issue or previous["logistics_issue"])
             req.intent_group = "logistics"
             req.intent_confidence = max(req.intent_confidence, 0.9)
@@ -1010,8 +1021,12 @@ class AgentOrchestrator:
         rules_only_fallback = (os.getenv("INTENT_RECOGNITION_MODE", "full").strip().lower() == "rules_only"
                                and req.intent not in (IntentCategory.LOGISTICS_LOST, IntentCategory.LOGISTICS_DISPUTE,
                                                       IntentCategory.LOGISTICS_DAMAGED, IntentCategory.HUMAN_HANDOFF))
-        if clarify_missing_delivery or self._needs_clarification(req) or rules_only_fallback:
-            if clarify_missing_delivery:
+        goal_unclear = req.task_goal == "uncertain" and not previous.get("logistics_case_id") and not explicit_handoff
+        if clarify_missing_delivery or self._needs_clarification(req) or rules_only_fallback or goal_unclear:
+            if goal_unclear:
+                content = "您是想了解相关规则、查询当前状态，还是申请处理具体问题？"
+                reason = "任务目标不确定，先澄清处理目标"
+            elif clarify_missing_delivery:
                 req.intent, req.intent_group, req.intent_confidence = IntentCategory.OTHER, "other", 0.0
                 content = ("这笔订单是还没收到、怀疑丢件，还是只想查物流进度？"
                            "请带订单号回复“疑似丢件”或“查询物流进度”。")
@@ -1036,6 +1051,21 @@ class AgentOrchestrator:
 
         # 复杂问题自动并行协作，例如同一句同时涉及登录故障和扣款/退款。
         decision = self._route_decision(req)
+        selected = self._best_agent(decision.primary_agent) if req.task_goal == "status_lookup" else None
+        if (req.task_goal == "status_lookup" and not explicit_handoff
+                and decision.primary_agent != AgentType.ESCALATION
+                and not (selected and any("status_lookup" in tool.capabilities
+                                         for tool in selected.get_tools().values()))):
+            result = OrchestratorResult(
+                request_id=req.request_id,
+                response="当前没有接入您所需的实时状态查询工具，补充订单号或支付信息也无法在此确认结果。请通过官方业务页面查看，或联系具备权限的客服核实。",
+                agent_type=decision.primary_agent, intent=req.intent,
+                latency_ms=(time.monotonic() - t0) * 1000,
+                agent_types=[decision.primary_agent], primary_agent=decision.primary_agent,
+                routing_reason="状态查询工具未提供，直接说明能力范围", routing_confidence=req.intent_confidence,
+            )
+            self._record_tool_trace(result)
+            return result
         if decision.multi_agent:
             return await self.run_parallel(req, decision)
 
@@ -1165,6 +1195,8 @@ class AgentOrchestrator:
             )
 
         if req.intent and req.intent.value in {"logistics_lost", "logistics_dispute", "logistics_damaged"}:
+            if req.task_goal in ("policy_question", "status_lookup"):
+                return RoutingDecision(AgentType.GENERAL, reason="物流主题规则咨询或只读查询", confidence=req.intent_confidence)
             return RoutingDecision(AgentType.LOGISTICS, reason="物流异常案件：串行核验与确认建单", confidence=req.intent_confidence)
 
         scores = self._domain_scores(req)

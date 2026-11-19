@@ -72,6 +72,7 @@ class IntentResult:
     source_scores: Dict[str, float] = field(default_factory=dict)
     embedding_source: str = "local-ngram"
     llm_failed: bool = False
+    task_goal: Optional[str] = None
 
 
 # ── Few-shot 模板（同时用于 LLM 示例和 Embedding 匹配）────────────────────────
@@ -251,6 +252,7 @@ class IntentRecognizer:
             source_scores=source_scores,
             embedding_source=emb.get("source", "unavailable"),
             llm_failed=bool(llm.get("failed")),
+            task_goal=llm.get("task_goal"),
         )
 
         if result.llm_failed:
@@ -324,7 +326,14 @@ class IntentRecognizer:
         用户消息: "{message}"
 
 返回格式（仅 JSON，不要其他文字）:
-{{"intent": "<意图值>", "confidence": <0-1>, "reasoning": "<一句话说明>"}}
+{{"intent": "<意图值>", "confidence": <0-1>, "reasoning": "<一句话说明>", "task_goal": "<任务目标>"}}
+
+任务目标独立于业务主题，四选一：
+policy_question：解释规则、状态含义、费用、时效或一般处理流程，例如“显示签收能证明本人收到吗”。
+status_lookup：查询某笔订单、物流或退款的当前真实状态，例如“退款申请审核通过了吗”。
+case_action：申请或继续处理具体案件，包括明确申请核查、补订单号、补材料、确认、重试和跟进已建案件。
+uncertain：无法确定用户要咨询规则、查询状态还是申请处理。
+“没收到”不自动表示申请核查，结合完整问法和历史判断。混合技术问题和规则咨询仍保留原意图主题。
 
 可选意图: {", ".join(c.value for c in IntentCategory)}"""
         prompt = self._clean_text(prompt)
@@ -347,7 +356,12 @@ class IntentRecognizer:
             confidence = data.get("confidence")
             if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not math.isfinite(confidence) or not 0 <= confidence <= 1:
                 raise ValueError("意图 confidence 必须是 0 到 1 的有限数字")
-            return {"intent": data["intent"], "confidence": confidence, "reasoning": data.get("reasoning", "")}
+            goal = data.get("task_goal")
+            if goal is not None and (goal not in ("policy_question", "status_lookup", "case_action", "uncertain")
+                                     or confidence < self.threshold):
+                goal = "uncertain"
+            return {"intent": data["intent"], "confidence": confidence, "reasoning": data.get("reasoning", ""),
+                    "task_goal": goal}
         except Exception as ex:
             logger.warning(f"LLM 识别失败: {ex}")
             return {"intent": IntentCategory.OTHER, "confidence": 0.0, "reasoning": "LLM 失败", "failed": True}

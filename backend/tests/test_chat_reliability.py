@@ -77,6 +77,84 @@ def body(message="退款规则", request_id="one", conv_id="c"):
 
 
 @pytest.mark.asyncio
+async def test_policy_goal_bypasses_logistics_issue_intake(services):
+    _, orch, model, http = services
+    orch.recognize_intent.return_value = IntentResult(
+        IntentCategory.LOGISTICS_DISPUTE, .95, UrgencyLevel.LOW, "logistics", {}, "", 0,
+        task_goal="policy_question")
+    orch.recognize_intent.side_effect = None
+    response = await http.post("/chat", json=body("显示签收但没收到，签收记录能证明本人收到吗？"))
+    assert response.status_code == 200
+    assert response.json()["agent_type"] == "general"
+    assert response.json()["task_goal"] == "policy_question"
+    assert model.messages.create.await_count == 1
+
+
+@pytest.mark.asyncio
+async def test_unavailable_status_query_and_uncertain_goal_do_not_collect_fields(services):
+    _, orch, model, http = services
+    orch.recognize_intent.side_effect = None
+    for goal, message in (("status_lookup", "退款申请审核通过了吗"), ("uncertain", "我没收到现在怎么办")):
+        orch.recognize_intent.return_value = IntentResult(
+            IntentCategory.REFUND, .95, UrgencyLevel.LOW, "billing", {}, "", 0, task_goal=goal)
+        response = await http.post("/chat", json=body(message, goal, goal))
+        assert response.status_code == 200 and response.json()["tools_used"] == []
+        if goal == "status_lookup":
+            assert "没有接入" in response.json()["response"]
+        else:
+            assert "您是想" in response.json()["response"]
+    assert model.messages.create.await_count == 0
+
+
+@pytest.mark.asyncio
+async def test_declared_status_capability_allows_real_tool_execution(services):
+    _, orch, model, http = services
+    seen = []
+    async def lookup(req, args):
+        seen.append(args["order_id"])
+        return {"success": True, "status": "under_review"}
+    orch.set_shared_tools({"lookup_status": AgentToolSpec(
+        "lookup_status", "查询已授权退款状态", {"type": "object", "properties": {
+            "order_id": {"type": "string"}}, "required": ["order_id"]}, lookup,
+        capabilities=("status_lookup",))})
+    orch.recognize_intent.side_effect = None
+    orch.recognize_intent.return_value = IntentResult(
+        IntentCategory.REFUND, .95, UrgencyLevel.LOW, "billing", {}, "", 0, task_goal="status_lookup")
+    model.messages.create.side_effect = [
+        SimpleNamespace(content=[{"type": "tool_use", "id": "one", "name": "lookup_status",
+                                  "input": {"order_id": "fixture"}}], stop_reason="tool_use"),
+        text_response("查询结果是审核中"),
+    ]
+    response = await http.post("/chat", json=body("查询退款状态"))
+    assert response.status_code == 200 and seen == ["fixture"]
+    assert response.json()["tools_used"] == ["lookup_status"]
+
+
+@pytest.mark.asyncio
+async def test_existing_case_confirmation_preserves_write_gate_when_goal_is_misclassified(services, tmp_path, monkeypatch):
+    _, orch, model, http = services
+    monkeypatch.setenv("DIAN_LOGISTICS_DB", str(tmp_path / "goal-case.sqlite3"))
+    monkeypatch.setenv("DIAN_TICKET_PROVIDER", "sqlite")
+    monkeypatch.setenv("DIAN_TEMPORAL_LOGISTICS", "false")
+    agent = LogisticsAgent(model, "test-model")
+    orch._pool[AgentType.LOGISTICS] = [agent]
+    orch.recognize_intent.side_effect = None
+    orch.recognize_intent.return_value = IntentResult(
+        IntentCategory.LOGISTICS_LOST, .95, UrgencyLevel.LOW, "logistics", {"order_id": ["DEMO1001"]}, "", 0,
+        task_goal="case_action")
+    first = {**body("包裹疑似丢件，订单号 DEMO1001", "open"), "user_id": "demo-user"}
+    opened = await http.post("/chat", json=first)
+    assert opened.json()["logistics_case"]["state"] == "awaiting_confirmation"
+    orch.recognize_intent.return_value = IntentResult(
+        IntentCategory.LOGISTICS_LOST, .95, UrgencyLevel.LOW, "logistics", {}, "", 0,
+        task_goal="policy_question")
+    confirmed = await http.post("/chat", json={**first, "message": "确认建单", "client_request_id": "confirm"})
+    assert confirmed.status_code == 200 and confirmed.json()["task_goal"] == "case_action"
+    with agent.service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 1
+
+
+@pytest.mark.asyncio
 async def test_receipt_transaction_rejects_takeover_after_ownership_check(services, monkeypatch):
     memory, _, _, _ = services
     async with memory.conversation("u", "c") as lease:

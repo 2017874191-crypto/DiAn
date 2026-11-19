@@ -1,0 +1,3526 @@
+{
+  "schema": 1,
+  "scope": "Actual ASGI chat with live models and isolated dependencies",
+  "semantic_review_source": "Codex model-assisted observation",
+  "baseline": {
+    "schema": 1,
+    "code_commit": "21642058b2077e3049310043afb085ccddd9dbb6",
+    "build": {
+      "source_sha256": "597ee28398661191e7a1a756e846597deeed8a28e5bf305aefc1f0eb765a68e3",
+      "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1"
+    },
+    "scope": "ASGI /chat, live intent and role models, production skills, evaluation-only BM25",
+    "dataset_manifest": {
+      "schema": 1,
+      "source": {
+        "dataset": "DiAn local demonstration knowledge",
+        "review_status": "pending_human_review",
+        "source_files": {
+          "tooling/knowledge_base.py": "51b59ac4fe6f44d9211d5260e8cfec822823dfd34f97b8739e92fd61e8786254",
+          "config/logistics/knowledge.json": "597bd70aeb4ee115a412393427f8bcdd01e17297fad99d79016e5dbbfaf01c4c"
+        }
+      },
+      "documents": 9,
+      "queries": 30,
+      "files": {
+        "corpus.json": "9e7235536765a16d3bc93586c2db6a7d411df6c6a8f08704a1869c244df27468",
+        "queries.json": "a518f2a5ff765fa0cfabb7c7f9566946c8a2ae950c3fe7c8a6b9247b92d91bae"
+      }
+    },
+    "manifest_sha256": "065c24fa5c3f86980724139cd0f48394221f92f52b40ee511512b96e3efe7e1a",
+    "model": "deepseek-v4-pro",
+    "configuration_source": {
+      "kind": "project_dotenv",
+      "shadowed_environment_fields": [
+        "ANTHROPIC_BASE_URL"
+      ]
+    },
+    "dependencies": {
+      "redis": "fakeredis protocol substitute",
+      "business": "Temporary SQLite with demo fixtures",
+      "background_memory": "Empty profile and episodic result",
+      "retrieval": "Fixed nine-passage BM25 evaluation adapter"
+    },
+    "complete": true,
+    "rows": [
+      {
+        "case_id": "state-list",
+        "message": "有哪些订单状态？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "state-list",
+          "request_id": "873bb07d-f812-4822-aed5-fad454dee64b",
+          "response": "根据《订单查询》文档，订单状态包括以下六种：\n\n1. 待支付\n2. 已支付\n3. 已发货\n4. 运输中\n5. 已签收\n6. 已完成\n\n补充说明：如果订单显示「已发货」但超过 7 天未收到，可以联系客服申请查件；物流信息通常在发货后 24 小时内更新。\n\n如果你需要查询某个具体订单的当前状态，请提供订单号或下单时间，我可以帮你进一步判断下一步该怎么处理。",
+          "intent": "order_status",
+          "intent_group": "query",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.77, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.77,
+          "escalated": false,
+          "latency_ms": 7000.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.764,
+          "intent_source_scores": {
+            "llm": 0.9,
+            "embedding": 0.42008402520840293,
+            "pattern": 0.5,
+            "refined_by_pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 2125.0,
+              "memory_background": 0.0,
+              "agent_execution": 4844.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2125.0,
+                "input_tokens": 115,
+                "output_tokens": 32,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2203.0,
+                "input_tokens": 2042,
+                "output_tokens": 77,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2610.0,
+                "input_tokens": 1251,
+                "output_tokens": 113,
+                "cache_read_input_tokens": 1920,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {
+              "model_tcp_connected": 1,
+              "model_direct_tls_connected": 1
+            },
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 6938.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 3408,
+              "output_tokens": 222,
+              "cache_read_input_tokens": 2304,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 7022.694,
+        "retrievals": [
+          {
+            "query": "订单状态 有哪些 状态说明",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 8.574019442879653,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "配送说明",
+                "content": "配送服务说明。标准配送：3-5 个工作日送达，免运费（订单满 99 元）。加急配送：1-2 个工作日送达，运费 15 元。同城配送：当日达或次日达，运费 10 元。偏远地区可能需要额外 2-3 天。配送时间为每天 9:00-18:00，节假日可能延迟。如果需要修改收货地址，请在发货前联系客服。",
+                "document_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+                "score": 1.2151209784785952,
+                "version": "9ddc4fc42b97b59d13710c770db288e77378dea2eb767311f6cc440ed2434678",
+                "chunk": 0
+              },
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 1.0691382505104183,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "账户安全",
+                "content": "账户安全说明。建议用户定期修改密码，密码长度至少 8 位，包含字母和数字。如果忘记密码，可以通过绑定的手机号或邮箱重置。发现账户异常登录时，系统会自动锁定账户并发送通知。用户可以在安全设置中开启两步验证，提高账户安全性。不要将密码分享给他人，客服人员不会索要用户密码。",
+                "document_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+                "score": 0.5594628237407054,
+                "version": "4cbdb2edc53ea45c3cbb7c7b9955b8806174dadfb41ea646b390804141b440de",
+                "chunk": 0
+              },
+              {
+                "title": "破损错发举证演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片",
+                "document_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+                "score": 0.0,
+                "version": "bb3e95ade494de6db56bd620227ab0909dc1e7c93e1ec11b3e90c8d08d482e04",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "873bb07d-f812-4822-aed5-fad454dee64b",
+          "timestamp": "2026-11-19T15:24:01.139331",
+          "intent": "order_status",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_TF3VNdR3w5pHEh8TuyZw2171",
+              "input": {
+                "query": "订单状态 有哪些 状态说明",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 4829.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-inference",
+        "message": "订单显示已签收，就能证明是我本人收到的吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-inference",
+          "request_id": "0ba56111-c5f4-4c77-816d-fbf6db2ff25b",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.7129779786800913,
+          "escalated": false,
+          "latency_ms": 2203.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.713,
+          "intent_source_scores": {
+            "llm": 0.93,
+            "embedding": 0.3098898934004561,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 2172.0,
+              "agent_execution": 31.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2156.0,
+                "input_tokens": 124,
+                "output_tokens": 40,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 2156.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 124,
+              "output_tokens": 40,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-b04c366c74183d1be092",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-0350313e64c29f3a13a183ee",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:24:03.359424+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 2234.548,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "0ba56111-c5f4-4c77-816d-fbf6db2ff25b",
+          "timestamp": "2026-11-19T15:24:03.376045",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-b04c366c74183d1be092",
+              "state": "awaiting_info",
+              "request_id": "0ba56111-c5f4-4c77-816d-fbf6db2ff25b",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 31.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-conflict",
+        "message": "页面显示已签收，但我确实没拿到，这两件事是不是矛盾？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-conflict",
+          "request_id": "3605d700-9edd-4f49-bbb4-25ecf48136c4",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.9,
+          "escalated": false,
+          "latency_ms": 2766.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.8187,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.24845199749997662,
+            "pattern": 0.9
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 2625.0,
+              "agent_execution": 125.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2625.0,
+                "input_tokens": 127,
+                "output_tokens": 41,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 2625.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 127,
+              "output_tokens": 41,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-b9f20c2646008391d64e",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-660cb82512983ff099aa4431",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:24:06.150726+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 2767.058,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "3605d700-9edd-4f49-bbb4-25ecf48136c4",
+          "timestamp": "2026-11-19T15:24:06.163408",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-b9f20c2646008391d64e",
+              "state": "awaiting_info",
+              "request_id": "3605d700-9edd-4f49-bbb4-25ecf48136c4",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 125.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-summary",
+        "message": "请解释“已发货、运输中、已签收”，尤其说明签收状态能否证明我本人收到了。",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-summary",
+          "request_id": "76e9097c-8ea6-4242-ac3a-9416ed3fda65",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.6588675134594812,
+          "escalated": false,
+          "latency_ms": 1890.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.6589,
+          "intent_source_scores": {
+            "llm": 0.9,
+            "embedding": 0.14433756729740646,
+            "pattern": 0.0
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1859.0,
+              "agent_execution": 31.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1844.0,
+                "input_tokens": 134,
+                "output_tokens": 40,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 1844.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 134,
+              "output_tokens": 40,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-415203b95d36e96ad43e",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-5cc32ad17a579f83fd9cd69f",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:24:08.042600+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 1891.999,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "76e9097c-8ea6-4242-ac3a-9416ed3fda65",
+          "timestamp": "2026-11-19T15:24:08.054691",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-415203b95d36e96ad43e",
+              "state": "awaiting_info",
+              "request_id": "76e9097c-8ea6-4242-ac3a-9416ed3fda65",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 31.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "billing-policy",
+        "message": "退款申请要审核多久？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "billing-policy",
+          "request_id": "2db0a363-4389-4822-8c34-983a2c1fe9b2",
+          "response": "关于退款审核时长，需要先说明：**具体审核时间取决于订单状态和支付渠道，我无法在未核验订单的情况下给出确切天数。**\n\n**当前可判断的内容：**\n- 退款申请提交后，通常需要经过订单核验、退款规则审核、原路退回几个环节。\n- 不同支付渠道（微信、支付宝、银行卡等）的处理时间不同，到账时间以支付渠道实际处理为准。\n\n**需要核验的信息：**\n- 订单号或交易号\n- 支付时间和支付渠道\n- 实际支付金额\n\n**下一步处理：**\n请提供上述信息，我可以帮你判断当前订单是否符合退款申请条件，并说明后续审核路径。若涉及已使用服务、活动价或企业合同等场景，通常需要人工审核，时效会相应延长。\n\n请保留好支付凭证，方便后续核验。",
+          "intent": "refund",
+          "intent_group": "billing",
+          "agent_type": "billing",
+          "agent_types": [
+            "billing"
+          ],
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": false,
+          "latency_ms": 8313.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.8074,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.391924757669098,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 1313.0,
+              "memory_background": 0.0,
+              "agent_execution": 6984.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1313.0,
+                "input_tokens": 117,
+                "output_tokens": 33,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 6984.0,
+                "input_tokens": 2437,
+                "output_tokens": 179,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 2,
+              "errors": 0,
+              "latency_ms": 8297.0,
+              "usage_reported_calls": 2,
+              "input_tokens": 2554,
+              "output_tokens": 212,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 8317.476,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "2db0a363-4389-4822-8c34-983a2c1fe9b2",
+          "timestamp": "2026-11-19T15:24:16.372344",
+          "intent": "refund",
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [],
+          "escalated": false,
+          "latency_ms": 6984.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "combined",
+        "message": "登录一直出现401，同时想知道退款申请审核多久？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "combined",
+          "request_id": "bf4e2ab6-4c39-44c2-916d-59d5b813f5be",
+          "response": "关于您提到的两个问题，分别说明如下：\n\n**一、登录出现 401**\n\n401 表示“认证失败”，通常是登录态或凭证问题，不代表账号一定异常。建议您按以下顺序排查：\n\n1. 确认登录方式：是账号密码登录，还是微信/手机号等第三方登录。\n2. 退出账号后重新登录一次，排除登录态过期。\n3. 如果是 App 或接口调用，检查 Token 是否过期、时间戳是否准确、是否使用了对应环境的密钥。\n4. 检查设备系统时间是否为自动同步，时间不准可能导致校验失败。\n\n如仍无法解决，请补充：是 App、网页还是接口调用？401 是稳定复现还是偶发？有无具体错误提示或 request_id？这些信息有助于进一步定位。若是生产环境持续出现且影响多名用户，建议转二线技术处理。\n\n**二、退款申请审核时长**\n\n退款审核时间需要先核验订单信息后才能判断，目前缺少必要信息，无法确认具体时长。\n\n请补充：订单号或交易号、支付金额、支付时间、支付渠道（微信/支付宝/银行卡等）。涉及实际退款时，可能需转人工或财务审核。审核时间以平台规则和订单状态为准，到账时间以支付渠道实际处理为准，暂无法承诺具体天数。\n\n您可以先提供订单号和支付金额，我再帮您进一步核实。",
+          "intent": "technical_login",
+          "intent_group": "technical",
+          "agent_type": "technical",
+          "agent_types": [
+            "technical",
+            "billing"
+          ],
+          "primary_agent": "technical",
+          "supporting_agents": [
+            "billing"
+          ],
+          "tools_used": [],
+          "routing_reason": "intent=technical_login, group=technical, primary=technical, supporting=billing, scores=[technical=0.93, billing=0.18, general=0.10, logistics=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": true,
+          "latency_ms": 15156.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.6975,
+          "intent_source_scores": {
+            "llm": 0.85,
+            "embedding": 0.5125000907915491,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 15.0,
+              "intent": 1438.0,
+              "memory_background": 0.0,
+              "agent_execution": 13703.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1438.0,
+                "input_tokens": 123,
+                "output_tokens": 39,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 7000.0,
+                "input_tokens": 2186,
+                "output_tokens": 236,
+                "cache_read_input_tokens": 256,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.technical",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 7593.0,
+                "input_tokens": 2294,
+                "output_tokens": 263,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "composer",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 6110.0,
+                "input_tokens": 659,
+                "output_tokens": 289,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {
+              "model_tcp_connected": 1,
+              "model_direct_tls_connected": 1
+            },
+            "llm": {
+              "calls": 4,
+              "errors": 0,
+              "latency_ms": 22141.0,
+              "usage_reported_calls": 4,
+              "input_tokens": 5262,
+              "output_tokens": 827,
+              "cache_read_input_tokens": 640,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 15158.993,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "bf4e2ab6-4c39-44c2-916d-59d5b813f5be",
+          "timestamp": "2026-11-19T15:24:31.537716",
+          "intent": "technical_login",
+          "primary_agent": "technical",
+          "supporting_agents": [
+            "billing"
+          ],
+          "tools_used": [],
+          "tool_calls": [],
+          "escalated": true,
+          "latency_ms": 13703.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "refund-live",
+        "message": "我刚提交的退款申请现在审核通过了吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "refund-live",
+          "request_id": "8845976d-053b-445a-afea-8f7bae588211",
+          "response": "**结论：目前还无法确认您的退款申请是否已审核通过，需要先核验订单信息。**\n\n**需要核验的信息**\n- 订单号或交易号\n- 支付金额与币种\n- 支付时间与支付渠道（微信 / 支付宝 / 银行卡等）\n\n**当前说明**\n退款审核结果取决于订单状态、实际支付金额和退款规则，在缺少上述信息前，我不能判断审核是否通过，也不会直接承诺结果。\n\n**下一步处理**\n请提供订单号、支付时间和支付渠道，我会据此继续帮您核对可判断的内容。若涉及实际退款到账或审核进度，通常需要转人工或财务核验后确认。\n\n请保留好支付凭证，方便后续补充核验。",
+          "intent": "refund",
+          "intent_group": "billing",
+          "agent_type": "billing",
+          "agent_types": [
+            "billing"
+          ],
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": true,
+          "latency_ms": 6609.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.7699,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.20438500686582434,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 15.0,
+              "intent": 1657.0,
+              "memory_background": 0.0,
+              "agent_execution": 4937.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1657.0,
+                "input_tokens": 121,
+                "output_tokens": 36,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 4937.0,
+                "input_tokens": 265,
+                "output_tokens": 153,
+                "cache_read_input_tokens": 2176,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 2,
+              "errors": 0,
+              "latency_ms": 6594.0,
+              "usage_reported_calls": 2,
+              "input_tokens": 386,
+              "output_tokens": 189,
+              "cache_read_input_tokens": 2560,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 6610.635,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "8845976d-053b-445a-afea-8f7bae588211",
+          "timestamp": "2026-11-19T15:24:38.152390",
+          "intent": "refund",
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [],
+          "escalated": true,
+          "latency_ms": 4937.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "shipping-address",
+        "message": "订单已经发货，还能改地址吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "shipping-address",
+          "request_id": "06f5e3a6-9a0f-41d7-981d-37d9c3659548",
+          "response": "根据《配送说明》文档，修改收货地址需要在**发货前**联系客服办理，资料中并未说明发货后是否还能改地址。\n\n所以针对你的情况，结论是：\n\n- **发货前**：可以联系客服修改收货地址。\n- **发货后**：资料没有明确说明可以修改，我不能凭常识替你判断“一定可以”或“一定不可以”，需要进一步核验。\n\n建议你通过官方订单页面查看当前物流状态，或直接联系专业客服确认该订单是否仍支持改址。如果你能提供订单号或下单时间，我可以帮你进一步判断下一步该怎么处理，但改址操作本身需要由客服在核实订单后办理。",
+          "intent": "logistics",
+          "intent_group": "query",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.77, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.77,
+          "escalated": false,
+          "latency_ms": 8500.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.7641,
+          "intent_source_scores": {
+            "llm": 0.92,
+            "embedding": 0.35032452487268534,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1406.0,
+              "memory_background": 0.0,
+              "agent_execution": 7094.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1391.0,
+                "input_tokens": 120,
+                "output_tokens": 36,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2781.0,
+                "input_tokens": 128,
+                "output_tokens": 99,
+                "cache_read_input_tokens": 1920,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 4313.0,
+                "input_tokens": 1277,
+                "output_tokens": 139,
+                "cache_read_input_tokens": 1920,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 8485.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 1525,
+              "output_tokens": 274,
+              "cache_read_input_tokens": 4224,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 8522.887,
+        "retrievals": [
+          {
+            "query": "订单发货后修改收货地址",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "配送说明",
+                "content": "配送服务说明。标准配送：3-5 个工作日送达，免运费（订单满 99 元）。加急配送：1-2 个工作日送达，运费 15 元。同城配送：当日达或次日达，运费 10 元。偏远地区可能需要额外 2-3 天。配送时间为每天 9:00-18:00，节假日可能延迟。如果需要修改收货地址，请在发货前联系客服。",
+                "document_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+                "score": 9.103108712802552,
+                "version": "9ddc4fc42b97b59d13710c770db288e77378dea2eb767311f6cc440ed2434678",
+                "chunk": 0
+              },
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 3.977543807292495,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 1.0691382505104183,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "账户安全",
+                "content": "账户安全说明。建议用户定期修改密码，密码长度至少 8 位，包含字母和数字。如果忘记密码，可以通过绑定的手机号或邮箱重置。发现账户异常登录时，系统会自动锁定账户并发送通知。用户可以在安全设置中开启两步验证，提高账户安全性。不要将密码分享给他人，客服人员不会索要用户密码。",
+                "document_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+                "score": 0.9928817510556905,
+                "version": "4cbdb2edc53ea45c3cbb7c7b9955b8806174dadfb41ea646b390804141b440de",
+                "chunk": 0
+              },
+              {
+                "title": "破损错发举证演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片",
+                "document_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+                "score": 0.0,
+                "version": "bb3e95ade494de6db56bd620227ab0909dc1e7c93e1ec11b3e90c8d08d482e04",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "06f5e3a6-9a0f-41d7-981d-37d9c3659548",
+          "timestamp": "2026-11-19T15:24:46.670732",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_PDMvPuh1O99jCJyLO24o1269",
+              "input": {
+                "query": "订单发货后修改收货地址",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 7094.0,
+          "status": "success",
+          "retryable": false
+        }
+      }
+    ],
+    "ticket_count": 0,
+    "observed_summary": {
+      "http_cases": 8,
+      "http_success": 8,
+      "model_calls": 17,
+      "model_errors": 0,
+      "ticket_count": 0,
+      "direct_checks": 0
+    }
+  },
+  "intermediate": {
+    "schema": 1,
+    "code_commit": "ae46d124cadaeea29ab514f1a7e09dc04971cbd6",
+    "build": {
+      "source_sha256": "056b9d224464a1b19746daecb95e1a73ace4a7bf7de6eeef6dc2a660dad51fff",
+      "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1"
+    },
+    "scope": "ASGI /chat, live intent and role models, production skills, evaluation-only BM25",
+    "dataset_manifest": {
+      "schema": 1,
+      "source": {
+        "dataset": "DiAn local demonstration knowledge",
+        "review_status": "pending_human_review",
+        "source_files": {
+          "tooling/knowledge_base.py": "51b59ac4fe6f44d9211d5260e8cfec822823dfd34f97b8739e92fd61e8786254",
+          "config/logistics/knowledge.json": "597bd70aeb4ee115a412393427f8bcdd01e17297fad99d79016e5dbbfaf01c4c"
+        }
+      },
+      "documents": 9,
+      "queries": 30,
+      "files": {
+        "corpus.json": "9e7235536765a16d3bc93586c2db6a7d411df6c6a8f08704a1869c244df27468",
+        "queries.json": "a518f2a5ff765fa0cfabb7c7f9566946c8a2ae950c3fe7c8a6b9247b92d91bae"
+      }
+    },
+    "manifest_sha256": "065c24fa5c3f86980724139cd0f48394221f92f52b40ee511512b96e3efe7e1a",
+    "model": "deepseek-v4-pro",
+    "configuration_source": {
+      "kind": "project_dotenv",
+      "shadowed_environment_fields": [
+        "ANTHROPIC_BASE_URL"
+      ]
+    },
+    "dependencies": {
+      "redis": "fakeredis protocol substitute",
+      "business": "Temporary SQLite with demo fixtures",
+      "background_memory": "Empty profile and episodic result",
+      "retrieval": "Fixed nine-passage BM25 evaluation adapter"
+    },
+    "complete": true,
+    "rows": [
+      {
+        "case_id": "state-list",
+        "message": "有哪些订单状态？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "state-list",
+          "request_id": "ff3ccc93-ea98-46df-b6a6-be0ab7bf58a0",
+          "response": "根据知识库《订单查询》文档，订单状态包括以下六种：\n\n1. 待支付\n2. 已支付\n3. 已发货\n4. 运输中\n5. 已签收\n6. 已完成\n\n补充说明：如果订单显示「已发货」但超过 7 天未收到，可以联系客服申请查件；物流信息通常在发货后 24 小时内更新。\n\n需要我帮你查询某个具体订单的状态吗？如果要查询，请提供订单号或下单时间。",
+          "intent": "order_status",
+          "intent_group": "query",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.77, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.77,
+          "escalated": false,
+          "latency_ms": 6671.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.764,
+          "intent_source_scores": {
+            "llm": 0.9,
+            "embedding": 0.42008402520840293,
+            "pattern": 0.5,
+            "refined_by_pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1641.0,
+              "memory_background": 0.0,
+              "agent_execution": 5015.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1641.0,
+                "input_tokens": 115,
+                "output_tokens": 32,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2110.0,
+                "input_tokens": 2094,
+                "output_tokens": 76,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2875.0,
+                "input_tokens": 1204,
+                "output_tokens": 110,
+                "cache_read_input_tokens": 2048,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {
+              "model_tcp_connected": 1,
+              "model_direct_tls_connected": 1
+            },
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 6626.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 3413,
+              "output_tokens": 218,
+              "cache_read_input_tokens": 2432,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 6679.734,
+        "retrievals": [
+          {
+            "query": "订单状态 有哪些",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 6.137860362141599,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "配送说明",
+                "content": "配送服务说明。标准配送：3-5 个工作日送达，免运费（订单满 99 元）。加急配送：1-2 个工作日送达，运费 15 元。同城配送：当日达或次日达，运费 10 元。偏远地区可能需要额外 2-3 天。配送时间为每天 9:00-18:00，节假日可能延迟。如果需要修改收货地址，请在发货前联系客服。",
+                "document_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+                "score": 0.6075604892392976,
+                "version": "9ddc4fc42b97b59d13710c770db288e77378dea2eb767311f6cc440ed2434678",
+                "chunk": 0
+              },
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 0.5345691252552092,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "破损错发举证演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片",
+                "document_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+                "score": 0.0,
+                "version": "bb3e95ade494de6db56bd620227ab0909dc1e7c93e1ec11b3e90c8d08d482e04",
+                "chunk": 0
+              },
+              {
+                "title": "会员与积分",
+                "content": "会员积分规则。每消费 1 元累积 1 积分。积分可以在下次购物时抵扣，100 积分 = 1 元。会员等级分为：普通会员、银卡会员（累计消费 1000 元）、金卡会员（累计消费 5000 元）。银卡会员享受 95 折优惠，金卡会员享受 9 折优惠。积分有效期为 1 年，过期自动清零。生日当月消费可获得双倍积分。",
+                "document_id": "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+                "score": 0.0,
+                "version": "ee10d33cc7b96cbec8b35b9c7a4c9f0f86a88c78cec26738c252da4abf0cb1e6",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "ff3ccc93-ea98-46df-b6a6-be0ab7bf58a0",
+          "timestamp": "2026-11-19T15:30:24.803413",
+          "intent": "order_status",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_24WK9aLp6hYMJj0bDrFJ3718",
+              "input": {
+                "query": "订单状态 有哪些",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 5015.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-inference",
+        "message": "订单显示已签收，就能证明是我本人收到的吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-inference",
+          "request_id": "a64de470-84da-4056-80dd-fd37180bd005",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.7129779786800913,
+          "escalated": false,
+          "latency_ms": 2079.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.713,
+          "intent_source_scores": {
+            "llm": 0.93,
+            "embedding": 0.3098898934004561,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 2047.0,
+              "agent_execution": 16.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2031.0,
+                "input_tokens": 124,
+                "output_tokens": 40,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 2031.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 124,
+              "output_tokens": 40,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-b04c366c74183d1be092",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-0350313e64c29f3a13a183ee",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:30:26.887843+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 2086.538,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "a64de470-84da-4056-80dd-fd37180bd005",
+          "timestamp": "2026-11-19T15:30:26.894257",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-b04c366c74183d1be092",
+              "state": "awaiting_info",
+              "request_id": "a64de470-84da-4056-80dd-fd37180bd005",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 16.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-conflict",
+        "message": "页面显示已签收，但我确实没拿到，这两件事是不是矛盾？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-conflict",
+          "request_id": "1b482473-e154-41c0-9a23-86b8bc935046",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.9,
+          "escalated": false,
+          "latency_ms": 1875.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.8187,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.24845199749997662,
+            "pattern": 0.9
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 1844.0,
+              "agent_execution": 15.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1844.0,
+                "input_tokens": 127,
+                "output_tokens": 41,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 1844.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 127,
+              "output_tokens": 41,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-b9f20c2646008391d64e",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-660cb82512983ff099aa4431",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:30:28.774680+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 1889.289,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "1b482473-e154-41c0-9a23-86b8bc935046",
+          "timestamp": "2026-11-19T15:30:28.785814",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-b9f20c2646008391d64e",
+              "state": "awaiting_info",
+              "request_id": "1b482473-e154-41c0-9a23-86b8bc935046",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 15.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-summary",
+        "message": "请解释“已发货、运输中、已签收”，尤其说明签收状态能否证明我本人收到了。",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-summary",
+          "request_id": "d16d2e0f-f4c0-4df4-9b4e-b8324115bcda",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.6588675134594812,
+          "escalated": false,
+          "latency_ms": 1875.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.6589,
+          "intent_source_scores": {
+            "llm": 0.9,
+            "embedding": 0.14433756729740646,
+            "pattern": 0.0
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 15.0,
+              "intent": 1844.0,
+              "agent_execution": 16.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1844.0,
+                "input_tokens": 6,
+                "output_tokens": 44,
+                "cache_read_input_tokens": 512,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 1844.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 6,
+              "output_tokens": 44,
+              "cache_read_input_tokens": 512,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-415203b95d36e96ad43e",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-5cc32ad17a579f83fd9cd69f",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:30:30.665475+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 1890.125,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "d16d2e0f-f4c0-4df4-9b4e-b8324115bcda",
+          "timestamp": "2026-11-19T15:30:30.677590",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-415203b95d36e96ad43e",
+              "state": "awaiting_info",
+              "request_id": "d16d2e0f-f4c0-4df4-9b4e-b8324115bcda",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 16.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "billing-policy",
+        "message": "退款申请要审核多久？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "billing-policy",
+          "request_id": "73daee15-7e80-469f-9e9b-eaa585ba56cc",
+          "response": "退款审核时间需要区分几个环节，我先把能说明的边界讲清楚：\n\n**需要核验的信息**\n- 订单号或交易号\n- 支付时间与支付渠道（微信、支付宝、银行卡等）\n- 实际支付金额\n\n**当前说明**\n- 退款流程通常分为：提交申请 → 核验订单状态与实际支付金额 → 审核结果 → 原路退回。\n- 审核时长没有统一固定值，取决于订单类型（是否已使用服务、虚拟商品、活动价、企业合同等）和是否需要人工/财务介入。\n- 到账时间也因支付渠道不同而有差异，通常以支付渠道实际处理为准。\n\n**下一步处理**\n- 如果您能提供订单号和支付渠道，我可以帮您判断这笔订单属于哪种审核路径，并说明对应的常规时效范围。\n- 涉及实际退款、部分退款或异常订单的，最终结果需以人工审核为准。\n\n请问您方便提供订单号吗？",
+          "intent": "refund",
+          "intent_group": "billing",
+          "agent_type": "billing",
+          "agent_types": [
+            "billing"
+          ],
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": false,
+          "latency_ms": 8032.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.8074,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.391924757669098,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1703.0,
+              "memory_background": 0.0,
+              "agent_execution": 6313.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1672.0,
+                "input_tokens": 117,
+                "output_tokens": 33,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 6313.0,
+                "input_tokens": 2489,
+                "output_tokens": 201,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 2,
+              "errors": 0,
+              "latency_ms": 7985.0,
+              "usage_reported_calls": 2,
+              "input_tokens": 2606,
+              "output_tokens": 234,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 8031.766,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "73daee15-7e80-469f-9e9b-eaa585ba56cc",
+          "timestamp": "2026-11-19T15:30:38.715589",
+          "intent": "refund",
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [],
+          "escalated": false,
+          "latency_ms": 6313.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "combined",
+        "message": "登录一直出现401，同时想知道退款申请审核多久？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "combined",
+          "request_id": "3969c05a-636d-4392-a7e5-830e1ac8dee6",
+          "response": "关于您提到的两个问题，我分别说明如下：\n\n**一、登录一直出现 401**\n\n401 表示身份验证未通过，常见原因包括：密码或验证码错误、登录状态或 Token 过期、账号被锁定、第三方授权失效、网络或服务异常等。\n\n建议您先按以下顺序排查：\n\n1. 确认账号密码和验证码输入是否正确，不要连续多次尝试，以免触发账号锁定。\n2. 如果是网页或 App，请退出账号、清除缓存后重新登录。\n3. 如果是接口调用，请检查 Token 是否过期、签名时间戳是否正确，以及是否使用了对应环境的 API Key。\n4. 如提示账号被锁定，请等待一段时间或通过找回密码流程处理。\n\n为了进一步定位，还需要您补充：是网页、App 还是接口调用出现 401；是所有账号都登录不上，还是仅当前账号；最近是否改过密码、换过设备或更新过版本。\n\n**二、退款申请审核时长**\n\n退款审核时间需要结合订单状态和支付渠道判断，目前无法直接确认具体时长。一般流程为：提交申请 → 核验订单 → 审核结果 → 原路退回，具体以实际处理为准。\n\n如需进一步判断，请提供：订单号或交易号、支付金额与币种、支付时间与支付渠道。涉及实际退款时，最终需人工审核，无法承诺具体到账时间。\n\n您可以先补充登录问题的上述信息，我继续帮您排查；退款问题也可同步提供订单信息，以便确认当前可查询的内容。",
+          "intent": "technical_login",
+          "intent_group": "technical",
+          "agent_type": "technical",
+          "agent_types": [
+            "technical",
+            "billing"
+          ],
+          "primary_agent": "technical",
+          "supporting_agents": [
+            "billing"
+          ],
+          "tools_used": [],
+          "routing_reason": "intent=technical_login, group=technical, primary=technical, supporting=billing, scores=[technical=0.93, billing=0.18, general=0.10, logistics=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": false,
+          "latency_ms": 22032.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.6975,
+          "intent_source_scores": {
+            "llm": 0.85,
+            "embedding": 0.5125000907915491,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1688.0,
+              "memory_background": 0.0,
+              "agent_execution": 20344.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1672.0,
+                "input_tokens": 123,
+                "output_tokens": 39,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 8235.0,
+                "input_tokens": 2494,
+                "output_tokens": 207,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.technical",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 12719.0,
+                "input_tokens": 2346,
+                "output_tokens": 355,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "composer",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 7625.0,
+                "input_tokens": 749,
+                "output_tokens": 323,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {
+              "model_tcp_connected": 1,
+              "model_direct_tls_connected": 1
+            },
+            "llm": {
+              "calls": 4,
+              "errors": 0,
+              "latency_ms": 30251.0,
+              "usage_reported_calls": 4,
+              "input_tokens": 5712,
+              "output_tokens": 924,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 22045.017,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "3969c05a-636d-4392-a7e5-830e1ac8dee6",
+          "timestamp": "2026-11-19T15:31:00.762684",
+          "intent": "technical_login",
+          "primary_agent": "technical",
+          "supporting_agents": [
+            "billing"
+          ],
+          "tools_used": [],
+          "tool_calls": [],
+          "escalated": false,
+          "latency_ms": 20344.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "refund-live",
+        "message": "我刚提交的退款申请现在审核通过了吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "refund-live",
+          "request_id": "796b0f15-064b-4a9d-b014-8831f4004bfe",
+          "response": "退款申请是否已审核通过，需要先核验订单信息后才能确认，我目前无法直接查询到您的申请状态。\n\n**需要核验的信息**\n- 订单号或交易号\n- 支付金额与币种\n- 支付时间与支付渠道（微信 / 支付宝 / 银行卡等）\n\n**当前说明**\n- 退款审核结果取决于订单状态、实际支付金额和退款规则，未核验前无法判断是否通过。\n- 即使审核通过，到账时间也以支付渠道实际处理为准，通常原路退回。\n\n**下一步处理**\n请提供上述订单号和支付信息，我会据此继续协助判断；如需确认最终审核结果或涉及实际退款，将转人工/财务核验处理。\n\n请保留好支付凭证，方便后续核对。",
+          "intent": "refund",
+          "intent_group": "billing",
+          "agent_type": "billing",
+          "agent_types": [
+            "billing"
+          ],
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": true,
+          "latency_ms": 6891.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.7699,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.20438500686582434,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 1953.0,
+              "memory_background": 0.0,
+              "agent_execution": 4922.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1953.0,
+                "input_tokens": 121,
+                "output_tokens": 36,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 4922.0,
+                "input_tokens": 189,
+                "output_tokens": 163,
+                "cache_read_input_tokens": 2304,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 2,
+              "errors": 0,
+              "latency_ms": 6875.0,
+              "usage_reported_calls": 2,
+              "input_tokens": 310,
+              "output_tokens": 199,
+              "cache_read_input_tokens": 2688,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 6903.543,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "796b0f15-064b-4a9d-b014-8831f4004bfe",
+          "timestamp": "2026-11-19T15:31:07.670410",
+          "intent": "refund",
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [],
+          "escalated": true,
+          "latency_ms": 4922.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "shipping-address",
+        "message": "订单已经发货，还能改地址吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "shipping-address",
+          "request_id": "bf063d6f-363d-4611-a1b7-06f5fecdb0e6",
+          "response": "根据知识库《配送说明》的说明：**修改收货地址需要在发货前联系客服办理**。也就是说，订单一旦已经发货，通常无法再直接修改地址。\n\n不过，你的订单目前具体处于哪个物流节点，我需要进一步核验才能判断是否还有处理空间。建议你：\n\n1. 通过官方订单页面查看当前订单状态（如“已发货”“运输中”等）；\n2. 如果订单已进入运输环节，可联系承运商或专业客服，看是否支持中途改址或拦截。\n\n由于我这边没有实时订单和物流查询工具，无法替你确认或代办改址。如果你能提供订单号或下单时间，我可以帮你进一步判断下一步该怎么处理。",
+          "intent": "logistics",
+          "intent_group": "query",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.77, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.77,
+          "escalated": false,
+          "latency_ms": 9219.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.7641,
+          "intent_source_scores": {
+            "llm": 0.92,
+            "embedding": 0.35032452487268534,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1422.0,
+              "memory_background": 0.0,
+              "agent_execution": 7797.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1406.0,
+                "input_tokens": 120,
+                "output_tokens": 36,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2953.0,
+                "input_tokens": 1844,
+                "output_tokens": 98,
+                "cache_read_input_tokens": 256,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 4844.0,
+                "input_tokens": 1072,
+                "output_tokens": 146,
+                "cache_read_input_tokens": 2176,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 9203.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 3036,
+              "output_tokens": 280,
+              "cache_read_input_tokens": 2816,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 9233.972,
+        "retrievals": [
+          {
+            "query": "订单发货后修改收货地址",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "配送说明",
+                "content": "配送服务说明。标准配送：3-5 个工作日送达，免运费（订单满 99 元）。加急配送：1-2 个工作日送达，运费 15 元。同城配送：当日达或次日达，运费 10 元。偏远地区可能需要额外 2-3 天。配送时间为每天 9:00-18:00，节假日可能延迟。如果需要修改收货地址，请在发货前联系客服。",
+                "document_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+                "score": 9.103108712802552,
+                "version": "9ddc4fc42b97b59d13710c770db288e77378dea2eb767311f6cc440ed2434678",
+                "chunk": 0
+              },
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 3.977543807292495,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 1.0691382505104183,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "账户安全",
+                "content": "账户安全说明。建议用户定期修改密码，密码长度至少 8 位，包含字母和数字。如果忘记密码，可以通过绑定的手机号或邮箱重置。发现账户异常登录时，系统会自动锁定账户并发送通知。用户可以在安全设置中开启两步验证，提高账户安全性。不要将密码分享给他人，客服人员不会索要用户密码。",
+                "document_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+                "score": 0.9928817510556905,
+                "version": "4cbdb2edc53ea45c3cbb7c7b9955b8806174dadfb41ea646b390804141b440de",
+                "chunk": 0
+              },
+              {
+                "title": "破损错发举证演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片",
+                "document_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+                "score": 0.0,
+                "version": "bb3e95ade494de6db56bd620227ab0909dc1e7c93e1ec11b3e90c8d08d482e04",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "bf063d6f-363d-4611-a1b7-06f5fecdb0e6",
+          "timestamp": "2026-11-19T15:31:16.907474",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_aNsaHW2GCimuBHybql9l4592",
+              "input": {
+                "query": "订单发货后修改收货地址",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 7797.0,
+          "status": "success",
+          "retryable": false
+        }
+      }
+    ],
+    "ticket_count": 0,
+    "observed_summary": {
+      "http_cases": 8,
+      "http_success": 8,
+      "model_calls": 17,
+      "model_errors": 0,
+      "ticket_count": 0,
+      "direct_checks": 0
+    }
+  },
+  "candidate": {
+    "schema": 1,
+    "code_commit": "04c6a4e6ba4a328934e7aec85b0caa386b641aee",
+    "build": {
+      "source_sha256": "30ef6beb590a7b2be6dc3868e321bf7b8875d84e9fe64bb87139b3abdcffca45",
+      "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+      "python": "3.11.9",
+      "system": "Windows",
+      "architecture": "AMD64",
+      "sqlite": "3.45.1"
+    },
+    "scope": "ASGI /chat, live intent and role models, production skills, evaluation-only BM25",
+    "dataset_manifest": {
+      "schema": 1,
+      "source": {
+        "dataset": "DiAn local demonstration knowledge",
+        "review_status": "pending_human_review",
+        "source_files": {
+          "tooling/knowledge_base.py": "51b59ac4fe6f44d9211d5260e8cfec822823dfd34f97b8739e92fd61e8786254",
+          "config/logistics/knowledge.json": "597bd70aeb4ee115a412393427f8bcdd01e17297fad99d79016e5dbbfaf01c4c"
+        }
+      },
+      "documents": 9,
+      "queries": 30,
+      "files": {
+        "corpus.json": "9e7235536765a16d3bc93586c2db6a7d411df6c6a8f08704a1869c244df27468",
+        "queries.json": "a518f2a5ff765fa0cfabb7c7f9566946c8a2ae950c3fe7c8a6b9247b92d91bae"
+      }
+    },
+    "manifest_sha256": "065c24fa5c3f86980724139cd0f48394221f92f52b40ee511512b96e3efe7e1a",
+    "model": "deepseek-v4-pro",
+    "configuration_source": {
+      "kind": "project_dotenv",
+      "shadowed_environment_fields": [
+        "ANTHROPIC_BASE_URL"
+      ]
+    },
+    "dependencies": {
+      "redis": "fakeredis protocol substitute",
+      "business": "Temporary SQLite with demo fixtures",
+      "background_memory": "Empty profile and episodic result",
+      "retrieval": "Fixed nine-passage BM25 evaluation adapter"
+    },
+    "complete": true,
+    "rows": [
+      {
+        "case_id": "state-list",
+        "message": "有哪些订单状态？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "state-list",
+          "request_id": "7861a056-0b22-4114-a93b-3d61d64bc8c5",
+          "response": "根据《订单查询》文档，本项目订单状态包括以下六种：\n\n1. 待支付\n2. 已支付\n3. 已发货\n4. 运输中\n5. 已签收\n6. 已完成\n\n补充说明：如果订单显示「已发货」但超过 7 天未收到，可以联系客服申请查件；物流信息通常在发货后 24 小时内更新。\n\n需要我帮你进一步说明某个状态的含义，或查看其他相关问题吗？",
+          "intent": "order_status",
+          "intent_group": "query",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=order_status, group=query, primary=general, supporting=none, scores=[general=0.77, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.77,
+          "escalated": false,
+          "latency_ms": 5234.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.764,
+          "intent_source_scores": {
+            "llm": 0.9,
+            "embedding": 0.42008402520840293,
+            "pattern": 0.5,
+            "refined_by_pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 1375.0,
+              "memory_background": 0.0,
+              "agent_execution": 3843.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1375.0,
+                "input_tokens": 115,
+                "output_tokens": 32,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1734.0,
+                "input_tokens": 1896,
+                "output_tokens": 77,
+                "cache_read_input_tokens": 256,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2109.0,
+                "input_tokens": 1105,
+                "output_tokens": 103,
+                "cache_read_input_tokens": 2176,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {
+              "model_tcp_connected": 1,
+              "model_direct_tls_connected": 1
+            },
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 5218.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 3116,
+              "output_tokens": 212,
+              "cache_read_input_tokens": 2816,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 5256.838,
+        "retrievals": [
+          {
+            "query": "订单状态 有哪些 状态说明",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 8.574019442879653,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "配送说明",
+                "content": "配送服务说明。标准配送：3-5 个工作日送达，免运费（订单满 99 元）。加急配送：1-2 个工作日送达，运费 15 元。同城配送：当日达或次日达，运费 10 元。偏远地区可能需要额外 2-3 天。配送时间为每天 9:00-18:00，节假日可能延迟。如果需要修改收货地址，请在发货前联系客服。",
+                "document_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+                "score": 1.2151209784785952,
+                "version": "9ddc4fc42b97b59d13710c770db288e77378dea2eb767311f6cc440ed2434678",
+                "chunk": 0
+              },
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 1.0691382505104183,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "账户安全",
+                "content": "账户安全说明。建议用户定期修改密码，密码长度至少 8 位，包含字母和数字。如果忘记密码，可以通过绑定的手机号或邮箱重置。发现账户异常登录时，系统会自动锁定账户并发送通知。用户可以在安全设置中开启两步验证，提高账户安全性。不要将密码分享给他人，客服人员不会索要用户密码。",
+                "document_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+                "score": 0.5594628237407054,
+                "version": "4cbdb2edc53ea45c3cbb7c7b9955b8806174dadfb41ea646b390804141b440de",
+                "chunk": 0
+              },
+              {
+                "title": "破损错发举证演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片",
+                "document_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+                "score": 0.0,
+                "version": "bb3e95ade494de6db56bd620227ab0909dc1e7c93e1ec11b3e90c8d08d482e04",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "7861a056-0b22-4114-a93b-3d61d64bc8c5",
+          "timestamp": "2026-11-19T15:32:01.109024",
+          "intent": "order_status",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_Czg3FgzJLXE7RIdPl2rS9913",
+              "input": {
+                "query": "订单状态 有哪些 状态说明",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 3843.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-inference",
+        "message": "订单显示已签收，就能证明是我本人收到的吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-inference",
+          "request_id": "af289e98-f975-42b6-a709-4755aa00424a",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.7129779786800913,
+          "escalated": false,
+          "latency_ms": 1469.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.713,
+          "intent_source_scores": {
+            "llm": 0.93,
+            "embedding": 0.3098898934004561,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 1437.0,
+              "agent_execution": 16.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1437.0,
+                "input_tokens": 124,
+                "output_tokens": 41,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 1437.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 124,
+              "output_tokens": 41,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-b04c366c74183d1be092",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-0350313e64c29f3a13a183ee",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:32:02.578681+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 1473.569,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "af289e98-f975-42b6-a709-4755aa00424a",
+          "timestamp": "2026-11-19T15:32:02.590862",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-b04c366c74183d1be092",
+              "state": "awaiting_info",
+              "request_id": "af289e98-f975-42b6-a709-4755aa00424a",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 16.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-conflict",
+        "message": "页面显示已签收，但我确实没拿到，这两件事是不是矛盾？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-conflict",
+          "request_id": "05ae6d16-5031-4d3b-95bc-f37f3f12339f",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.9,
+          "escalated": false,
+          "latency_ms": 1453.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.8187,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.24845199749997662,
+            "pattern": 0.9
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1438.0,
+              "agent_execution": 15.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1422.0,
+                "input_tokens": 127,
+                "output_tokens": 41,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 1422.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 127,
+              "output_tokens": 41,
+              "cache_read_input_tokens": 384,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-b9f20c2646008391d64e",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-660cb82512983ff099aa4431",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:32:04.049288+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 1471.799,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "05ae6d16-5031-4d3b-95bc-f37f3f12339f",
+          "timestamp": "2026-11-19T15:32:04.060828",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-b9f20c2646008391d64e",
+              "state": "awaiting_info",
+              "request_id": "05ae6d16-5031-4d3b-95bc-f37f3f12339f",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 15.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "signed-summary",
+        "message": "请解释“已发货、运输中、已签收”，尤其说明签收状态能否证明我本人收到了。",
+        "http_status": 200,
+        "response": {
+          "conv_id": "signed-summary",
+          "request_id": "09b91c8f-e985-4d28-bd36-e985e8999ba8",
+          "response": "请提供订单号或运单号，以便核验物流异常。当前使用模拟物流服务。",
+          "intent": "logistics_dispute",
+          "intent_group": "logistics",
+          "agent_type": "logistics",
+          "agent_types": [
+            "logistics"
+          ],
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "物流异常案件：串行核验与确认建单",
+          "routing_confidence": 0.6588675134594812,
+          "escalated": false,
+          "latency_ms": 2188.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.6589,
+          "intent_source_scores": {
+            "llm": 0.9,
+            "embedding": 0.14433756729740646,
+            "pattern": 0.0
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 2156.0,
+              "agent_execution": 16.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2156.0,
+                "input_tokens": 6,
+                "output_tokens": 44,
+                "cache_read_input_tokens": 512,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 1,
+              "errors": 0,
+              "latency_ms": 2156.0,
+              "usage_reported_calls": 1,
+              "input_tokens": 6,
+              "output_tokens": 44,
+              "cache_read_input_tokens": 512,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": {
+            "case_id": "LC-415203b95d36e96ad43e",
+            "issue": "logistics_dispute",
+            "state": "awaiting_info",
+            "run_id": "LR-5cc32ad17a579f83fd9cd69f",
+            "order_id": null,
+            "tracking_no": null,
+            "ticket_id": null,
+            "updated_at": "2026-11-19T07:32:06.249049+00:00",
+            "source": "mock",
+            "next_step": "请核对并补充订单号或运单号。",
+            "required_evidence": [],
+            "evidence_declared": false,
+            "can_confirm": false
+          }
+        },
+        "wall_ms": 2195.066,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "09b91c8f-e985-4d28-bd36-e985e8999ba8",
+          "timestamp": "2026-11-19T15:32:06.259117",
+          "intent": "logistics_dispute",
+          "primary_agent": "logistics",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [
+            {
+              "event": "logistics_case_transition",
+              "case_id": "LC-415203b95d36e96ad43e",
+              "state": "awaiting_info",
+              "request_id": "09b91c8f-e985-4d28-bd36-e985e8999ba8",
+              "source": "mock"
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 16.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "billing-policy",
+        "message": "退款申请要审核多久？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "billing-policy",
+          "request_id": "329a419f-df6a-4827-aee9-18e0b407c202",
+          "response": "根据《退款政策》，退款审核时效如下：\n\n**审核时间**：退款申请提交后，系统通常在 **1–3 个工作日**内完成审核。\n\n**到账时间**：审核通过后，款项通常在 **5–7 个工作日**内退回原支付账户。\n\n**需要注意的适用条件**：\n- 购买后 **7 天内**可申请无理由退款；\n- 若商品已发货，需先完成退货流程才能退款；\n- 超过 7 天但未超过 30 天的订单，需提供商品质量问题的证据才能退款。\n\n以上为一般规则，具体到您的订单能否通过、实际到账时间，仍需以订单状态和支付渠道实际处理为准。如需核验具体订单，请提供订单号、支付时间和支付渠道。",
+          "intent": "refund",
+          "intent_group": "billing",
+          "agent_type": "billing",
+          "agent_types": [
+            "billing"
+          ],
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": false,
+          "latency_ms": 8797.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.7934,
+          "intent_source_scores": {
+            "llm": 0.95,
+            "embedding": 0.391924757669098,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 1938.0,
+              "memory_background": 0.0,
+              "agent_execution": 6859.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1922.0,
+                "input_tokens": 117,
+                "output_tokens": 33,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2343.0,
+                "input_tokens": 2673,
+                "output_tokens": 71,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 4516.0,
+                "input_tokens": 1147,
+                "output_tokens": 166,
+                "cache_read_input_tokens": 2688,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 8781.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 3937,
+              "output_tokens": 270,
+              "cache_read_input_tokens": 3072,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 8806.405,
+        "retrievals": [
+          {
+            "query": "退款申请审核时间 审核周期 时效",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 8.873377775773719,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "破损错发举证演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片",
+                "document_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+                "score": 2.557409325908882,
+                "version": "bb3e95ade494de6db56bd620227ab0909dc1e7c93e1ec11b3e90c8d08d482e04",
+                "chunk": 0
+              },
+              {
+                "title": "配送说明",
+                "content": "配送服务说明。标准配送：3-5 个工作日送达，免运费（订单满 99 元）。加急配送：1-2 个工作日送达，运费 15 元。同城配送：当日达或次日达，运费 10 元。偏远地区可能需要额外 2-3 天。配送时间为每天 9:00-18:00，节假日可能延迟。如果需要修改收货地址，请在发货前联系客服。",
+                "document_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+                "score": 1.7024366979272667,
+                "version": "9ddc4fc42b97b59d13710c770db288e77378dea2eb767311f6cc440ed2434678",
+                "chunk": 0
+              },
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 1.0728155781999429,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "会员与积分",
+                "content": "会员积分规则。每消费 1 元累积 1 积分。积分可以在下次购物时抵扣，100 积分 = 1 元。会员等级分为：普通会员、银卡会员（累计消费 1000 元）、金卡会员（累计消费 5000 元）。银卡会员享受 95 折优惠，金卡会员享受 9 折优惠。积分有效期为 1 年，过期自动清零。生日当月消费可获得双倍积分。",
+                "document_id": "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+                "score": 0.0,
+                "version": "ee10d33cc7b96cbec8b35b9c7a4c9f0f86a88c78cec26738c252da4abf0cb1e6",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "329a419f-df6a-4827-aee9-18e0b407c202",
+          "timestamp": "2026-11-19T15:32:15.069366",
+          "intent": "refund",
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "billing",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_Ko1tyL5hI9pwQcLDEjyW0404",
+              "input": {
+                "query": "退款申请审核时间 审核周期 时效",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 6859.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "combined",
+        "message": "登录一直出现401，同时想知道退款申请审核多久？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "combined",
+          "request_id": "c82c8da6-6d42-43f3-93b0-a63f6b843149",
+          "response": "关于您的问题，分别说明如下：\n\n**一、登录一直出现 401**\n401 通常表示“认证失败”，即登录凭证无效或过期，不一定是密码输错。建议您先确认以下几点：\n1. 登录方式：是账号密码登录，还是第三方（微信/手机验证码）登录？\n2. 是否持续复现：每次都会 401，还是偶尔出现？切换网络（如从 WiFi 换成流量）后是否仍出现？\n3. 最近是否有变更：是否刚改过密码、换过设备、清理过缓存或更新过 App？\n\n请提供以上信息，以便进一步排查。同时提醒：请勿在任何对话中发送密码、验证码或完整 Token。\n\n**二、退款申请审核时效**\n根据一般退款规则：\n- 购买后 7 天内可申请无理由退款；\n- 提交申请后，通常 **1-3 个工作日**内完成审核；\n- 审核通过后，款项一般在 **5-7 个工作日**内退回原支付账户；\n- 若商品已发货，需先完成退货流程；非质量问题退货运费一般由用户承担；\n- 超过 7 天但未超过 30 天的订单，通常需提供商品质量问题的证据。\n\n具体到您的订单是否适用，需核验订单状态和实际支付情况。如需进一步处理退款，请提供订单号、支付时间和支付渠道，以便协助判断后续路径。",
+          "intent": "technical_login",
+          "intent_group": "technical",
+          "agent_type": "technical",
+          "agent_types": [
+            "technical",
+            "billing"
+          ],
+          "primary_agent": "technical",
+          "supporting_agents": [
+            "billing"
+          ],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=technical_login, group=technical, primary=technical, supporting=billing, scores=[technical=0.93, billing=0.18, general=0.10, logistics=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": false,
+          "latency_ms": 17406.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.6975,
+          "intent_source_scores": {
+            "llm": 0.85,
+            "embedding": 0.5125000907915491,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 0.0,
+              "intent": 2031.0,
+              "memory_background": 0.0,
+              "agent_execution": 15375.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2031.0,
+                "input_tokens": 123,
+                "output_tokens": 39,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 4047.0,
+                "input_tokens": 2678,
+                "output_tokens": 129,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.technical",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 7937.0,
+                "input_tokens": 2404,
+                "output_tokens": 227,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 5000.0,
+                "input_tokens": 1205,
+                "output_tokens": 222,
+                "cache_read_input_tokens": 2688,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "composer",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 6328.0,
+                "input_tokens": 636,
+                "output_tokens": 302,
+                "cache_read_input_tokens": 0,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {
+              "model_tcp_connected": 1,
+              "model_direct_tls_connected": 1
+            },
+            "llm": {
+              "calls": 5,
+              "errors": 0,
+              "latency_ms": 25343.0,
+              "usage_reported_calls": 5,
+              "input_tokens": 7046,
+              "output_tokens": 919,
+              "cache_read_input_tokens": 3072,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 17428.735,
+        "retrievals": [
+          {
+            "query": "退款申请审核时效 审核周期",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 8.873377775773719,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "破损错发举证演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。材料：外包装照片、面单照片、商品问题照片",
+                "document_id": "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+                "score": 2.557409325908882,
+                "version": "bb3e95ade494de6db56bd620227ab0909dc1e7c93e1ec11b3e90c8d08d482e04",
+                "chunk": 0
+              },
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 1.0728155781999429,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "会员与积分",
+                "content": "会员积分规则。每消费 1 元累积 1 积分。积分可以在下次购物时抵扣，100 积分 = 1 元。会员等级分为：普通会员、银卡会员（累计消费 1000 元）、金卡会员（累计消费 5000 元）。银卡会员享受 95 折优惠，金卡会员享受 9 折优惠。积分有效期为 1 年，过期自动清零。生日当月消费可获得双倍积分。",
+                "document_id": "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+                "score": 0.0,
+                "version": "ee10d33cc7b96cbec8b35b9c7a4c9f0f86a88c78cec26738c252da4abf0cb1e6",
+                "chunk": 0
+              },
+              {
+                "title": "技术故障排查",
+                "content": "常见技术问题排查。应用崩溃：请尝试清除缓存后重启应用，如果问题持续请更新到最新版本。登录失败 401 错误：表示认证失败，请检查用户名密码是否正确，或尝试重置密码。页面加载慢：检查网络连接，尝试切换 WiFi 或移动数据。支付失败：确认银行卡余额充足，检查是否开启了网上支付功能。500 服务器错误：这是服务端问题，请稍后重试，如果持续出现请联系技术支持。",
+                "document_id": "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+                "score": 0.0,
+                "version": "f60ada92831c5eb16025d315dc9d72a3df0680460d207b34993d521a1b78c938",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "c82c8da6-6d42-43f3-93b0-a63f6b843149",
+          "timestamp": "2026-11-19T15:32:32.505119",
+          "intent": "technical_login",
+          "primary_agent": "technical",
+          "supporting_agents": [
+            "billing"
+          ],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "billing",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_HRRA2k1qW0TJmMoGgsKV8060",
+              "input": {
+                "query": "退款申请审核时效 审核周期",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 15375.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "refund-live",
+        "message": "我刚提交的退款申请现在审核通过了吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "refund-live",
+          "request_id": "64f8b657-3f76-41eb-bf31-43c15b8ffffa",
+          "response": "关于退款审核结果，我这边目前无法直接查询到您订单的实时状态，需要先核验具体交易信息才能继续判断。\n\n**需要核验的信息**\n- 订单号或交易号\n- 支付金额与币种\n- 支付时间与支付渠道（微信 / 支付宝 / 银行卡等）\n\n**当前说明**\n退款是否通过，取决于订单状态、实际支付金额以及是否符合退款规则。在缺少上述信息前，我无法确认审核结果，也不会替您承诺“已通过”或“已退款”。\n\n**下一步处理**\n1. 请提供订单号、支付金额、支付时间和支付渠道；\n2. 您也可以先在 App 内「订单详情 / 退款记录」页面查看当前状态；\n3. 若页面显示“退款成功”但款项未到账，请检查原支付账户或银行卡入账记录，并留意支付渠道通知。\n\n退款到账通常为原路退回，具体时效以支付渠道实际处理为准。请保留好支付凭证，方便后续核验。",
+          "intent": "refund",
+          "intent_group": "billing",
+          "agent_type": "billing",
+          "agent_types": [
+            "billing"
+          ],
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+          "routing_confidence": 0.93,
+          "escalated": false,
+          "latency_ms": 7453.0,
+          "knowledge_used": false,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.7699,
+          "intent_source_scores": {
+            "llm": 0.97,
+            "embedding": 0.20438500686582434,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 15.0,
+              "intent": 1500.0,
+              "memory_background": 0.0,
+              "agent_execution": 5938.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1500.0,
+                "input_tokens": 121,
+                "output_tokens": 36,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.billing",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 5938.0,
+                "input_tokens": 245,
+                "output_tokens": 217,
+                "cache_read_input_tokens": 2432,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 2,
+              "errors": 0,
+              "latency_ms": 7438.0,
+              "usage_reported_calls": 2,
+              "input_tokens": 366,
+              "output_tokens": 253,
+              "cache_read_input_tokens": 2816,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 7463.774,
+        "retrievals": [],
+        "tool_trace": {
+          "request_id": "64f8b657-3f76-41eb-bf31-43c15b8ffffa",
+          "timestamp": "2026-11-19T15:32:39.972240",
+          "intent": "refund",
+          "primary_agent": "billing",
+          "supporting_agents": [],
+          "tools_used": [],
+          "tool_calls": [],
+          "escalated": false,
+          "latency_ms": 5938.0,
+          "status": "success",
+          "retryable": false
+        }
+      },
+      {
+        "case_id": "shipping-address",
+        "message": "订单已经发货，还能改地址吗？",
+        "http_status": 200,
+        "response": {
+          "conv_id": "shipping-address",
+          "request_id": "3efe7693-6f3f-4967-bef0-96670708b6a9",
+          "response": "根据《配送说明》，修改收货地址需要在**发货前**联系客服处理。你的订单已经发货，按现有规则，发货后能否改地址需要进一步核验，资料中并未明确说明发货后一定可以或不可以修改。\n\n建议你通过官方订单页面查看当前物流状态，或直接联系专业客服，提供订单号确认是否还能拦截或改址。需要我帮你梳理联系客服时要准备哪些信息吗？",
+          "intent": "logistics",
+          "intent_group": "query",
+          "agent_type": "general",
+          "agent_types": [
+            "general"
+          ],
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "routing_reason": "intent=logistics, group=query, primary=general, supporting=none, scores=[general=0.77, logistics=0.00, technical=0.00, billing=0.00]",
+          "routing_confidence": 0.77,
+          "escalated": false,
+          "latency_ms": 7078.0,
+          "knowledge_used": true,
+          "entities": {
+            "order_id": [],
+            "tracking_no": [],
+            "product": [],
+            "date": [],
+            "amount": [],
+            "error_code": []
+          },
+          "intent_confidence": 0.7641,
+          "intent_source_scores": {
+            "llm": 0.92,
+            "embedding": 0.35032452487268534,
+            "pattern": 0.5
+          },
+          "intent_embedding_source": "local-ngram",
+          "status": "success",
+          "retryable": false,
+          "error_code": null,
+          "performance": {
+            "stages_ms": {
+              "memory_read": 16.0,
+              "intent": 1547.0,
+              "memory_background": 0.0,
+              "agent_execution": 5515.0
+            },
+            "llm_calls": [
+              {
+                "stage": "intent",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 1547.0,
+                "input_tokens": 120,
+                "output_tokens": 36,
+                "cache_read_input_tokens": 384,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 2250.0,
+                "input_tokens": 1902,
+                "output_tokens": 79,
+                "cache_read_input_tokens": 256,
+                "cache_creation_input_tokens": 0
+              },
+              {
+                "stage": "agent.general",
+                "model": "deepseek-v4-pro",
+                "status": "success",
+                "latency_ms": 3265.0,
+                "input_tokens": 1229,
+                "output_tokens": 89,
+                "cache_read_input_tokens": 2048,
+                "cache_creation_input_tokens": 0
+              }
+            ],
+            "events": {},
+            "llm": {
+              "calls": 3,
+              "errors": 0,
+              "latency_ms": 7062.0,
+              "usage_reported_calls": 3,
+              "input_tokens": 3251,
+              "output_tokens": 204,
+              "cache_read_input_tokens": 2688,
+              "cache_creation_input_tokens": 0
+            }
+          },
+          "logistics_case": null
+        },
+        "wall_ms": 7087.375,
+        "retrievals": [
+          {
+            "query": "订单已发货 修改收货地址 规则",
+            "requested_top_k": 5,
+            "results": [
+              {
+                "title": "配送说明",
+                "content": "配送服务说明。标准配送：3-5 个工作日送达，免运费（订单满 99 元）。加急配送：1-2 个工作日送达，运费 15 元。同城配送：当日达或次日达，运费 10 元。偏远地区可能需要额外 2-3 天。配送时间为每天 9:00-18:00，节假日可能延迟。如果需要修改收货地址，请在发货前联系客服。",
+                "document_id": "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+                "score": 9.103108712802552,
+                "version": "9ddc4fc42b97b59d13710c770db288e77378dea2eb767311f6cc440ed2434678",
+                "chunk": 0
+              },
+              {
+                "title": "订单查询",
+                "content": "订单查询指南。用户可以通过订单号查询订单状态。订单状态包括：待支付、已支付、已发货、运输中、已签收、已完成。如果订单显示已发货但超过 7 天未收到，可以联系客服申请查件。物流信息通常在发货后 24 小时内更新。如果订单显示异常，请提供订单号联系客服处理。",
+                "document_id": "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+                "score": 3.8266183878509805,
+                "version": "faae5da225a4662a81554146ba9b335c8d6b80220025f8e320706a2bc39a4ca0",
+                "chunk": 0
+              },
+              {
+                "title": "退款政策",
+                "content": "退款政策说明。用户在购买后 7 天内可以申请无理由退款。退款申请提交后，系统会在 1-3 个工作日内审核。审核通过后，款项将在 5-7 个工作日内退回原支付账户。如果商品已发货，需要先完成退货流程才能退款。退货运费由用户承担，除非是商品质量问题。超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。",
+                "document_id": "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+                "score": 2.01784101791663,
+                "version": "e4b40a68a4bd522e93e91479b81abf818e06ecc17cf217d716c4dbfe295ee3f7",
+                "chunk": 0
+              },
+              {
+                "title": "账户安全",
+                "content": "账户安全说明。建议用户定期修改密码，密码长度至少 8 位，包含字母和数字。如果忘记密码，可以通过绑定的手机号或邮箱重置。发现账户异常登录时，系统会自动锁定账户并发送通知。用户可以在安全设置中开启两步验证，提高账户安全性。不要将密码分享给他人，客服人员不会索要用户密码。",
+                "document_id": "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+                "score": 0.9928817510556905,
+                "version": "4cbdb2edc53ea45c3cbb7c7b9955b8806174dadfb41ea646b390804141b440de",
+                "chunk": 0
+              },
+              {
+                "title": "签收争议演示规则",
+                "content": "版本 demo-2026-11-v1。仅为演示政策，不代表真实承运商规则。签收记录不能证明实际收件；可提交签收争议核查。材料：",
+                "document_id": "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+                "score": 0.2600827217961098,
+                "version": "0283b6d254b414538c15019631c0baf698f6fae6108d61394726c1e0e2a51511",
+                "chunk": 0
+              }
+            ]
+          }
+        ],
+        "tool_trace": {
+          "request_id": "3efe7693-6f3f-4967-bef0-96670708b6a9",
+          "timestamp": "2026-11-19T15:32:47.068041",
+          "intent": "logistics",
+          "primary_agent": "general",
+          "supporting_agents": [],
+          "tools_used": [
+            "search_knowledge_base"
+          ],
+          "tool_calls": [
+            {
+              "agent_type": "general",
+              "tool_name": "search_knowledge_base",
+              "tool_use_id": "call_00_QHnNMtTLVkaoTF3YPSNE3933",
+              "input": {
+                "query": "订单已发货 修改收货地址 规则",
+                "top_k": 5
+              },
+              "success": true,
+              "result_success": true,
+              "latency_ms": 0.0,
+              "cached": false,
+              "reranked": false,
+              "error": "",
+              "source": "local",
+              "mcp_server": null,
+              "mcp_tool": null,
+              "retry_safe": true
+            }
+          ],
+          "escalated": false,
+          "latency_ms": 5515.0,
+          "status": "success",
+          "retryable": false
+        }
+      }
+    ],
+    "direct_general_checks": [
+      {
+        "case_id": "enum-explanation",
+        "message": "请列出并解释订单状态，已签收是什么意思？",
+        "response": "根据知识库《订单查询》文档，订单状态包括以下六种：\n\n1. **待支付**：订单已创建，但尚未完成付款。\n2. **已支付**：付款成功，订单进入待发货或处理阶段。\n3. **已发货**：商品已交由承运方发出。\n4. **运输中**：包裹正在配送途中。\n5. **已签收**：系统中有签收记录，表示承运方已登记包裹被签收。\n6. **已完成**：订单流程结束。\n\n关于「已签收」需要特别说明：它仅表示**系统存在签收记录**，并不等同于收件人本人实际收到包裹。依据《签收争议演示规则》，签收记录不能证明实际收件；如果您看到「已签收」但并未收到货，可以提交签收争议核查。\n\n如果您需要核实某笔具体订单的签收情况，我这边没有实时订单查询工具，建议您通过官方订单页面查看，或联系专业客服申请查件。需要我继续说明其他状态吗？",
+        "success": true,
+        "status": "success",
+        "tools_used": [
+          "search_knowledge_base"
+        ],
+        "performance": {
+          "stages_ms": {},
+          "llm_calls": [
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 1953.0,
+              "input_tokens": 207,
+              "output_tokens": 88,
+              "cache_read_input_tokens": 1920,
+              "cache_creation_input_tokens": 0
+            },
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 5391.0,
+              "input_tokens": 1063,
+              "output_tokens": 221,
+              "cache_read_input_tokens": 2176,
+              "cache_creation_input_tokens": 0
+            }
+          ],
+          "events": {},
+          "llm": {
+            "calls": 2,
+            "errors": 0,
+            "latency_ms": 7344.0,
+            "usage_reported_calls": 2,
+            "input_tokens": 1270,
+            "output_tokens": 309,
+            "cache_read_input_tokens": 4096,
+            "cache_creation_input_tokens": 0
+          }
+        }
+      },
+      {
+        "case_id": "record-versus-receipt",
+        "message": "系统有签收记录，是否足以证明我本人收到了？",
+        "response": "不能。系统里的“已签收”仅表示系统存在一条签收记录，不能直接等同于您本人实际收到货物。\n\n如果您本人并未收到，建议您：\n\n1. 先核对订单页面上的签收时间、签收人及配送地址等信息；\n2. 如信息与实际情况不符，请通过官方订单页面发起售后/异常反馈，或联系专业客服进一步核查。\n\n由于我这边没有真实订单、物流或签收状态的查询工具，无法帮您核实具体记录，也无法代办处理。需要我说明一般情况下的核查要点或进一步建议吗？",
+        "success": true,
+        "status": "success",
+        "tools_used": [],
+        "performance": {
+          "stages_ms": {},
+          "llm_calls": [
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 5234.0,
+              "input_tokens": 913,
+              "output_tokens": 121,
+              "cache_read_input_tokens": 256,
+              "cache_creation_input_tokens": 0
+            }
+          ],
+          "events": {},
+          "llm": {
+            "calls": 1,
+            "errors": 0,
+            "latency_ms": 5234.0,
+            "usage_reported_calls": 1,
+            "input_tokens": 913,
+            "output_tokens": 121,
+            "cache_read_input_tokens": 256,
+            "cache_creation_input_tokens": 0
+          }
+        }
+      },
+      {
+        "case_id": "preserve-user-statement",
+        "message": "系统显示已签收，但我本人没有拿到，能直接说我已经收货了吗？",
+        "response": "不能直接说您已经收货。\n\n“已签收”只是系统里有签收记录，并不等同于您本人实际收到包裹。您反馈未收到，两者需要一并核查，不能仅凭系统状态就认定您已收货。\n\n建议您先做这几步：\n\n1. 核对配送地址、签收时间和签收人信息，确认是否由家人、同事或代收点（如驿站、门卫）代收。\n2. 查看订单详情页的物流轨迹和签收备注。\n3. 若确认无人代收，请通过官方订单页面发起“未收到货”申诉，或联系专业客服进一步核查签收凭证。\n\n由于我这边没有真实订单、物流或签收记录的查询工具，无法帮您核实具体签收情况，也无法代办申诉或转接人工。请以官方订单页面或专业客服的核查结果为准。",
+        "success": true,
+        "status": "success",
+        "tools_used": [],
+        "performance": {
+          "stages_ms": {},
+          "llm_calls": [
+            {
+              "stage": "agent.general",
+              "model": "deepseek-v4-pro",
+              "status": "success",
+              "latency_ms": 6125.0,
+              "input_tokens": 22,
+              "output_tokens": 182,
+              "cache_read_input_tokens": 1152,
+              "cache_creation_input_tokens": 0
+            }
+          ],
+          "events": {},
+          "llm": {
+            "calls": 1,
+            "errors": 0,
+            "latency_ms": 6125.0,
+            "usage_reported_calls": 1,
+            "input_tokens": 22,
+            "output_tokens": 182,
+            "cache_read_input_tokens": 1152,
+            "cache_creation_input_tokens": 0
+          }
+        }
+      }
+    ],
+    "ticket_count": 0,
+    "observed_summary": {
+      "http_cases": 8,
+      "http_success": 8,
+      "model_calls": 23,
+      "model_errors": 0,
+      "ticket_count": 0,
+      "direct_checks": 3
+    }
+  },
+  "qualitative_review": {
+    "status_fact_direct_checks": "3/3 observed replies distinguish recorded signing from actual receipt",
+    "billing_policy": "Candidate retrieves 1–3 workday review policy rather than withholding general policy pending transaction information",
+    "combined": "Observed technical and billing branches followed by real composer with refund review period preserved",
+    "remaining_cases": {
+      "signed-inference": "Policy question routed into logistics case intake",
+      "signed-conflict": "Rule/consistency question routed into logistics case intake",
+      "signed-summary": "Status explanation routed into logistics case intake",
+      "refund-live": "Still requests transaction fields without a live status tool"
+    },
+    "limitations": [
+      "Eight selected cases with one run per version",
+      "Intermediate replies were used for prompt and skill changes",
+      "BM25 and storage/background adapters are evaluation-only",
+      "Direct GeneralAgent checks bypass routing and are reported separately"
+    ]
+  },
+  "total_model_calls": 57
+}

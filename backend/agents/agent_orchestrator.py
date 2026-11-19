@@ -280,6 +280,13 @@ class BaseAgent:
         self._shared_tools = {name: spec for name, spec in (tools or {}).items()
                               if spec.allowed_agents is None or self.agent_type.value in spec.allowed_agents}
 
+    def status_lookup_tools(self, req: Request) -> List[AgentToolSpec]:
+        topic = "logistics" if req.intent and req.intent.value in {
+            "order_status", "logistics", "logistics_lost", "logistics_dispute", "logistics_damaged"
+        } else "other"
+        return [tool for tool in self.get_tools().values()
+                if "status_lookup" in tool.capabilities or f"status_lookup:{topic}" in tool.capabilities]
+
     async def handle(self, req: Request) -> AgentResponse:
         t0 = time.monotonic()
         if self.agent_type in (AgentType.TECHNICAL, AgentType.BILLING):
@@ -521,7 +528,7 @@ class BaseAgent:
         packet = {
             "agent_type": self.agent_type.value,
             "task_goal": req.task_goal,
-            "status_lookup_available": any("status_lookup" in tool.capabilities for tool in self.get_tools().values()),
+            "status_lookup_available": bool(self.status_lookup_tools(req)),
             "intent": req.intent.value if req.intent else None,
             "intent_group": req.intent_group,
             "urgency": req.urgency.name if req.urgency else None,
@@ -556,9 +563,9 @@ class GeneralAgent(BaseAgent):
         "以返回资料为依据回答并注明文档名称。"
         "资料没有说明的流程、界面按钮、绑定方式、时效和资格条件应明确待确认，不凭常识补成本项目规定。"
         "保留资料中的适用案件类型与时间条件，发货前规定不能用于推断发货后一定可以或一定不可以。"
-        "只在当前提供的工具范围内承诺服务。当前没有真实订单、物流、退款状态查询或业务执行工具，"
-        "也没有人工转接工具。应建议用户通过官方订单页面或自行联系专业客服处理，"
-        "不承诺收集订单号后由自己查询、退款、联系承运商或代办转接。"
+        "只在当前提供的工具范围内承诺服务。有匹配当前问题的只读查询工具时可以查询，"
+        "未提供的订单、退款状态、业务执行或人工转接能力应引导用户自行使用官方渠道，"
+        "不承诺收集信息后代办未提供的操作。"
         "已能回答的政策问题直接回答，额外信息仅在确实影响答案时询问。"
     )
 
@@ -646,7 +653,7 @@ class BillingAgent(BaseAgent):
             packet["verification_fields"]["missing_fields"] = []
         elif req.task_goal == "status_lookup":
             packet["verification_fields"]["missing_fields"] = list(dict.fromkeys(
-                name for tool in self.get_tools().values() if "status_lookup" in tool.capabilities
+                name for tool in self.status_lookup_tools(req)
                 for name in tool.input_schema.get("required", []) if not req.entities.get(name)
             ))
         return json.dumps(packet, ensure_ascii=False)
@@ -1063,8 +1070,7 @@ class AgentOrchestrator:
         selected = self._best_agent(decision.primary_agent) if req.task_goal == "status_lookup" else None
         if (req.task_goal == "status_lookup" and not explicit_handoff
                 and decision.primary_agent != AgentType.ESCALATION
-                and not (selected and any("status_lookup" in tool.capabilities
-                                         for tool in selected.get_tools().values()))):
+                and not (selected and selected.status_lookup_tools(req))):
             result = OrchestratorResult(
                 request_id=req.request_id,
                 response="当前没有接入您所需的实时状态查询工具，补充订单号或支付信息也无法在此确认结果。请通过官方业务页面查看，或联系具备权限的客服核实。",

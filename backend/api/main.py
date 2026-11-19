@@ -244,8 +244,10 @@ async def lifespan(app: FastAPI):
 
 def _refresh_agent_tools():
     from agents.tools import build_shared_rag_tools
+    from agents.tracking_tools import build_tracking_tools
     if _orchestrator is not None and _tool_manager is not None:
         tools = build_shared_rag_tools(_tool_manager)
+        tools.update(build_tracking_tools())
         if _mcp_client is not None:
             tools.update(_mcp_client.agent_tools())
         _orchestrator.set_shared_tools(tools)

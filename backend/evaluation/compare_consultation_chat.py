@@ -11,7 +11,8 @@ from contextlib import ExitStack
 from pathlib import Path
 from unittest.mock import patch
 
-from agents.agent_orchestrator import GeneralAgent
+from agents import agent_orchestrator
+from agents.agent_orchestrator import BaseAgent, GeneralAgent
 from core import intent_recognizer
 from core.skill_loader import SkillManager
 from evaluation import replay_logistics_candidate as runner
@@ -32,16 +33,26 @@ def old_texts(revision):
     namespace = vars(intent_recognizer).copy()
     exec(compile(ast.Module(body=[method], type_ignores=[]), "<committed-intent-method>", "exec"), namespace)
     agent_source = committed_text(revision, "agents/agent_orchestrator.py")
+    base = next(node for node in ast.parse(agent_source).body if isinstance(node, ast.ClassDef) and node.name == "BaseAgent")
+    base_method = next(node for node in base.body if isinstance(node, ast.FunctionDef) and node.name == "_build_system_prompt")
+    base_namespace = vars(agent_orchestrator).copy()
+    exec(compile(ast.Module(body=[base_method], type_ignores=[]), "<committed-system-prompt-method>", "exec"), base_namespace)
     agent = next(node for node in ast.parse(agent_source).body if isinstance(node, ast.ClassDef) and node.name == "GeneralAgent")
     assignment = next(node for node in agent.body if isinstance(node, ast.Assign)
                       and any(isinstance(target, ast.Name) and target.id == "system_prompt" for target in node.targets))
-    return namespace["_llm_recognize"], ast.literal_eval(assignment.value), intent_source
+    return namespace["_llm_recognize"], ast.literal_eval(assignment.value), intent_source, base_namespace["_build_system_prompt"], ast.unparse(base_method)
 
 
 async def compare(protocol_path, cases_path, output):
     protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     revision = protocol["baseline_commit"]
-    old_method, old_prompt, old_intent_source = old_texts(revision)
+    old_method, old_prompt, old_intent_source, old_base_method, old_base_source = old_texts(revision)
+    current_base_method = BaseAgent._build_system_prompt
+    current_base = next(node for node in ast.parse(
+        (ROOT / "agents/agent_orchestrator.py").read_text(encoding="utf-8")).body
+        if isinstance(node, ast.ClassDef) and node.name == "BaseAgent")
+    current_base_source = ast.unparse(next(node for node in current_base.body
+        if isinstance(node, ast.FunctionDef) and node.name == "_build_system_prompt"))
     current_method, current_prompt = intent_recognizer.IntentRecognizer._llm_recognize, GeneralAgent.system_prompt
     result = {"schema": 1, "candidate_commit": git_commit(ROOT), "protocol": protocol,
               "protocol_sha256": sha256(protocol_path.read_bytes()),
@@ -62,6 +73,7 @@ async def compare(protocol_path, cases_path, output):
             with ExitStack() as stack:
                 stack.enter_context(patch.object(intent_recognizer.IntentRecognizer, "_llm_recognize", intent_method))
                 stack.enter_context(patch.object(GeneralAgent, "system_prompt", prompt))
+                stack.enter_context(patch.object(BaseAgent, "_build_system_prompt", current_base_method if group == "full" else old_base_method))
                 stack.enter_context(patch.object(runner, "SkillManager", lambda _path: SkillManager(str(skills_dir))))
                 await runner.replay(run_output, cases_path)
             run = json.loads(run_output.read_text(encoding="utf-8"))
@@ -71,6 +83,7 @@ async def compare(protocol_path, cases_path, output):
                 "general_system_prompt_sha256": sha256(prompt.encode()),
                 "general_skill_sha256": sha256((old_skill_text if group != "full" else
                     (ROOT / skill_relative).read_text(encoding="utf-8")).replace("\r\n", "\n").encode()),
+                "base_prompt_method_sha256": sha256((old_base_source if group != "full" else current_base_source).encode()),
             }
             result["runs"][group] = run
             write_json(output, result)

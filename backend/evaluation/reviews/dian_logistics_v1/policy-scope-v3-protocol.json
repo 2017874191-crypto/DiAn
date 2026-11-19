@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "contract_version": "consultation-v2/policy-scope-v3",
+  "baseline_commit": "017080d",
+  "why_follow_up": "First v2 three-group experiment completed and failed reply review: wrong-item was inferred to be quality trouble with unrestricted post-7-day refunds. Preserve that experiment; this is a separately recorded corrective candidate.",
+  "api_ablation": {
+    "groups": [
+      "baseline",
+      "full"
+    ],
+    "repetitions": 1
+  },
+  "variable": "Shared policy scope and General answer relevance only; v2 intent method and tools unchanged.",
+  "cases": "policy_scope_v3_dev.jsonl",
+  "label_source": "Codex-assisted development, no independent human review",
+  "exposure": "One explicit replay of the known failure plus four new wording probes; all development, not blind.",
+  "acceptance": [
+    "Keep all five observations per group; do not infer wrong-item means verified quality issue.",
+    "No merchant-paid return guarantee from the quality exception alone; no unlimited refund period.",
+    "Explicit >7 and <=30 day quality-evidence policy remains answerable.",
+    "No tickets or other business writes; preserve v2 goal controls and original failed v2 record."
+  ],
+  "stop": "One paired five-case API replay; retain all replies and remaining flaws. No statistical or generalization claims."
+}

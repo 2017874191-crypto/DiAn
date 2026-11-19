@@ -1,0 +1,295 @@
+﻿experiment,group,case_id,turn,review_source,verdict,reason,observed_response,observed_tools
+consultation_v2_chat.json,baseline,CONS-howto,0,"Codex-assisted visible development review, no independent human review",unsupported_policy,未检索却补售后界面或处理结果。,"我先帮你确认一下：你反馈的是订单 DEMO1003 **发错货**（收到与订单不符的商品），这属于售后/物流问题。
+
+处理这类问题通常需要先核验订单状态和实际收到的商品信息。由于我这边没有订单查询和售后执行工具，无法直接帮你查状态或发起换货/退款，建议你按以下步骤走官方渠道：
+
+1. 在订单详情页找到「申请售后 / 换货」入口，选择「发错货」类型。
+2. 按提示上传收到的商品照片、外包装和订单截图，便于客服核验。
+3. 提交后等待售后审核，一般会给出补发或退款方案。
+
+需要我帮你确认发错货的常见处理时效或需要准备的材料吗？如果你希望我进一步判断，也可以补充一下：收到的商品和下单商品分别是什么、是否已拆封。",
+consultation_v2_chat.json,baseline,CONS-where,0,"Codex-assisted visible development review, no independent human review",partial_guidance,部分说明文档时效，但回复仍暗示存在特定物流详情或预计字段，未完整解决查询方法与资料缺失。,"关于订单 DEMO1001 的预计送达时间，知识库资料里没有说明具体的查看入口或按钮位置，这部分需要你以官方渠道的实际界面为准，我这边无法替你确认具体在哪个页面查看。
+
+不过根据《配送说明》，可以给你一个参考范围：
+
+- 标准配送：3-5 个工作日送达（订单满 99 元免运费）
+- 加急配送：1-2 个工作日送达（运费 15 元）
+- 同城配送：当日达或次日达（运费 10 元）
+- 偏远地区可能额外增加 2-3 天
+
+同时《订单查询》提到，物流信息通常在发货后 24 小时内更新，你可以通过订单号在订单详情页查看物流状态。
+
+需要说明的是，我目前没有查询具体订单实时状态的工具，无法替你核实 DEMO1001 当前处于哪个配送节点。建议你登录官方渠道，在订单详情或物流信息页面查看预计送达时间；如果订单已发货但超过 7 天未收到，可以联系客服申请查件。
+
+如果你能告诉我这个订单选择的是哪种配送方式，我可以帮你进一步判断大概的送达时间范围。",search_knowledge_base
+consultation_v2_chat.json,baseline,CONS-cancel,0,"Codex-assisted visible development review, no independent human review",unsupported_policy,完整组说明取消/拦截/拒收规则缺失；其余组补出取消按钮、退货或拒收规则。,"我先帮你确认一下这个诉求：你想取消订单 DEMO1001 的寄送，原因是选错了商品。
+
+关于取消寄送，我需要先说明：我这边没有直接查询或操作订单状态的工具，无法替你确认该订单当前能否取消，也不能承诺取消一定成功。
+
+建议你按以下方式处理：
+
+1. 登录 DiAn 官方渠道（App 或官网），进入「我的订单」找到 DEMO1001。
+2. 查看订单当前状态。如果仍处于「待发货/未出库」阶段，通常页面会提供「取消订单」按钮，可直接操作。
+3. 如果订单已进入发货或已签收状态，页面一般不再支持自助取消，需要走「申请售后/退货」流程。
+
+需要提醒的是：能否取消取决于订单当前的实际状态和平台规则，发货前的规定不能用来推断发货后一定可以或不可以取消。
+
+如果你愿意补充下单时间或商品名称，我可以帮你进一步判断应该走「取消」还是「退货」路径。",
+consultation_v2_chat.json,baseline,CONS-address,0,"Codex-assisted visible development review, no independent human review",unsupported_policy,完整组保留发货前条件并说明发货后资料缺失；其余组推断发货后通常不能改址。,"根据《配送说明》，**修改收货地址需要在发货前联系客服处理**。你的订单 DEMO1001 已经发货，按现有规则，发货后一般无法直接修改收货地址。
+
+建议你：
+1. 联系承运方（快递公司）尝试拦截或改派，具体能否操作以承运方为准；
+2. 若无法改派，可等包裹退回后重新下单或联系客服处理。
+
+需要说明的是，资料中只明确了“发货前可修改”，发货后能否改派属于承运方能力，我这边无法直接替你操作或承诺结果。如需进一步协助，建议通过官方渠道联系人工客服核验订单状态。",search_knowledge_base
+consultation_v2_chat.json,baseline,CONS-unclear,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,您是想了解相关规则、查询当前状态，还是申请处理具体问题？,
+consultation_v2_chat.json,baseline,CONS-apply,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,请提供外包装、面单和商品破损或错发情况的照片。演示版仅记录您声明已提交材料，不验证图片。,"query_order,query_logistics,lookup_logistics_policy"
+consultation_v2_chat.json,baseline,CONS-apply,1,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,已按模拟轨迹核验。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。如同意创建模拟核查工单，请回复“确认建单”。,"query_order,query_logistics,lookup_logistics_policy"
+consultation_v2_chat.json,baseline,CONS-apply,2,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,已创建模拟核查工单：MOCK-020e62a4d0eb3aef。未联系真实承运商，未执行退款或赔偿。,"query_order,query_logistics,lookup_logistics_policy,create_logistics_case"
+consultation_v2_chat.json,baseline,CONS-refund,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,当前没有接入您所需的实时状态查询工具，补充订单号或支付信息也无法在此确认结果。请通过官方业务页面查看，或联系具备权限的客服核实。,
+consultation_v2_chat.json,baseline,CONS-signed,0,"Codex-assisted visible development review, no independent human review",missing_retrieval,核心记录与实际收件区别正确；仅改目标组实际检索引用，其余两组未检索，不能据此宣布统一引用已解决。,"“已签收”仅表示系统中有签收记录，不能直接等同于收件人本人实际收到。
+
+具体来说，签收记录可能由本人、代收人（如家人、前台、驿站等）或快递员操作产生，系统状态只反映“有签收记录”这一事实，并不代表一定是收件人本人签收。如果您本人未收到，但系统显示“已签收”，这属于需要进一步核查的情况，应保留两者差异并核实实际签收人、签收时间与地点。
+
+如需进一步确认某笔订单的具体签收情况，建议通过官方渠道（如订单详情页或客服入口）查询物流明细。",
+consultation_v2_chat.json,goal_only,CONS-howto,0,"Codex-assisted visible development review, no independent human review",unsupported_policy,未检索却补售后界面或处理结果。,"我先帮你确认一下：你反馈的是订单 DEMO1003 收到的商品与下单不符（发错货），这属于售后/物流问题。
+
+关于发错货的处理，通常需要先核验订单和物流记录，确认实际发货内容与下单商品是否一致。由于我这边没有订单查询和售后执行工具，无法直接替你核实或办理退换，建议你通过官方渠道按以下步骤处理：
+
+1. 准备好订单号 DEMO1003、收到的商品照片、以及下单时选择的商品信息。
+2. 在官方 App 或网站的订单详情页找到「申请售后 / 退换货」入口，选择「发错货」类型并提交。
+3. 提交后由售后人员核验发货记录，确认后按平台规则安排补发或退款。
+
+需要提醒的是，发错货的判定和后续处理需要以系统发货记录和实际核验结果为准，我不能直接承诺补发或退款结果。
+
+如果你愿意，可以补充一下具体是「收到的商品完全不对」还是「规格/型号/数量有差异」，以及期望的处理方式（补发还是退款），我帮你进一步梳理提交时需要说明的要点。",
+consultation_v2_chat.json,goal_only,CONS-where,0,"Codex-assisted visible development review, no independent human review",partial_guidance,部分说明文档时效，但回复仍暗示存在特定物流详情或预计字段，未完整解决查询方法与资料缺失。,"根据《配送说明》，预计送达时间主要看订单选择的配送方式：
+
+- **标准配送**：3-5 个工作日送达（订单满 99 元免运费）
+- **加急配送**：1-2 个工作日送达（运费 15 元）
+- **同城配送**：当日达或次日达（运费 10 元）
+- 偏远地区可能额外增加 2-3 天，配送时间为每天 9:00-18:00，节假日可能延迟
+
+具体到订单 DEMO1001 的预计送达时间，需要结合该订单实际选择的配送方式和发货状态来确认。你可以通过订单详情页查看所选配送方式，或参考发货后物流信息（通常在发货后 24 小时内更新）。
+
+如果你能告诉我该订单的配送方式或发货时间，我可以帮你进一步估算。需要我继续说明吗？",search_knowledge_base
+consultation_v2_chat.json,goal_only,CONS-cancel,0,"Codex-assisted visible development review, no independent human review",unsupported_policy,完整组说明取消/拦截/拒收规则缺失；其余组补出取消按钮、退货或拒收规则。,"我先帮你确认这个诉求：你希望取消订单 **DEMO1001** 的寄送。
+
+关于取消/拦截寄送，我需要先说明两点边界：
+
+1. **能否取消取决于订单当前状态**。如果订单已进入发货或已签收环节，通常无法直接取消，需要走退货或拒收流程；如果仍在待发货阶段，取消的可能性更大。
+2. 我这边**没有订单状态查询和取消操作的工具**，无法替你直接核验或执行取消，也不能承诺“已经取消”。
+
+建议你按以下步骤处理：
+
+1. 打开下单时使用的官方渠道（App/小程序/官网），进入「我的订单」找到 **DEMO1001**。
+2. 查看订单状态：
+   - 若显示「待发货/待处理」，通常可直接点击「取消订单」。
+   - 若已显示「已发货/运输中」，请尽快联系在线客服或拨打官方客服电话申请拦截，或选择收货时拒收。
+3. 若页面没有取消入口，说明订单可能已进入不可取消阶段，需转人工协助。
+
+为了更准确地给你建议，可以补充一下：**你下单大概是什么时候？订单页面现在显示的状态是什么？** 这样我能帮你判断下一步更合适的处理方式。",
+consultation_v2_chat.json,goal_only,CONS-address,0,"Codex-assisted visible development review, no independent human review",unsupported_policy,完整组保留发货前条件并说明发货后资料缺失；其余组推断发货后通常不能改址。,"根据《配送说明》，修改收货地址需要在**发货前**联系客服办理。你的订单 DEMO1001 已显示为发货状态，因此按现有规则，发货后通常无法直接修改收货地址。
+
+建议你：
+1. 先确认订单当前的实际物流状态（是否已进入运输环节）；
+2. 若包裹尚未真正发出，可尽快联系客服尝试拦截或协调；
+3. 若已进入运输中，可关注物流信息，或与承运方沟通派送安排。
+
+关于发货后是否还有特殊处理通道，资料中未明确说明，需要进一步核验。如需人工协助处理，建议通过官方客服渠道提交订单号 DEMO1001 申请核实。
+
+还需要我帮你查看其他相关问题吗？",search_knowledge_base
+consultation_v2_chat.json,goal_only,CONS-unclear,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,您是想了解相关规则、查询当前状态，还是申请处理具体问题？,
+consultation_v2_chat.json,goal_only,CONS-apply,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,请提供外包装、面单和商品破损或错发情况的照片。演示版仅记录您声明已提交材料，不验证图片。,"query_order,query_logistics,lookup_logistics_policy"
+consultation_v2_chat.json,goal_only,CONS-apply,1,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,已按模拟轨迹核验。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。如同意创建模拟核查工单，请回复“确认建单”。,"query_order,query_logistics,lookup_logistics_policy"
+consultation_v2_chat.json,goal_only,CONS-apply,2,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,已创建模拟核查工单：MOCK-f09b95f0ea148dba。未联系真实承运商，未执行退款或赔偿。,"query_order,query_logistics,lookup_logistics_policy,create_logistics_case"
+consultation_v2_chat.json,goal_only,CONS-refund,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,当前没有接入您所需的实时状态查询工具，补充订单号或支付信息也无法在此确认结果。请通过官方业务页面查看，或联系具备权限的客服核实。,
+consultation_v2_chat.json,goal_only,CONS-signed,0,"Codex-assisted visible development review, no independent human review",supported_with_retrieval,核心记录与实际收件区别正确；仅改目标组实际检索引用，其余两组未检索，不能据此宣布统一引用已解决。,"结论：**“已签收”不等于本人实际收到。**
+
+依据《签收争议演示规则》（demo-2026-11-v1）：签收记录不能证明实际收件，仅代表系统中有签收记录。如果收件人表示未收到，应保留“系统有签收记录”与“用户称未收到”两种信息，并核查。
+
+补充说明（来自《订单查询》文档）：“已签收”是订单状态之一，属于系统状态记录，不直接解释为收件人本人签收。
+
+下一步：如您遇到“显示已签收但实际未收到”的情况，可提交签收争议核查。该文档为演示政策，不代表真实承运商规则；具体核查流程和所需材料请以官方渠道为准。",search_knowledge_base
+consultation_v2_chat.json,full,CONS-howto,0,"Codex-assisted visible development review, no independent human review",unsupported_policy,将错发等同质量问题，推出商家承担运费和不受7天限制；资料不支持，回复候选未通过。,"根据知识库资料，发错货属于商品问题，可以按以下方式处理：
+
+**处理规则**
+- 根据《退款政策》，商品质量问题（含发错货）退货运费由商家承担，而非用户承担。
+- 购买后 7 天内可申请无理由退款；发错货属于质量问题，不受 7 天限制，但具体时效建议以官方审核为准。
+
+**需要您准备的材料**
+根据《破损错发举证演示规则》，处理错发需要提供：
+1. 外包装照片
+2. 面单照片
+3. 商品问题照片（能体现发错货的商品照片）
+
+**下一步**
+我这边没有实时查询或代为提交售后申请的权限，无法直接帮您查订单 DEMO1003 的具体状态或发起换货/退款。建议您：
+- 登录官方渠道，用订单号 DEMO1003 找到该订单，进入售后/退款入口提交申请，并上传上述三张照片；
+- 如需人工协助，可联系官方客服，说明“发错货”并附上订单号。
+
+需要我继续帮您说明退款或换货的具体流程吗？",search_knowledge_base
+consultation_v2_chat.json,full,CONS-where,0,"Codex-assisted visible development review, no independent human review",partial_guidance,部分说明文档时效，但回复仍暗示存在特定物流详情或预计字段，未完整解决查询方法与资料缺失。,"根据《配送说明》，预计送达时间主要取决于你选择的配送方式：
+
+- **标准配送**：3–5 个工作日送达（订单满 99 元免运费）
+- **加急配送**：1–2 个工作日送达（运费 15 元）
+- **同城配送**：当日达或次日达（运费 10 元）
+- 偏远地区可能额外增加 2–3 天；配送时间为每天 9:00–18:00，节假日可能延迟
+
+关于**具体订单 DEMO1001 的实时预计送达时间**，我这边没有实时物流查询工具，无法直接查到该订单当前的运输状态和精确送达时间。建议你通过官方订单查询入口，用订单号查看「运输中」状态下的物流详情和预计送达时间。
+
+需要我帮你说明如何按订单号查询订单状态吗？",search_knowledge_base
+consultation_v2_chat.json,full,CONS-cancel,0,"Codex-assisted visible development review, no independent human review",bounded_in_this_reply,完整组说明取消/拦截/拒收规则缺失；其余组补出取消按钮、退货或拒收规则。,"关于取消订单 DEMO1001 的寄送，我先说明目前能确认的规则：
+
+根据《配送说明》，资料中只提到“如果需要修改收货地址，请在发货前联系客服”，**没有提供取消寄送、拦截或拒收的具体政策**。因此我无法直接确认发货前或发货后能否取消寄送，也不能替你执行取消操作。
+
+建议你通过官方客服渠道核实该订单当前状态及取消寄送的可行性。需要提醒的是，根据《退款政策》，如果商品已发货，通常需要先完成退货流程才能退款，退货运费一般由用户承担（商品质量问题除外）。
+
+请问还需要我帮你查看其他相关规则吗？",search_knowledge_base
+consultation_v2_chat.json,full,CONS-address,0,"Codex-assisted visible development review, no independent human review",bounded_in_this_reply,完整组保留发货前条件并说明发货后资料缺失；其余组推断发货后通常不能改址。,"根据《配送说明》，修改收货地址需要在**发货前**联系客服办理。
+
+您的订单 DEMO1001 已处于发货状态，现有资料中**没有说明发货后的改址规则**，因此我无法确认发货后是否还能修改地址，也不能代为操作。
+
+建议您通过官方客服渠道核实发货后的改址或拦截、拒收等处理方式。需要我帮您继续查看其他相关问题吗？",search_knowledge_base
+consultation_v2_chat.json,full,CONS-unclear,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,您是想了解相关规则、查询当前状态，还是申请处理具体问题？,
+consultation_v2_chat.json,full,CONS-apply,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,请提供外包装、面单和商品破损或错发情况的照片。演示版仅记录您声明已提交材料，不验证图片。,"query_order,query_logistics,lookup_logistics_policy"
+consultation_v2_chat.json,full,CONS-apply,1,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,已按模拟轨迹核验。记录用户已提供材料的声明后，可提交人工审核；不自动判责赔偿。如同意创建模拟核查工单，请回复“确认建单”。,"query_order,query_logistics,lookup_logistics_policy"
+consultation_v2_chat.json,full,CONS-apply,2,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,已创建模拟核查工单：MOCK-752699b07cf01751。未联系真实承运商，未执行退款或赔偿。,"query_order,query_logistics,lookup_logistics_policy,create_logistics_case"
+consultation_v2_chat.json,full,CONS-refund,0,"Codex-assisted visible development review, no independent human review",flow_control_preserved,主题不明澄清、举证与独立确认、退款能力限制保持。,当前没有接入您所需的实时状态查询工具，补充订单号或支付信息也无法在此确认结果。请通过官方业务页面查看，或联系具备权限的客服核实。,
+consultation_v2_chat.json,full,CONS-signed,0,"Codex-assisted visible development review, no independent human review",missing_retrieval,核心记录与实际收件区别正确；仅改目标组实际检索引用，其余两组未检索，不能据此宣布统一引用已解决。,"“已签收”只是系统里的一条签收记录，不能直接等同于收件人本人实际收到货物。
+
+具体来说：
+
+- **“已签收”的含义**：表示物流系统中有签收记录，可能是本人签收，也可能是代收点、物业、家人、同事等代签，甚至可能存在误录的情况。
+- **与“本人收到”的区别**：本人实际收到是事实层面的确认，需要收件人自己核实；系统记录只是物流方的登记结果。
+
+所以，如果你看到订单状态是“已签收”，但自己并没有收到，建议先核对签收地点、签收人信息，再联系承运方核实。若需要进一步处理，我可以帮你梳理下一步该找谁、需要准备哪些信息。",
+policy_scope_v3_chat.json,baseline,POLICY-known,0,"Codex-assisted visible development review, no independent human review",unsupported_responsibility_inference,仍称错发属于商家责任/通常不承担运费，资料没有支持该责任认定。,"关于订单 DEMO1003 发错货的处理，根据知识库资料说明如下：
+
+**已明确的规则**
+
+- 发错货属于商品与订单不符的情况，可参照《退款政策》处理：商品已发货时，需要先完成退货流程才能退款。
+- 退货运费由用户承担，**除非是商品质量问题**。发错货属于商家责任，通常不属于用户承担运费的情形，但资料中未明确“发错货”是否直接归类为免运费情形，这一点需要向官方客服核实。
+- 退款审核通过后，款项将在 5-7 个工作日内退回原支付账户。
+
+**举证材料（依据《破损错发举证演示规则》）**
+
+处理错发问题时，需要准备并提交以下材料供人工审核：
+1. 外包装照片
+2. 面单照片
+3. 商品问题照片（即收到的错误商品照片）
+
+**需要说明的边界**
+
+- 现有资料没有说明“发错货”的专属处理入口、具体操作按钮或改寄/补发流程，我不能代为查询订单状态或代办退货、退款。
+- 建议你通过官方客服渠道提交上述举证材料，由人工审核后进一步处理。
+
+请问是否需要我继续说明退货流程的具体步骤？",search_knowledge_base
+policy_scope_v3_chat.json,baseline,POLICY-materials,0,"Codex-assisted visible development review, no independent human review",bounded_in_this_reply,三类材料与演示审核边界清楚，运费适用范围说明待核实。,"根据《破损错发举证演示规则》，型号不符属于错发类问题，需要准备以下三类照片材料：
+
+1. **外包装照片**：收到时的完整外包装，能看清包装状态。
+2. **面单照片**：快递面单，用于核对订单和物流信息。
+3. **商品问题照片**：实际收到的商品，能清楚看出型号与订单不符。
+
+补充说明：
+
+- 该规则为演示政策，记录你已提供材料的声明后可提交人工审核，**不会自动判责赔偿**。
+- 关于具体提交入口、审核时效，以及型号不符是否适用《退款政策》中“商品质量问题”的运费承担规则，现有资料未明确说明，需向官方客服进一步核实。
+- 我这边没有实时查询工具，无法替你核验订单 DEMO1003 的具体状态或直接提交申请，建议你通过官方售后渠道上传上述照片材料。
+
+需要我帮你梳理一下提交时的文字说明要点吗？","search_knowledge_base,search_knowledge_base"
+policy_scope_v3_chat.json,baseline,POLICY-fee,0,"Codex-assisted visible development review, no independent human review",bounded_in_this_reply,保留质量例外和7至30天条件，拒绝将错发自动认作免运费或无限退款资格。,"根据《退款政策》，退货运费由用户承担，除非是商品质量问题。资料中明确列出的运费豁免情形是“商品质量问题”，并未将“发错货”单独列为商家承担运费的情形。
+
+因此，就现有资料而言，**发错货是否一定由商家承担退货运费，资料没有明确说明**，不能直接认定“肯定由商家承担”。
+
+建议你向官方客服核实发错货场景下的运费责任规则；这里无法代为确认或承诺运费由谁承担。",search_knowledge_base
+policy_scope_v3_chat.json,baseline,POLICY-window,0,"Codex-assisted visible development review, no independent human review",bounded_in_this_reply,保留质量例外和7至30天条件，拒绝将错发自动认作免运费或无限退款资格。,"根据《退款政策》，不能“一直申请退款”，规则如下：
+
+- **7 天内**：可申请无理由退款。
+- **超过 7 天但未超过 30 天**：需要提供商品质量问题的证据才能退款。
+- **超过 30 天**：资料未说明退款规则，需向官方客服核实。
+
+关于“发错货”这一情形，现有资料没有单独说明它是否属于可适用“质量问题证据”的范畴，也没有说明超过 30 天后的处理方式。因此无法仅凭现有规则判断“超过七天就能一直申请退款”。
+
+如需进一步确认发错货在超期后的具体处理条件，建议向官方客服核实。",search_knowledge_base
+policy_scope_v3_chat.json,baseline,POLICY-positive,0,"Codex-assisted visible development review, no independent human review",partial_policy_answer,保留7至30天质量证据要求；仍混用错发材料例子，完整组末尾索取无实时核验工具可用的支付字段，不能计全面修复。,"根据知识库《退款政策》文档，超过 7 天但未超过 30 天的订单，退款规则如下：
+
+**核心要求**
+- 此阶段不再适用 7 天无理由退款，必须提供**商品质量问题的证据**才能申请退款。
+- 举证材料通常包括：商品问题照片、外包装照片、面单照片等（可参考《破损错发举证演示规则》中列出的材料类型）。
+
+**需要说明的边界**
+- 知识库只规定了“需提供质量证据”这一条件，未明确列出证据的具体判定标准或审核通过率。因此，能否退款最终取决于人工审核对证据的认定。
+- 若商品已发货，通常还需先完成退货流程；质量问题情形下运费承担规则与普通退货不同，具体以审核结果为准。
+
+**下一步处理**
+- 请保留好商品问题照片、外包装、面单等原始凭证。
+- 提交退款申请时一并上传上述证据，进入人工审核；审核结果和到账时间以实际处理为准，我无法在此直接确认能否通过。
+
+如需我协助整理举证材料清单或说明申请入口，可以继续告诉我。",search_knowledge_base
+policy_scope_v3_chat.json,full,POLICY-known,0,"Codex-assisted visible development review, no independent human review",unsupported_fee_inference,仍暗示错发退货通常不由用户承担，随后附人工核验条件并不能撤销前述无依据判断。,"根据知识库资料，发错货属于“错发”问题，处理方式如下：
+
+**处理规则（依据《破损错发举证演示规则》）**
+- 该规则仅为演示政策，不代表真实承运商规则。
+- 记录你已提供材料的声明后，可提交人工审核；系统**不会自动判责或赔偿**。
+- 需要准备的材料：**外包装照片、面单照片、商品问题照片**。
+
+**关于退款（依据《退款政策》）**
+- 发错货属于商品与订单不符，通常按商品问题处理，退货运费不由你承担（商品质量问题除外条款）。
+- 但具体是否免除运费、退款时效，需以人工审核结果为准，我不能直接认定。
+
+**下一步建议**
+1. 准备好上述三张照片材料；
+2. 通过官方客服渠道提交订单号 DEMO1003 和材料，申请人工审核。
+
+需要说明的是，我当前没有实时查询或转人工的工具，无法替你提交或查询该订单的审核进度，请通过官方客服入口办理。还需要我解释其他相关规则吗？",search_knowledge_base
+policy_scope_v3_chat.json,full,POLICY-materials,0,"Codex-assisted visible development review, no independent human review",unsupported_fee_inference,仍暗示错发退货通常不由用户承担，随后附人工核验条件并不能撤销前述无依据判断。,"根据《破损错发举证演示规则》，收到型号不符属于错发类问题，处理规则如下：
+
+**需要准备的照片材料（共 3 类）：**
+1. 外包装照片
+2. 面单照片
+3. 商品问题照片（能清晰体现实际收到的型号与订单不符）
+
+**处理规则说明：**
+- 记录你已提供材料的声明后，会提交人工审核，不自动判责赔偿。
+- 该规则为演示政策，不代表真实承运商规则。
+
+**关于退款/退货的补充（依据《退款政策》）：**
+- 错发属于商品问题，退货相关运费通常不由你承担（质量问题除外条款），但具体是否适用需以人工审核结果为准。
+- 7 天内可申请无理由退款；超过 7 天未超过 30 天，需提供商品质量问题的证据才能退款。错发是否属于""质量问题""证据范围，需人工核验确认。
+
+**下一步建议：**
+请先拍好上述 3 类照片，再通过官方客服渠道提交错发申请。我这边没有实时订单查询或提交工单的工具，无法代为核实 DEMO1003 的具体状态或直接办理，具体审核结果以人工处理为准。
+
+需要我帮你把照片拍摄要点再展开说明吗？",search_knowledge_base
+policy_scope_v3_chat.json,full,POLICY-fee,0,"Codex-assisted visible development review, no independent human review",bounded_in_this_reply,保留质量例外和7至30天条件，拒绝将错发自动认作免运费或无限退款资格。,"根据《退款政策》，退货运费由用户承担，**除非是商品质量问题**。资料中并没有把“发错货”单独列为运费由商家承担的情形。
+
+关于错发，另有《破损错发举证演示规则》，但它只说明：记录用户已提供材料的声明后，可提交人工审核，**不自动判责赔偿**，也未明确错发情况下的运费由谁承担。
+
+所以结论是：现有资料没有明确“发错货退货运费一定由商家承担”的规则。错发是否属于可免除运费的“商品质量问题”范畴，需要人工审核认定，不能直接推定。
+
+如果你需要进一步确认，建议通过官方客服渠道提交错发举证（外包装照片、面单照片、商品问题照片），由人工审核后确认运费责任。这里不能代为认定或承诺运费由谁承担。",search_knowledge_base
+policy_scope_v3_chat.json,full,POLICY-window,0,"Codex-assisted visible development review, no independent human review",bounded_in_this_reply,保留质量例外和7至30天条件，拒绝将错发自动认作免运费或无限退款资格。,"根据《退款政策》，不能“一直申请退款”，规则如下：
+
+- 购买后 **7 天内**可申请无理由退款。
+- **超过 7 天但未超过 30 天**的订单，需要提供**商品质量问题的证据**才能退款。
+- 超过 30 天的情况，资料中未说明退款规则。
+
+关于“发错货”本身：现有资料中《破损错发举证演示规则》仅说明可提交人工审核（需外包装照片、面单照片、商品问题照片），**不自动判责赔偿**，也不能据此认定商品质量问题或免除运费。
+
+所以结论是：发错货不等于自动获得无限期退款资格；超过 7 天需按“质量问题证据”路径处理，且是否成立需人工审核，资料未载明超过 30 天的规则。建议向官方客服核实具体订单的处理条件。",search_knowledge_base
+policy_scope_v3_chat.json,full,POLICY-positive,0,"Codex-assisted visible development review, no independent human review",partial_policy_answer,保留7至30天质量证据要求；仍混用错发材料例子，完整组末尾索取无实时核验工具可用的支付字段，不能计全面修复。,"根据知识库《退款政策》，超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。具体说明如下：
+
+**适用条件**
+- 购买后 7 天内：可申请无理由退款。
+- 超过 7 天、未超过 30 天：不再适用无理由退款，必须提供商品质量问题的证据，经审核通过后才能退款。
+
+**举证要求**
+- 需要能证明商品存在质量问题的材料，例如商品问题照片等（可参考《破损错发举证演示规则》中列出的材料类型：外包装照片、面单照片、商品问题照片）。
+- 举证材料仅用于提交人工审核，不能据此自动认定商品质量问题、免除运费或扩大退款期限。
+
+**处理边界**
+- 是否退款、是否免除退货运费，需在核验订单状态和举证材料后由人工审核确认，不能直接承诺结果。
+- 超过 30 天的订单不在上述规则范围内，需另行核验。
+
+如需针对具体订单核验，请提供订单号、支付时间和支付渠道，我再协助判断下一步处理路径。",search_knowledge_base

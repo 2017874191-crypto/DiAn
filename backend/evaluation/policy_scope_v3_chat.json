@@ -1,0 +1,1831 @@
+{
+  "schema": 1,
+  "candidate_commit": "98fa44d80a9eba1e3c9ff690c3e5ef88321b2930",
+  "protocol": {
+    "schema": 1,
+    "contract_version": "consultation-v2/policy-scope-v3",
+    "baseline_commit": "017080d",
+    "why_follow_up": "First v2 three-group experiment completed and failed reply review: wrong-item was inferred to be quality trouble with unrestricted post-7-day refunds. Preserve that experiment; this is a separately recorded corrective candidate.",
+    "api_ablation": {
+      "groups": [
+        "baseline",
+        "full"
+      ],
+      "repetitions": 1
+    },
+    "variable": "Shared policy scope and General answer relevance only; v2 intent method and tools unchanged.",
+    "cases": "policy_scope_v3_dev.jsonl",
+    "label_source": "Codex-assisted development, no independent human review",
+    "exposure": "One explicit replay of the known failure plus four new wording probes; all development, not blind.",
+    "acceptance": [
+      "Keep all five observations per group; do not infer wrong-item means verified quality issue.",
+      "No merchant-paid return guarantee from the quality exception alone; no unlimited refund period.",
+      "Explicit >7 and <=30 day quality-evidence policy remains answerable.",
+      "No tickets or other business writes; preserve v2 goal controls and original failed v2 record."
+    ],
+    "stop": "One paired five-case API replay; retain all replies and remaining flaws. No statistical or generalization claims."
+  },
+  "protocol_sha256": "b0d59f483b3550ee48f209a09f5501d83b209720f92329778cb6602abe6d4fc4",
+  "dataset_sha256": "df03181aaa1855e62be486ae583504b4c6a1f8ce9484afe5764004ee380a64f5",
+  "runs": {
+    "baseline": {
+      "schema": 1,
+      "code_commit": "98fa44d80a9eba1e3c9ff690c3e5ef88321b2930",
+      "model": "deepseek-v4-pro",
+      "case_source": "policy_scope_v3_dev.jsonl",
+      "configuration_source": {
+        "kind": "project_dotenv",
+        "shadowed_environment_fields": [
+          "ANTHROPIC_BASE_URL"
+        ]
+      },
+      "complete": true,
+      "scope": "Live models and actual ASGI /chat, frozen demo logistics, no external business calls",
+      "dependencies": {
+        "redis": "fakeredis protocol substitute",
+        "business": "Temporary SQLite",
+        "memory": "Empty episodic/profile reads; existing conversation storage",
+        "retrieval": "Fixed nine-passage evaluation BM25 adapter"
+      },
+      "rag_corpus_sha256": "a05b311bfe5b2f05a51844816baab52f39635a2eac2ada69d1f72dd75665cdb3",
+      "gold_status": "Codex-assisted initial review; independent human review pending",
+      "http_exchanges": [
+        {
+          "request": {
+            "message": "订单号 DEMO1003 的货发错了，应该怎么处理？",
+            "user_id": "demo-user",
+            "conv_id": "eval-e44427c1e6c34afba3945d1dad90eafa",
+            "client_request_id": "eval-a79b59a15d7a4397a0540042f9fd1568"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-e44427c1e6c34afba3945d1dad90eafa",
+            "request_id": "67563bfd-040e-4e04-b999-cdfa7c51c868",
+            "response": "关于订单 DEMO1003 发错货的处理，根据知识库资料说明如下：\n\n**已明确的规则**\n\n- 发错货属于商品与订单不符的情况，可参照《退款政策》处理：商品已发货时，需要先完成退货流程才能退款。\n- 退货运费由用户承担，**除非是商品质量问题**。发错货属于商家责任，通常不属于用户承担运费的情形，但资料中未明确“发错货”是否直接归类为免运费情形，这一点需要向官方客服核实。\n- 退款审核通过后，款项将在 5-7 个工作日内退回原支付账户。\n\n**举证材料（依据《破损错发举证演示规则》）**\n\n处理错发问题时，需要准备并提交以下材料供人工审核：\n1. 外包装照片\n2. 面单照片\n3. 商品问题照片（即收到的错误商品照片）\n\n**需要说明的边界**\n\n- 现有资料没有说明“发错货”的专属处理入口、具体操作按钮或改寄/补发流程，我不能代为查询订单状态或代办退货、退款。\n- 建议你通过官方客服渠道提交上述举证材料，由人工审核后进一步处理。\n\n请问是否需要我继续说明退货流程的具体步骤？",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.7905,
+            "escalated": false,
+            "latency_ms": 9250.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.7905,
+            "intent_source_scores": {
+              "llm": 0.93,
+              "embedding": 0.0,
+              "pattern": 0.75
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1516.0,
+                "memory_background": 0.0,
+                "agent_execution": 7734.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1516.0,
+                  "input_tokens": 47,
+                  "output_tokens": 53,
+                  "cache_read_input_tokens": 1024,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 2390.0,
+                  "input_tokens": 185,
+                  "output_tokens": 90,
+                  "cache_read_input_tokens": 2176,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 5329.0,
+                  "input_tokens": 1113,
+                  "output_tokens": 263,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 9235.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 1345,
+                "output_tokens": 406,
+                "cache_read_input_tokens": 5632,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "订单号 DEMO1003 收到的型号不一样，我先了解处理规则，需要准备哪些照片？",
+            "user_id": "demo-user",
+            "conv_id": "eval-a066c7a642904eafba6c5e0000c79ba5",
+            "client_request_id": "eval-ff910b4f3eff4f6dadb91b14e503f0dc"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-a066c7a642904eafba6c5e0000c79ba5",
+            "request_id": "96a17269-4306-42ca-b649-e90e1dbf1997",
+            "response": "根据《破损错发举证演示规则》，型号不符属于错发类问题，需要准备以下三类照片材料：\n\n1. **外包装照片**：收到时的完整外包装，能看清包装状态。\n2. **面单照片**：快递面单，用于核对订单和物流信息。\n3. **商品问题照片**：实际收到的商品，能清楚看出型号与订单不符。\n\n补充说明：\n\n- 该规则为演示政策，记录你已提供材料的声明后可提交人工审核，**不会自动判责赔偿**。\n- 关于具体提交入口、审核时效，以及型号不符是否适用《退款政策》中“商品质量问题”的运费承担规则，现有资料未明确说明，需向官方客服进一步核实。\n- 我这边没有实时查询工具，无法替你核验订单 DEMO1003 的具体状态或直接提交申请，建议你通过官方售后渠道上传上述照片材料。\n\n需要我帮你梳理一下提交时的文字说明要点吗？",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base",
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.8075,
+            "escalated": false,
+            "latency_ms": 8156.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.8075,
+            "intent_source_scores": {
+              "llm": 0.95,
+              "embedding": 0.0,
+              "pattern": 0.5
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1406.0,
+                "memory_background": 0.0,
+                "agent_execution": 6750.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1406.0,
+                  "input_tokens": 564,
+                  "output_tokens": 57,
+                  "cache_read_input_tokens": 512,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 2407.0,
+                  "input_tokens": 62,
+                  "output_tokens": 156,
+                  "cache_read_input_tokens": 2304,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 4328.0,
+                  "input_tokens": 3383,
+                  "output_tokens": 203,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 8141.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 4009,
+                "output_tokens": 416,
+                "cache_read_input_tokens": 5248,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "订单号 DEMO1003 发错货了，退货运费肯定是商家承担吗？我只咨询规则。",
+            "user_id": "demo-user",
+            "conv_id": "eval-ecfcac0886834e7696becd93dfe8d2b5",
+            "client_request_id": "eval-d2f48cdc58e44371826892c8fc513edd"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-ecfcac0886834e7696becd93dfe8d2b5",
+            "request_id": "01078678-5107-42be-8614-74746fcb0a46",
+            "response": "根据《退款政策》，退货运费由用户承担，除非是商品质量问题。资料中明确列出的运费豁免情形是“商品质量问题”，并未将“发错货”单独列为商家承担运费的情形。\n\n因此，就现有资料而言，**发错货是否一定由商家承担退货运费，资料没有明确说明**，不能直接认定“肯定由商家承担”。\n\n建议你向官方客服核实发错货场景下的运费责任规则；这里无法代为确认或承诺运费由谁承担。",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.9425,
+            "escalated": false,
+            "latency_ms": 5203.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.9425,
+            "intent_source_scores": {
+              "llm": 0.95,
+              "embedding": 0.0,
+              "pattern": 0.9
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1031.0,
+                "memory_background": 0.0,
+                "agent_execution": 4172.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1031.0,
+                  "input_tokens": 566,
+                  "output_tokens": 57,
+                  "cache_read_input_tokens": 512,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1328.0,
+                  "input_tokens": 193,
+                  "output_tokens": 74,
+                  "cache_read_input_tokens": 2176,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 2844.0,
+                  "input_tokens": 1138,
+                  "output_tokens": 105,
+                  "cache_read_input_tokens": 2304,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 5203.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 1897,
+                "output_tokens": 236,
+                "cache_read_input_tokens": 4992,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "订单号 DEMO1003 发错货，超过七天就能一直申请退款吗？只问规则。",
+            "user_id": "demo-user",
+            "conv_id": "eval-5c4b4e97bbda4c8a8d57a157b5f173fa",
+            "client_request_id": "eval-1d61fa66c0384c5c9788a8e817cfa081"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-5c4b4e97bbda4c8a8d57a157b5f173fa",
+            "request_id": "001233b9-2ccc-44fc-a483-8ad80bbaf6e1",
+            "response": "根据《退款政策》，不能“一直申请退款”，规则如下：\n\n- **7 天内**：可申请无理由退款。\n- **超过 7 天但未超过 30 天**：需要提供商品质量问题的证据才能退款。\n- **超过 30 天**：资料未说明退款规则，需向官方客服核实。\n\n关于“发错货”这一情形，现有资料没有单独说明它是否属于可适用“质量问题证据”的范畴，也没有说明超过 30 天后的处理方式。因此无法仅凭现有规则判断“超过七天就能一直申请退款”。\n\n如需进一步确认发错货在超期后的具体处理条件，建议向官方客服核实。",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.9255,
+            "escalated": false,
+            "latency_ms": 5765.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.9255,
+            "intent_source_scores": {
+              "llm": 0.93,
+              "embedding": 0.0,
+              "pattern": 0.9
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 15.0,
+                "intent": 1532.0,
+                "memory_background": 0.0,
+                "agent_execution": 4218.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1532.0,
+                  "input_tokens": 565,
+                  "output_tokens": 53,
+                  "cache_read_input_tokens": 512,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1359.0,
+                  "input_tokens": 192,
+                  "output_tokens": 72,
+                  "cache_read_input_tokens": 2176,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 2859.0,
+                  "input_tokens": 990,
+                  "output_tokens": 145,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 5750.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 1747,
+                "output_tokens": 270,
+                "cache_read_input_tokens": 5120,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "请解释退款政策里超过七天但不超过三十天的质量问题举证要求。",
+            "user_id": "demo-user",
+            "conv_id": "eval-2dde8879028f4e4bbd283ebaa5bb3255",
+            "client_request_id": "eval-423076deeb464236b5421087d3bf3cf6"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-2dde8879028f4e4bbd283ebaa5bb3255",
+            "request_id": "98da722a-a16c-4a51-9df6-5be6ae61f64c",
+            "response": "根据知识库《退款政策》文档，超过 7 天但未超过 30 天的订单，退款规则如下：\n\n**核心要求**\n- 此阶段不再适用 7 天无理由退款，必须提供**商品质量问题的证据**才能申请退款。\n- 举证材料通常包括：商品问题照片、外包装照片、面单照片等（可参考《破损错发举证演示规则》中列出的材料类型）。\n\n**需要说明的边界**\n- 知识库只规定了“需提供质量证据”这一条件，未明确列出证据的具体判定标准或审核通过率。因此，能否退款最终取决于人工审核对证据的认定。\n- 若商品已发货，通常还需先完成退货流程；质量问题情形下运费承担规则与普通退货不同，具体以审核结果为准。\n\n**下一步处理**\n- 请保留好商品问题照片、外包装、面单等原始凭证。\n- 提交退款申请时一并上传上述证据，进入人工审核；审核结果和到账时间以实际处理为准，我无法在此直接确认能否通过。\n\n如需我协助整理举证材料清单或说明申请入口，可以继续告诉我。",
+            "intent": "refund",
+            "intent_group": "billing",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "billing",
+            "agent_types": [
+              "billing"
+            ],
+            "primary_agent": "billing",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+            "routing_confidence": 0.93,
+            "escalated": false,
+            "latency_ms": 8531.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.7584,
+            "intent_source_scores": {
+              "llm": 0.95,
+              "embedding": 0.21693045781865616,
+              "pattern": 0.5
+            },
+            "intent_embedding_source": "local-ngram",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1578.0,
+                "memory_background": 0.0,
+                "agent_execution": 6953.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1578.0,
+                  "input_tokens": 557,
+                  "output_tokens": 52,
+                  "cache_read_input_tokens": 512,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.billing",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1703.0,
+                  "input_tokens": 259,
+                  "output_tokens": 87,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.billing",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 5234.0,
+                  "input_tokens": 1123,
+                  "output_tokens": 242,
+                  "cache_read_input_tokens": 2688,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 8515.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 1939,
+                "output_tokens": 381,
+                "cache_read_input_tokens": 5632,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        }
+      ],
+      "provenance": {
+        "schema": 1,
+        "dataset_sha256": "df03181aaa1855e62be486ae583504b4c6a1f8ce9484afe5764004ee380a64f5",
+        "case_ids": [
+          "POLICY-fee",
+          "POLICY-known",
+          "POLICY-materials",
+          "POLICY-positive",
+          "POLICY-window"
+        ],
+        "runner": {
+          "source_sha256": "cc8722b5f1cae7baeb6ec6faa14a5608c8157e9430bd534f5beaf776476f1865",
+          "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+          "python": "3.11.9",
+          "system": "Windows",
+          "architecture": "AMD64",
+          "sqlite": "3.45.1",
+          "git_commit": "98fa44d80a9eba1e3c9ff690c3e5ef88321b2930"
+        },
+        "target": {
+          "runtime": {
+            "build": {
+              "source_sha256": "cc8722b5f1cae7baeb6ec6faa14a5608c8157e9430bd534f5beaf776476f1865",
+              "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+              "python": "3.11.9",
+              "system": "Windows",
+              "architecture": "AMD64",
+              "sqlite": "3.45.1"
+            },
+            "fixtures_sha256": "11f4f61d00c2e6d4ef6f62076c7da00986b736e6f20872fa4939fe4b25fb9077",
+            "policy_sha256": "e1810fb7e7a0455892c567eeb35d0451d0491219963cc00b9f40301ed201753b",
+            "skills_sha256": "b26ccfe60101020695ab091c264eab9b1757fa76c4954e90f4a31261a1194485",
+            "tools_sha256": "91bd8f321b05d8f821cb609e51d2b775700b85082244670562905d8afc9bd9a7",
+            "configuration": {
+              "intent_mode": "full",
+              "model": "deepseek-v4-pro",
+              "model_endpoint_sha256": "4817a95a15d5a81e5eea1a1c12f1af30eb9e5b7ed80317e7b8be775a407cbf0f",
+              "intent_embedding": true,
+              "logistics_embedding": false,
+              "embedding_provider": "local",
+              "remote_embedding_available": false,
+              "embedding_model": "BAAI/bge-m3",
+              "ticket_provider": "sqlite",
+              "temporal_logistics": false,
+              "external_mcp": false,
+              "authentication": true,
+              "intent_timeout_s": 8.0,
+              "agent_timeout_s": 15.0,
+              "composer_timeout_s": 8.0,
+              "composer_temperature": 0.1,
+              "composer_max_tokens": 1000,
+              "model_timeout_s": 30.0,
+              "chat_timeout_s": 50.0,
+              "chat_model_calls": 16,
+              "queue_timeout_s": 2.0,
+              "chat_per_user": 4,
+              "chat_active": 16,
+              "chat_waiting": 32,
+              "logistics_active": 4,
+              "logistics_waiting": 8,
+              "model_active": 8,
+              "model_waiting": 16
+            }
+          },
+          "image_id": null
+        },
+        "controlled_restart": false,
+        "verification_errors": []
+      },
+      "suite": "dian_logistics_v1",
+      "split": "development",
+      "generated_at": "2026-11-19T12:44:08.374740+00:00",
+      "variant": "full",
+      "summary": {
+        "flow_pass_semantic_pending": 5
+      },
+      "metrics": {
+        "cases_total": 5,
+        "flow_pass_cases": 5,
+        "unexpected_tickets": 0,
+        "unexpected_ticket_turns": 0,
+        "observed_turns": 5,
+        "wall_latency_p50_ms": 8156.0,
+        "wall_latency_p95_ms": 8531.0,
+        "llm_usage": {
+          "calls": 15,
+          "errors": 0,
+          "usage_reported_calls": 15,
+          "input_tokens": 10937,
+          "output_tokens": 1709
+        },
+        "monetary_cost": "unavailable: provider prices and unreported usage are not estimated"
+      },
+      "by_family": {
+        "POLICY-fee": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-known": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-materials": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-positive": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-window": {
+          "flow_pass_semantic_pending": 1
+        }
+      },
+      "semantic_evaluation": "pending_human_review",
+      "cases": [
+        {
+          "case_id": "POLICY-known",
+          "family_id": "POLICY-known",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "关于订单 DEMO1003 发错货的处理，根据知识库资料说明如下：\n\n**已明确的规则**\n\n- 发错货属于商品与订单不符的情况，可参照《退款政策》处理：商品已发货时，需要先完成退货流程才能退款。\n- 退货运费由用户承担，**除非是商品质量问题**。发错货属于商家责任，通常不属于用户承担运费的情形，但资料中未明确“发错货”是否直接归类为免运费情形，这一点需要向官方客服核实。\n- 退款审核通过后，款项将在 5-7 个工作日内退回原支付账户。\n\n**举证材料（依据《破损错发举证演示规则》）**\n\n处理错发问题时，需要准备并提交以下材料供人工审核：\n1. 外包装照片\n2. 面单照片\n3. 商品问题照片（即收到的错误商品照片）\n\n**需要说明的边界**\n\n- 现有资料没有说明“发错货”的专属处理入口、具体操作按钮或改寄/补发流程，我不能代为查询订单状态或代办退货、退款。\n- 建议你通过官方客服渠道提交上述举证材料，由人工审核后进一步处理。\n\n请问是否需要我继续说明退货流程的具体步骤？",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.93,
+                  "embedding": 0.0,
+                  "pattern": 0.75
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 9250.0,
+                "wall_latency_ms": 9265.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 9235.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 1345,
+                  "output_tokens": 406,
+                  "cache_read_input_tokens": 5632,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "67563bfd-040e-4e04-b999-cdfa7c51c868"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-materials",
+          "family_id": "POLICY-materials",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据《破损错发举证演示规则》，型号不符属于错发类问题，需要准备以下三类照片材料：\n\n1. **外包装照片**：收到时的完整外包装，能看清包装状态。\n2. **面单照片**：快递面单，用于核对订单和物流信息。\n3. **商品问题照片**：实际收到的商品，能清楚看出型号与订单不符。\n\n补充说明：\n\n- 该规则为演示政策，记录你已提供材料的声明后可提交人工审核，**不会自动判责赔偿**。\n- 关于具体提交入口、审核时效，以及型号不符是否适用《退款政策》中“商品质量问题”的运费承担规则，现有资料未明确说明，需向官方客服进一步核实。\n- 我这边没有实时查询工具，无法替你核验订单 DEMO1003 的具体状态或直接提交申请，建议你通过官方售后渠道上传上述照片材料。\n\n需要我帮你梳理一下提交时的文字说明要点吗？",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.95,
+                  "embedding": 0.0,
+                  "pattern": 0.5
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 8156.0,
+                "wall_latency_ms": 8156.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 8141.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 4009,
+                  "output_tokens": 416,
+                  "cache_read_input_tokens": 5248,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base",
+                  "search_knowledge_base"
+                ],
+                "request_id": "96a17269-4306-42ca-b649-e90e1dbf1997"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-fee",
+          "family_id": "POLICY-fee",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据《退款政策》，退货运费由用户承担，除非是商品质量问题。资料中明确列出的运费豁免情形是“商品质量问题”，并未将“发错货”单独列为商家承担运费的情形。\n\n因此，就现有资料而言，**发错货是否一定由商家承担退货运费，资料没有明确说明**，不能直接认定“肯定由商家承担”。\n\n建议你向官方客服核实发错货场景下的运费责任规则；这里无法代为确认或承诺运费由谁承担。",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.95,
+                  "embedding": 0.0,
+                  "pattern": 0.9
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 5203.0,
+                "wall_latency_ms": 5219.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 5203.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 1897,
+                  "output_tokens": 236,
+                  "cache_read_input_tokens": 4992,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "01078678-5107-42be-8614-74746fcb0a46"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-window",
+          "family_id": "POLICY-window",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据《退款政策》，不能“一直申请退款”，规则如下：\n\n- **7 天内**：可申请无理由退款。\n- **超过 7 天但未超过 30 天**：需要提供商品质量问题的证据才能退款。\n- **超过 30 天**：资料未说明退款规则，需向官方客服核实。\n\n关于“发错货”这一情形，现有资料没有单独说明它是否属于可适用“质量问题证据”的范畴，也没有说明超过 30 天后的处理方式。因此无法仅凭现有规则判断“超过七天就能一直申请退款”。\n\n如需进一步确认发错货在超期后的具体处理条件，建议向官方客服核实。",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.93,
+                  "embedding": 0.0,
+                  "pattern": 0.9
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 5765.0,
+                "wall_latency_ms": 5781.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 5750.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 1747,
+                  "output_tokens": 270,
+                  "cache_read_input_tokens": 5120,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "001233b9-2ccc-44fc-a483-8ad80bbaf6e1"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-positive",
+          "family_id": "POLICY-positive",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据知识库《退款政策》文档，超过 7 天但未超过 30 天的订单，退款规则如下：\n\n**核心要求**\n- 此阶段不再适用 7 天无理由退款，必须提供**商品质量问题的证据**才能申请退款。\n- 举证材料通常包括：商品问题照片、外包装照片、面单照片等（可参考《破损错发举证演示规则》中列出的材料类型）。\n\n**需要说明的边界**\n- 知识库只规定了“需提供质量证据”这一条件，未明确列出证据的具体判定标准或审核通过率。因此，能否退款最终取决于人工审核对证据的认定。\n- 若商品已发货，通常还需先完成退货流程；质量问题情形下运费承担规则与普通退货不同，具体以审核结果为准。\n\n**下一步处理**\n- 请保留好商品问题照片、外包装、面单等原始凭证。\n- 提交退款申请时一并上传上述证据，进入人工审核；审核结果和到账时间以实际处理为准，我无法在此直接确认能否通过。\n\n如需我协助整理举证材料清单或说明申请入口，可以继续告诉我。",
+                "agent_type": "billing",
+                "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+                "intent": "refund",
+                "intent_embedding_source": "local-ngram",
+                "intent_source_scores": {
+                  "llm": 0.95,
+                  "embedding": 0.21693045781865616,
+                  "pattern": 0.5
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 8531.0,
+                "wall_latency_ms": 8531.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 8515.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 1939,
+                  "output_tokens": 381,
+                  "cache_read_input_tokens": 5632,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "98da722a-a16c-4a51-9df6-5be6ae61f64c"
+              }
+            }
+          ]
+        }
+      ],
+      "total_simulated_tickets": 0,
+      "effective_texts": {
+        "intent_source_sha256": "a0de779e2f32a9d9a2714e592217d4a572f9dade182f4b65221d3efc6c4bcdfe",
+        "general_system_prompt_sha256": "00a548ce4333b48cd19a6cf3a1fbe3d5f3ed708b82030b91b83618f1af5c358c",
+        "general_skill_sha256": "95be8b5e261bcf25ea2e4d633e31a058c1b674bbef478d87d68f8af440f5a074",
+        "base_prompt_method_sha256": "128883403a8c0357a141563da63c0500663b3781dd7656bad2a3722fb2287a81"
+      }
+    },
+    "full": {
+      "schema": 1,
+      "code_commit": "98fa44d80a9eba1e3c9ff690c3e5ef88321b2930",
+      "model": "deepseek-v4-pro",
+      "case_source": "policy_scope_v3_dev.jsonl",
+      "configuration_source": {
+        "kind": "project_dotenv",
+        "shadowed_environment_fields": [
+          "ANTHROPIC_BASE_URL"
+        ]
+      },
+      "complete": true,
+      "scope": "Live models and actual ASGI /chat, frozen demo logistics, no external business calls",
+      "dependencies": {
+        "redis": "fakeredis protocol substitute",
+        "business": "Temporary SQLite",
+        "memory": "Empty episodic/profile reads; existing conversation storage",
+        "retrieval": "Fixed nine-passage evaluation BM25 adapter"
+      },
+      "rag_corpus_sha256": "a05b311bfe5b2f05a51844816baab52f39635a2eac2ada69d1f72dd75665cdb3",
+      "gold_status": "Codex-assisted initial review; independent human review pending",
+      "http_exchanges": [
+        {
+          "request": {
+            "message": "订单号 DEMO1003 的货发错了，应该怎么处理？",
+            "user_id": "demo-user",
+            "conv_id": "eval-e3f6b1f10e5a4d2f85f4c9a298fd60f2",
+            "client_request_id": "eval-c2cf05d3746445de9a3d1adbf465ce0f"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-e3f6b1f10e5a4d2f85f4c9a298fd60f2",
+            "request_id": "a77544dc-ea75-402c-a78e-8e03161cce45",
+            "response": "根据知识库资料，发错货属于“错发”问题，处理方式如下：\n\n**处理规则（依据《破损错发举证演示规则》）**\n- 该规则仅为演示政策，不代表真实承运商规则。\n- 记录你已提供材料的声明后，可提交人工审核；系统**不会自动判责或赔偿**。\n- 需要准备的材料：**外包装照片、面单照片、商品问题照片**。\n\n**关于退款（依据《退款政策》）**\n- 发错货属于商品与订单不符，通常按商品问题处理，退货运费不由你承担（商品质量问题除外条款）。\n- 但具体是否免除运费、退款时效，需以人工审核结果为准，我不能直接认定。\n\n**下一步建议**\n1. 准备好上述三张照片材料；\n2. 通过官方客服渠道提交订单号 DEMO1003 和材料，申请人工审核。\n\n需要说明的是，我当前没有实时查询或转人工的工具，无法替你提交或查询该订单的审核进度，请通过官方客服入口办理。还需要我解释其他相关规则吗？",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.7905,
+            "escalated": true,
+            "latency_ms": 7468.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.7905,
+            "intent_source_scores": {
+              "llm": 0.93,
+              "embedding": 0.0,
+              "pattern": 0.75
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1421.0,
+                "memory_background": 0.0,
+                "agent_execution": 6047.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1421.0,
+                  "input_tokens": 47,
+                  "output_tokens": 54,
+                  "cache_read_input_tokens": 1024,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1688.0,
+                  "input_tokens": 2436,
+                  "output_tokens": 90,
+                  "cache_read_input_tokens": 0,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 4359.0,
+                  "input_tokens": 1735,
+                  "output_tokens": 229,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 7468.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 4218,
+                "output_tokens": 373,
+                "cache_read_input_tokens": 3456,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "订单号 DEMO1003 收到的型号不一样，我先了解处理规则，需要准备哪些照片？",
+            "user_id": "demo-user",
+            "conv_id": "eval-28e2aa055bdc4e69ae00613606b8ff02",
+            "client_request_id": "eval-31227fd7230e46f2bd33f2618e8e312f"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-28e2aa055bdc4e69ae00613606b8ff02",
+            "request_id": "2ca57a50-0b9c-4c49-9a5a-edd1fe746433",
+            "response": "根据《破损错发举证演示规则》，收到型号不符属于错发类问题，处理规则如下：\n\n**需要准备的照片材料（共 3 类）：**\n1. 外包装照片\n2. 面单照片\n3. 商品问题照片（能清晰体现实际收到的型号与订单不符）\n\n**处理规则说明：**\n- 记录你已提供材料的声明后，会提交人工审核，不自动判责赔偿。\n- 该规则为演示政策，不代表真实承运商规则。\n\n**关于退款/退货的补充（依据《退款政策》）：**\n- 错发属于商品问题，退货相关运费通常不由你承担（质量问题除外条款），但具体是否适用需以人工审核结果为准。\n- 7 天内可申请无理由退款；超过 7 天未超过 30 天，需提供商品质量问题的证据才能退款。错发是否属于\"质量问题\"证据范围，需人工核验确认。\n\n**下一步建议：**\n请先拍好上述 3 类照片，再通过官方客服渠道提交错发申请。我这边没有实时订单查询或提交工单的工具，无法代为核实 DEMO1003 的具体状态或直接办理，具体审核结果以人工处理为准。\n\n需要我帮你把照片拍摄要点再展开说明吗？",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.816,
+            "escalated": false,
+            "latency_ms": 8484.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.816,
+            "intent_source_scores": {
+              "llm": 0.96,
+              "embedding": 0.0,
+              "pattern": 0.5
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1719.0,
+                "memory_background": 0.0,
+                "agent_execution": 6765.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1719.0,
+                  "input_tokens": 52,
+                  "output_tokens": 56,
+                  "cache_read_input_tokens": 1024,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1453.0,
+                  "input_tokens": 2440,
+                  "output_tokens": 92,
+                  "cache_read_input_tokens": 0,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 5312.0,
+                  "input_tokens": 1739,
+                  "output_tokens": 273,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 8484.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 4231,
+                "output_tokens": 421,
+                "cache_read_input_tokens": 3456,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "订单号 DEMO1003 发错货了，退货运费肯定是商家承担吗？我只咨询规则。",
+            "user_id": "demo-user",
+            "conv_id": "eval-6c371deadcb74b6c83ac9571d52749c5",
+            "client_request_id": "eval-96cff27a765f456d8110c5efa8df9ca5"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-6c371deadcb74b6c83ac9571d52749c5",
+            "request_id": "ff17e4fd-1137-4f89-b5ec-26969b611196",
+            "response": "根据《退款政策》，退货运费由用户承担，**除非是商品质量问题**。资料中并没有把“发错货”单独列为运费由商家承担的情形。\n\n关于错发，另有《破损错发举证演示规则》，但它只说明：记录用户已提供材料的声明后，可提交人工审核，**不自动判责赔偿**，也未明确错发情况下的运费由谁承担。\n\n所以结论是：现有资料没有明确“发错货退货运费一定由商家承担”的规则。错发是否属于可免除运费的“商品质量问题”范畴，需要人工审核认定，不能直接推定。\n\n如果你需要进一步确认，建议通过官方客服渠道提交错发举证（外包装照片、面单照片、商品问题照片），由人工审核后确认运费责任。这里不能代为认定或承诺运费由谁承担。",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.9425,
+            "escalated": false,
+            "latency_ms": 6703.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.9425,
+            "intent_source_scores": {
+              "llm": 0.95,
+              "embedding": 0.0,
+              "pattern": 0.9
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1422.0,
+                "memory_background": 0.0,
+                "agent_execution": 5281.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1422.0,
+                  "input_tokens": 54,
+                  "output_tokens": 57,
+                  "cache_read_input_tokens": 1024,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1781.0,
+                  "input_tokens": 140,
+                  "output_tokens": 87,
+                  "cache_read_input_tokens": 2304,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 3500.0,
+                  "input_tokens": 1330,
+                  "output_tokens": 177,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 6703.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 1524,
+                "output_tokens": 321,
+                "cache_read_input_tokens": 5760,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "订单号 DEMO1003 发错货，超过七天就能一直申请退款吗？只问规则。",
+            "user_id": "demo-user",
+            "conv_id": "eval-93984967671b4537a0f421e24b9fc5cc",
+            "client_request_id": "eval-632b08d8e419445487cf9e375c4b4c73"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-93984967671b4537a0f421e24b9fc5cc",
+            "request_id": "04b82afa-84e6-4c0e-9d50-198bdee3d60a",
+            "response": "根据《退款政策》，不能“一直申请退款”，规则如下：\n\n- 购买后 **7 天内**可申请无理由退款。\n- **超过 7 天但未超过 30 天**的订单，需要提供**商品质量问题的证据**才能退款。\n- 超过 30 天的情况，资料中未说明退款规则。\n\n关于“发错货”本身：现有资料中《破损错发举证演示规则》仅说明可提交人工审核（需外包装照片、面单照片、商品问题照片），**不自动判责赔偿**，也不能据此认定商品质量问题或免除运费。\n\n所以结论是：发错货不等于自动获得无限期退款资格；超过 7 天需按“质量问题证据”路径处理，且是否成立需人工审核，资料未载明超过 30 天的规则。建议向官方客服核实具体订单的处理条件。",
+            "intent": "logistics_damaged",
+            "intent_group": "logistics",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "general",
+            "agent_types": [
+              "general"
+            ],
+            "primary_agent": "general",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "物流主题规则咨询或只读查询",
+            "routing_confidence": 0.9255,
+            "escalated": false,
+            "latency_ms": 6500.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [
+                "DEMO1003"
+              ],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.9255,
+            "intent_source_scores": {
+              "llm": 0.93,
+              "embedding": 0.0,
+              "pattern": 0.9
+            },
+            "intent_embedding_source": "disabled-logistics",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1422.0,
+                "memory_background": 0.0,
+                "agent_execution": 5078.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1422.0,
+                  "input_tokens": 53,
+                  "output_tokens": 53,
+                  "cache_read_input_tokens": 1024,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1453.0,
+                  "input_tokens": 139,
+                  "output_tokens": 71,
+                  "cache_read_input_tokens": 2304,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.general",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 3625.0,
+                  "input_tokens": 1308,
+                  "output_tokens": 187,
+                  "cache_read_input_tokens": 2432,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 6500.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 1500,
+                "output_tokens": 311,
+                "cache_read_input_tokens": 5760,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        },
+        {
+          "request": {
+            "message": "请解释退款政策里超过七天但不超过三十天的质量问题举证要求。",
+            "user_id": "demo-user",
+            "conv_id": "eval-77c179af8b76470086aa50a7708ac5c8",
+            "client_request_id": "eval-d7f0d99afb82473fa223f2dc39c2bd4a"
+          },
+          "http_status": 200,
+          "response": {
+            "conv_id": "eval-77c179af8b76470086aa50a7708ac5c8",
+            "request_id": "a63dc2be-6e3a-408e-b042-c094315f0f7e",
+            "response": "根据知识库《退款政策》，超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。具体说明如下：\n\n**适用条件**\n- 购买后 7 天内：可申请无理由退款。\n- 超过 7 天、未超过 30 天：不再适用无理由退款，必须提供商品质量问题的证据，经审核通过后才能退款。\n\n**举证要求**\n- 需要能证明商品存在质量问题的材料，例如商品问题照片等（可参考《破损错发举证演示规则》中列出的材料类型：外包装照片、面单照片、商品问题照片）。\n- 举证材料仅用于提交人工审核，不能据此自动认定商品质量问题、免除运费或扩大退款期限。\n\n**处理边界**\n- 是否退款、是否免除退货运费，需在核验订单状态和举证材料后由人工审核确认，不能直接承诺结果。\n- 超过 30 天的订单不在上述规则范围内，需另行核验。\n\n如需针对具体订单核验，请提供订单号、支付时间和支付渠道，我再协助判断下一步处理路径。",
+            "intent": "refund",
+            "intent_group": "billing",
+            "task_goal": "policy_question",
+            "tracking_query": null,
+            "agent_type": "billing",
+            "agent_types": [
+              "billing"
+            ],
+            "primary_agent": "billing",
+            "supporting_agents": [],
+            "tools_used": [
+              "search_knowledge_base"
+            ],
+            "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+            "routing_confidence": 0.93,
+            "escalated": false,
+            "latency_ms": 7063.0,
+            "knowledge_used": true,
+            "entities": {
+              "order_id": [],
+              "tracking_no": [],
+              "product": [],
+              "date": [],
+              "amount": [],
+              "error_code": []
+            },
+            "intent_confidence": 0.7654,
+            "intent_source_scores": {
+              "llm": 0.96,
+              "embedding": 0.21693045781865616,
+              "pattern": 0.5
+            },
+            "intent_embedding_source": "local-ngram",
+            "status": "success",
+            "retryable": false,
+            "error_code": null,
+            "performance": {
+              "stages_ms": {
+                "memory_read": 0.0,
+                "intent": 1703.0,
+                "memory_background": 0.0,
+                "agent_execution": 5360.0
+              },
+              "llm_calls": [
+                {
+                  "stage": "intent",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1688.0,
+                  "input_tokens": 45,
+                  "output_tokens": 45,
+                  "cache_read_input_tokens": 1024,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.billing",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 1469.0,
+                  "input_tokens": 2746,
+                  "output_tokens": 88,
+                  "cache_read_input_tokens": 0,
+                  "cache_creation_input_tokens": 0
+                },
+                {
+                  "stage": "agent.billing",
+                  "model": "deepseek-v4-pro",
+                  "status": "success",
+                  "latency_ms": 3891.0,
+                  "input_tokens": 1219,
+                  "output_tokens": 237,
+                  "cache_read_input_tokens": 2816,
+                  "cache_creation_input_tokens": 0
+                }
+              ],
+              "events": {},
+              "llm": {
+                "calls": 3,
+                "errors": 0,
+                "latency_ms": 7048.0,
+                "usage_reported_calls": 3,
+                "input_tokens": 4010,
+                "output_tokens": 370,
+                "cache_read_input_tokens": 3840,
+                "cache_creation_input_tokens": 0
+              }
+            },
+            "logistics_case": null
+          }
+        }
+      ],
+      "provenance": {
+        "schema": 1,
+        "dataset_sha256": "df03181aaa1855e62be486ae583504b4c6a1f8ce9484afe5764004ee380a64f5",
+        "case_ids": [
+          "POLICY-fee",
+          "POLICY-known",
+          "POLICY-materials",
+          "POLICY-positive",
+          "POLICY-window"
+        ],
+        "runner": {
+          "source_sha256": "cc8722b5f1cae7baeb6ec6faa14a5608c8157e9430bd534f5beaf776476f1865",
+          "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+          "python": "3.11.9",
+          "system": "Windows",
+          "architecture": "AMD64",
+          "sqlite": "3.45.1",
+          "git_commit": "98fa44d80a9eba1e3c9ff690c3e5ef88321b2930"
+        },
+        "target": {
+          "runtime": {
+            "build": {
+              "source_sha256": "cc8722b5f1cae7baeb6ec6faa14a5608c8157e9430bd534f5beaf776476f1865",
+              "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+              "python": "3.11.9",
+              "system": "Windows",
+              "architecture": "AMD64",
+              "sqlite": "3.45.1"
+            },
+            "fixtures_sha256": "11f4f61d00c2e6d4ef6f62076c7da00986b736e6f20872fa4939fe4b25fb9077",
+            "policy_sha256": "e1810fb7e7a0455892c567eeb35d0451d0491219963cc00b9f40301ed201753b",
+            "skills_sha256": "b26ccfe60101020695ab091c264eab9b1757fa76c4954e90f4a31261a1194485",
+            "tools_sha256": "91bd8f321b05d8f821cb609e51d2b775700b85082244670562905d8afc9bd9a7",
+            "configuration": {
+              "intent_mode": "full",
+              "model": "deepseek-v4-pro",
+              "model_endpoint_sha256": "4817a95a15d5a81e5eea1a1c12f1af30eb9e5b7ed80317e7b8be775a407cbf0f",
+              "intent_embedding": true,
+              "logistics_embedding": false,
+              "embedding_provider": "local",
+              "remote_embedding_available": false,
+              "embedding_model": "BAAI/bge-m3",
+              "ticket_provider": "sqlite",
+              "temporal_logistics": false,
+              "external_mcp": false,
+              "authentication": true,
+              "intent_timeout_s": 8.0,
+              "agent_timeout_s": 15.0,
+              "composer_timeout_s": 8.0,
+              "composer_temperature": 0.1,
+              "composer_max_tokens": 1000,
+              "model_timeout_s": 30.0,
+              "chat_timeout_s": 50.0,
+              "chat_model_calls": 16,
+              "queue_timeout_s": 2.0,
+              "chat_per_user": 4,
+              "chat_active": 16,
+              "chat_waiting": 32,
+              "logistics_active": 4,
+              "logistics_waiting": 8,
+              "model_active": 8,
+              "model_waiting": 16
+            }
+          },
+          "image_id": null
+        },
+        "controlled_restart": false,
+        "verification_errors": []
+      },
+      "suite": "dian_logistics_v1",
+      "split": "development",
+      "generated_at": "2026-11-19T12:44:45.281940+00:00",
+      "variant": "full",
+      "summary": {
+        "flow_pass_semantic_pending": 5
+      },
+      "metrics": {
+        "cases_total": 5,
+        "flow_pass_cases": 5,
+        "unexpected_tickets": 0,
+        "unexpected_ticket_turns": 0,
+        "observed_turns": 5,
+        "wall_latency_p50_ms": 7063.0,
+        "wall_latency_p95_ms": 7484.0,
+        "llm_usage": {
+          "calls": 15,
+          "errors": 0,
+          "usage_reported_calls": 15,
+          "input_tokens": 15483,
+          "output_tokens": 1796
+        },
+        "monetary_cost": "unavailable: provider prices and unreported usage are not estimated"
+      },
+      "by_family": {
+        "POLICY-fee": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-known": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-materials": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-positive": {
+          "flow_pass_semantic_pending": 1
+        },
+        "POLICY-window": {
+          "flow_pass_semantic_pending": 1
+        }
+      },
+      "semantic_evaluation": "pending_human_review",
+      "cases": [
+        {
+          "case_id": "POLICY-known",
+          "family_id": "POLICY-known",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据知识库资料，发错货属于“错发”问题，处理方式如下：\n\n**处理规则（依据《破损错发举证演示规则》）**\n- 该规则仅为演示政策，不代表真实承运商规则。\n- 记录你已提供材料的声明后，可提交人工审核；系统**不会自动判责或赔偿**。\n- 需要准备的材料：**外包装照片、面单照片、商品问题照片**。\n\n**关于退款（依据《退款政策》）**\n- 发错货属于商品与订单不符，通常按商品问题处理，退货运费不由你承担（商品质量问题除外条款）。\n- 但具体是否免除运费、退款时效，需以人工审核结果为准，我不能直接认定。\n\n**下一步建议**\n1. 准备好上述三张照片材料；\n2. 通过官方客服渠道提交订单号 DEMO1003 和材料，申请人工审核。\n\n需要说明的是，我当前没有实时查询或转人工的工具，无法替你提交或查询该订单的审核进度，请通过官方客服入口办理。还需要我解释其他相关规则吗？",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.93,
+                  "embedding": 0.0,
+                  "pattern": 0.75
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 7468.0,
+                "wall_latency_ms": 7484.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 7468.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 4218,
+                  "output_tokens": 373,
+                  "cache_read_input_tokens": 3456,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "a77544dc-ea75-402c-a78e-8e03161cce45"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-materials",
+          "family_id": "POLICY-materials",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据《破损错发举证演示规则》，收到型号不符属于错发类问题，处理规则如下：\n\n**需要准备的照片材料（共 3 类）：**\n1. 外包装照片\n2. 面单照片\n3. 商品问题照片（能清晰体现实际收到的型号与订单不符）\n\n**处理规则说明：**\n- 记录你已提供材料的声明后，会提交人工审核，不自动判责赔偿。\n- 该规则为演示政策，不代表真实承运商规则。\n\n**关于退款/退货的补充（依据《退款政策》）：**\n- 错发属于商品问题，退货相关运费通常不由你承担（质量问题除外条款），但具体是否适用需以人工审核结果为准。\n- 7 天内可申请无理由退款；超过 7 天未超过 30 天，需提供商品质量问题的证据才能退款。错发是否属于\"质量问题\"证据范围，需人工核验确认。\n\n**下一步建议：**\n请先拍好上述 3 类照片，再通过官方客服渠道提交错发申请。我这边没有实时订单查询或提交工单的工具，无法代为核实 DEMO1003 的具体状态或直接办理，具体审核结果以人工处理为准。\n\n需要我帮你把照片拍摄要点再展开说明吗？",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.96,
+                  "embedding": 0.0,
+                  "pattern": 0.5
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 8484.0,
+                "wall_latency_ms": 8484.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 8484.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 4231,
+                  "output_tokens": 421,
+                  "cache_read_input_tokens": 3456,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "2ca57a50-0b9c-4c49-9a5a-edd1fe746433"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-fee",
+          "family_id": "POLICY-fee",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据《退款政策》，退货运费由用户承担，**除非是商品质量问题**。资料中并没有把“发错货”单独列为运费由商家承担的情形。\n\n关于错发，另有《破损错发举证演示规则》，但它只说明：记录用户已提供材料的声明后，可提交人工审核，**不自动判责赔偿**，也未明确错发情况下的运费由谁承担。\n\n所以结论是：现有资料没有明确“发错货退货运费一定由商家承担”的规则。错发是否属于可免除运费的“商品质量问题”范畴，需要人工审核认定，不能直接推定。\n\n如果你需要进一步确认，建议通过官方客服渠道提交错发举证（外包装照片、面单照片、商品问题照片），由人工审核后确认运费责任。这里不能代为认定或承诺运费由谁承担。",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.95,
+                  "embedding": 0.0,
+                  "pattern": 0.9
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 6703.0,
+                "wall_latency_ms": 6703.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 6703.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 1524,
+                  "output_tokens": 321,
+                  "cache_read_input_tokens": 5760,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "ff17e4fd-1137-4f89-b5ec-26969b611196"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-window",
+          "family_id": "POLICY-window",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据《退款政策》，不能“一直申请退款”，规则如下：\n\n- 购买后 **7 天内**可申请无理由退款。\n- **超过 7 天但未超过 30 天**的订单，需要提供**商品质量问题的证据**才能退款。\n- 超过 30 天的情况，资料中未说明退款规则。\n\n关于“发错货”本身：现有资料中《破损错发举证演示规则》仅说明可提交人工审核（需外包装照片、面单照片、商品问题照片），**不自动判责赔偿**，也不能据此认定商品质量问题或免除运费。\n\n所以结论是：发错货不等于自动获得无限期退款资格；超过 7 天需按“质量问题证据”路径处理，且是否成立需人工审核，资料未载明超过 30 天的规则。建议向官方客服核实具体订单的处理条件。",
+                "agent_type": "general",
+                "routing_reason": "物流主题规则咨询或只读查询",
+                "intent": "logistics_damaged",
+                "intent_embedding_source": "disabled-logistics",
+                "intent_source_scores": {
+                  "llm": 0.93,
+                  "embedding": 0.0,
+                  "pattern": 0.9
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 6500.0,
+                "wall_latency_ms": 6516.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 6500.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 1500,
+                  "output_tokens": 311,
+                  "cache_read_input_tokens": 5760,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "04b82afa-84e6-4c0e-9d50-198bdee3d60a"
+              }
+            }
+          ]
+        },
+        {
+          "case_id": "POLICY-positive",
+          "family_id": "POLICY-positive",
+          "status": "flow_pass_semantic_pending",
+          "turns": [
+            {
+              "turn": 0,
+              "status": "pass",
+              "failures": [],
+              "semantic_status": "pending_human_review",
+              "observed": {
+                "response": "根据知识库《退款政策》，超过 7 天但未超过 30 天的订单，需要提供商品质量问题的证据才能退款。具体说明如下：\n\n**适用条件**\n- 购买后 7 天内：可申请无理由退款。\n- 超过 7 天、未超过 30 天：不再适用无理由退款，必须提供商品质量问题的证据，经审核通过后才能退款。\n\n**举证要求**\n- 需要能证明商品存在质量问题的材料，例如商品问题照片等（可参考《破损错发举证演示规则》中列出的材料类型：外包装照片、面单照片、商品问题照片）。\n- 举证材料仅用于提交人工审核，不能据此自动认定商品质量问题、免除运费或扩大退款期限。\n\n**处理边界**\n- 是否退款、是否免除退货运费，需在核验订单状态和举证材料后由人工审核确认，不能直接承诺结果。\n- 超过 30 天的订单不在上述规则范围内，需另行核验。\n\n如需针对具体订单核验，请提供订单号、支付时间和支付渠道，我再协助判断下一步处理路径。",
+                "agent_type": "billing",
+                "routing_reason": "intent=refund, group=billing, primary=billing, supporting=none, scores=[billing=0.93, general=0.10, logistics=0.00, technical=0.00]",
+                "intent": "refund",
+                "intent_embedding_source": "local-ngram",
+                "intent_source_scores": {
+                  "llm": 0.96,
+                  "embedding": 0.21693045781865616,
+                  "pattern": 0.5
+                },
+                "case_state": null,
+                "case_issue": null,
+                "case_id": null,
+                "ticket_id": null,
+                "ticket_count": 0,
+                "unexpected_ticket_count": 0,
+                "latency_ms": 7063.0,
+                "wall_latency_ms": 7063.0,
+                "llm_usage": {
+                  "calls": 3,
+                  "errors": 0,
+                  "latency_ms": 7048.0,
+                  "usage_reported_calls": 3,
+                  "input_tokens": 4010,
+                  "output_tokens": 370,
+                  "cache_read_input_tokens": 3840,
+                  "cache_creation_input_tokens": 0
+                },
+                "tools": [
+                  "search_knowledge_base"
+                ],
+                "request_id": "a63dc2be-6e3a-408e-b042-c094315f0f7e"
+              }
+            }
+          ]
+        }
+      ],
+      "total_simulated_tickets": 0,
+      "effective_texts": {
+        "intent_source_sha256": "a0de779e2f32a9d9a2714e592217d4a572f9dade182f4b65221d3efc6c4bcdfe",
+        "general_system_prompt_sha256": "330a80fa5ec1ad90dfecf166aeae992cb88021d9a285f6662ca18f9ad43257f0",
+        "general_skill_sha256": "95be8b5e261bcf25ea2e4d633e31a058c1b674bbef478d87d68f8af440f5a074",
+        "base_prompt_method_sha256": "1a9e32fbb9ff2d43f4122ac69a980de5570173d32a8fb9df3f3d3ed67b8453be"
+      }
+    }
+  },
+  "complete": true,
+  "scope": "One sequential three-group development ablation, live models and actual ASGI /chat",
+  "source_limit": "Old text restored into current runtime, not a separately deployed historical build"
+}

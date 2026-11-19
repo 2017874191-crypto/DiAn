@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "dataset_sha256": "74644e23b36bd8aeb45bd3b00ab89c2b241fd116c564a7f0472a5a079930fcaa",
+  "cases": 20,
+  "turns": 28,
+  "review_source": "Codex-assisted, not independent human gold",
+  "independent_human_reviews": 0,
+  "uncertain_cases": [
+    "DIAN-012",
+    "DIAN-016"
+  ],
+  "intent_mode": "full",
+  "intent_embedding_provider": "local-ngram",
+  "logistics_embedding_enabled": false,
+  "production_behavior_changes": false,
+  "repetitions": 1,
+  "model_retries": 0,
+  "judging": "Keep original expected states/tools/roles unchanged; show raw flow result for all 20 cases, report ambiguity separately; inspect actual replies after replay.",
+  "stop_condition": "One full candidate pass; retain all failures and unexecuted turns. Do not tune product or re-run failed cases against this exposed split.",
+  "scope": "Actual ASGI /chat with live models; fakeredis; temporary SQLite and frozen demo providers; no carrier, refund or real ticket requests.",
+  "metrics": [
+    "case and turn denominators",
+    "scenario-family failures",
+    "unexpected tickets",
+    "observed reply semantics",
+    "wall P95 for this sample only",
+    "actual model calls and token usage including failures"
+  ],
+  "test_status": "Historical frozen split; expected labels remain agent-curated pending independent review; no claim of new blind or production benchmark."
+}

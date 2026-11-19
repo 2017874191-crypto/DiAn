@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import json
+from pathlib import Path
 from urllib.parse import parse_qs
 
 import httpx
@@ -13,6 +14,25 @@ from core.kdniao_tracking import KdniaoTrackingProvider
 
 
 ORDERS = [{"user_id": "owner", "order_id": "TEST1001", "tracking_no": "fixture-number"}]
+
+
+def test_user_supplied_ascending_and_descending_traces_choose_the_same_latest_event():
+    fixture = Path(__file__).resolve().parents[1] / "evaluation/fixtures/kdniao_signed_redacted.json"
+    reply = json.loads(fixture.read_text(encoding="utf-8"))["response"]
+    for traces in (reply["Traces"], list(reversed(reply["Traces"]))):
+        body = {**reply, "Traces": traces}
+        provider = KdniaoTrackingProvider("fixture-id", "fixture-key", ORDERS,
+            transport=httpx.MockTransport(lambda request: httpx.Response(200, json=body)))
+        tracking = provider.query_logistics("owner", "TEST1001")["tracking"]
+        assert len(tracking["events"]) == 16 and tracking["chronology_verified"]
+        assert tracking["latest"]["at"] == "2026-11-16 18:09:02"
+        assert tracking["latest"]["description"] == "快件领取成功"
+        assert tracking["latest"]["location"] == "成都市"
+    invalid = {**reply, "Traces": [{**reply["Traces"][0], "AcceptTime": "unsupported-format"}]}
+    provider = KdniaoTrackingProvider("fixture-id", "fixture-key", ORDERS,
+        transport=httpx.MockTransport(lambda request: httpx.Response(200, json=invalid)))
+    tracking = provider.query_logistics("owner", "TEST1001")["tracking"]
+    assert tracking["events"] and tracking["latest"] is None and not tracking["chronology_verified"]
 
 
 def test_signature_ownership_and_accepted_empty_tracking():

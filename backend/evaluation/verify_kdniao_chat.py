@@ -6,6 +6,7 @@ import logging
 import os
 import secrets
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
@@ -23,7 +24,7 @@ from core.kdniao_tracking import KdniaoTrackingProvider
 from core.skill_loader import SkillManager
 from evaluation.compare_rag import model_settings
 from evaluation.prepare_rag_data import ROOT, validate, write_json
-from evaluation.provenance import build_identity, git_commit
+from evaluation.provenance import build_identity, git_commit, sha256
 from evaluation.replay_business_answers import EvaluationBM25
 from memory.conversation_memory import MemoryManager
 from dotenv import dotenv_values
@@ -41,15 +42,50 @@ class CountedTransport(httpx.BaseTransport):
     def close(self):
         self.transport.close()
 
+    @property
+    def external_calls(self):
+        return self.calls
 
-async def verify(output):
+
+class RecordedTransport(CountedTransport):
+    def __init__(self, response):
+        self.calls, self.response = 0, response
+
+    def handle_request(self, request):
+        self.calls += 1
+        return httpx.Response(200, json=self.response, request=request)
+
+    def close(self):
+        pass
+
+    @property
+    def external_calls(self):
+        return 0
+
+
+class RecordedTrackingProvider(KdniaoTrackingProvider):
+    def query_logistics(self, user_id, order_id):
+        result = super().query_logistics(user_id, order_id)
+        if result["success"]:
+            result.update(source="user_supplied_kdniao_response", query_mode="response_replay",
+                          query_performed=False, queried_at=None,
+                          replayed_at=datetime.now(timezone.utc).isoformat(),
+                          message="以下为用户提供的历史物流响应回放，非本次实时查询。签收记录不能证明本人实际收到。")
+        return result
+
+
+async def verify(output, response_fixture=None):
     cfg = dotenv_values(ROOT / ".env")
-    orders = json.loads(Path(cfg["KDNIAO_ORDER_BINDINGS"]).read_text(encoding="utf-8"))
+    fixture = json.loads(response_fixture.read_text(encoding="utf-8")) if response_fixture else None
+    orders = ([{"user_id": "recorded-owner", "order_id": "LIVE1001",
+                "tracking_no": fixture["response"]["LogisticCode"]}] if fixture
+              else json.loads(Path(cfg["KDNIAO_ORDER_BINDINGS"]).read_text(encoding="utf-8")))
     owner, order_id = orders[0]["user_id"], orders[0]["order_id"]
     settings, _ = model_settings()
-    transport = CountedTransport()
-    provider = KdniaoTrackingProvider(cfg["KDNIAO_EBUSINESS_ID"], cfg["KDNIAO_API_KEY"], orders,
-                                    transport=transport)
+    transport = RecordedTransport(fixture["response"]) if fixture else CountedTransport()
+    provider = (RecordedTrackingProvider("fixture-id", "fixture-key", orders, transport=transport)
+                if fixture else KdniaoTrackingProvider(cfg["KDNIAO_EBUSINESS_ID"], cfg["KDNIAO_API_KEY"], orders,
+                                                       transport=transport))
     _, corpus, _ = validate(ROOT / "evaluation/datasets/dian_rag_v1")
     owner_token, other_token = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
     memory = MemoryManager.__new__(MemoryManager)
@@ -58,8 +94,12 @@ async def verify(output):
     memory._query_episodic = AsyncMock(return_value={})
     memory._get_profile = AsyncMock(return_value={})
     result = {"schema": 1, "code_commit": git_commit(ROOT), "build": build_identity(ROOT),
-              "scope": "Live KDniao 8002 and live models via actual ASGI chat, local ownership binding",
+              "scope": ("User-supplied KDniao response replay with live models through ASGI chat" if fixture
+                        else "Live KDniao 8002 and live models via actual ASGI chat, local ownership binding"),
               "redis": "fakeredis", "business_database": "Temporary SQLite", "rows": [], "complete": False}
+    if fixture:
+        result["response_fixture"] = {"sha256": sha256(response_fixture.read_bytes()),
+                                      "provenance": fixture["provenance"]}
     try:
         with tempfile.TemporaryDirectory(prefix="dian-kdniao-chat-") as folder:
             env = {"DIAN_ENV": "production", "DIAN_LOGISTICS_DB": str(Path(folder) / "cases.sqlite3"),
@@ -91,22 +131,25 @@ async def verify(output):
                                 ("unbound_subject", other_token, "other"),
                             ):
                                 before = transport.calls
+                                external_before = transport.external_calls
                                 response = await http.post("/chat", headers={"Authorization": "Bearer " + token},
                                     json={"message": f"查询物流轨迹，订单号{order_id}", "user_id": owner,
                                           "conv_id": conv, "client_request_id": "read-tracking"})
                                 payload = response.json()
                                 result["rows"].append({
                                     "scenario": label, "http_status": response.status_code, "response": payload,
-                                    "external_calls": transport.calls - before,
+                                    "external_calls": transport.external_calls - external_before,
+                                    "provider_calls": transport.calls - before,
                                     "tool_trace": orch.get_tool_trace(payload.get("request_id", "")),
                                 })
                                 write_json(output, result)
-                                print(label, response.status_code, "external_calls", transport.calls - before, flush=True)
+                                print(label, response.status_code, "external_calls", transport.external_calls - external_before, flush=True)
                         with api._logistics_service().connect() as db:
                             result["ticket_count"] = db.execute("SELECT count(*) FROM tickets").fetchone()[0]
     finally:
         await memory._redis.aclose()
-    result["external_calls"] = transport.calls
+    result["external_calls"] = transport.external_calls
+    result["provider_calls"] = transport.calls
     result["complete"] = True
     write_json(output, result)
 
@@ -114,10 +157,11 @@ async def verify(output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--response-fixture", type=Path, help="Replay an explicitly sourced saved response, no carrier calls")
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(level=logging.ERROR)
-    asyncio.run(verify(args.output))
+    asyncio.run(verify(args.output, args.response_fixture))
 
 
 if __name__ == "__main__":

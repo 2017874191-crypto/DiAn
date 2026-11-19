@@ -50,6 +50,16 @@ class KdniaoTrackingProvider:
             return {"success": False, "source": "kdniao", "error": "物流接口返回的轨迹格式无效"}
         events = [{"at": t.get("AcceptTime"), "description": t.get("AcceptStation"),
                    "location": t.get("Location"), "state": t.get("Action")} for t in traces]
+        chronology_verified = False
+        latest = None
+        if events:
+            try:
+                dated = [(datetime.strptime(event["at"], "%Y-%m-%d %H:%M:%S"), event) for event in events]
+            except (ValueError, TypeError):
+                pass  # Preserve unsupported timestamps without inventing which event is newest.
+            else:
+                events = [event for _at, event in sorted(dated, key=lambda pair: pair[0], reverse=True)]
+                latest, chronology_verified = events[0], True
         return {
             "success": True, "source": "kdniao", "order_id": order_id,
             "query_performed": True,
@@ -59,7 +69,7 @@ class KdniaoTrackingProvider:
                         if events else "接口已受理，暂未查询到物流轨迹，不能据此判断丢件、运输中或已签收。"),
             "tracking": {"state": data.get("State"), "state_ex": data.get("StateEx"),
                          "location": data.get("Location"), "events": events,
-                         "latest": events[0] if events else None},
+                         "latest": latest, "chronology_verified": chronology_verified},
         }
 
 

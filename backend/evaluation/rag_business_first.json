@@ -1,0 +1,3162 @@
+{
+  "schema": 1,
+  "scope": "Business development replay with Codex-assisted labels",
+  "code_commit": "07656091658f1d73f476e54eb20c9a3eb481e361",
+  "build": {
+    "source_sha256": "087431c60e47c44971d6083d77e748f8fb037d790ab71dab723027ec01bfa52c",
+    "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+    "python": "3.11.9",
+    "system": "Windows",
+    "architecture": "AMD64",
+    "sqlite": "3.45.1"
+  },
+  "dataset_manifest": {
+    "schema": 1,
+    "source": {
+      "dataset": "DiAn local demonstration knowledge",
+      "review_status": "pending_human_review",
+      "source_files": {
+        "tooling/knowledge_base.py": "51b59ac4fe6f44d9211d5260e8cfec822823dfd34f97b8739e92fd61e8786254",
+        "config/logistics/knowledge.json": "597bd70aeb4ee115a412393427f8bcdd01e17297fad99d79016e5dbbfaf01c4c"
+      }
+    },
+    "documents": 9,
+    "queries": 30,
+    "files": {
+      "corpus.json": "9e7235536765a16d3bc93586c2db6a7d411df6c6a8f08704a1869c244df27468",
+      "queries.json": "a518f2a5ff765fa0cfabb7c7f9566946c8a2ae950c3fe7c8a6b9247b92d91bae"
+    }
+  },
+  "dataset_manifest_sha256": "065c24fa5c3f86980724139cd0f48394221f92f52b40ee511512b96e3efe7e1a",
+  "review_file_sha256": "27b0b880db1d58ad25e352d1ca55638fbe7c74649283cdb4cf9d4182b3475cce",
+  "label_source": {
+    "status": "completed",
+    "file": "codex-initial-review.csv",
+    "reviewer": "Codex",
+    "method": "Model-assisted initial review informed by original drafts and complete frozen corpus",
+    "independent_human_reviews": 0,
+    "answerable": 25,
+    "uncertain": 2,
+    "unanswerable": 3
+  },
+  "model": "deepseek-v4-pro",
+  "model_endpoint_sha256": "ea7317d8ad8d16a0c41546bee4303d2df82d7717218756462e46678a1dd12dc9",
+  "configuration_source": {
+    "kind": "project_dotenv",
+    "shadowed_environment_fields": [
+      "ANTHROPIC_BASE_URL"
+    ]
+  },
+  "controls": {
+    "candidate_budget": 9,
+    "top_k": 3,
+    "bm25": {
+      "k1": 1.5,
+      "b": 0.75,
+      "epsilon": 0.25
+    },
+    "input": "Passage text only, same bigram tokenizer as public experiment",
+    "model_retries": 0,
+    "per_query_model_calls": 1,
+    "preview": "Production 200-character serialized item prefix",
+    "quality_population": "Review decision 是 only",
+    "boundary_population": "Review decision 不确定 or 否, no quality aggregate",
+    "latency_scope": "Local retrieval and ranking only, excludes chat and answer generation"
+  },
+  "rows": [
+    {
+      "query_id": "DIAN-RAG-001",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "fc6b4bb8450f338ebe1cb04fa2ce70116671595af19eac0f744a4789aedb1d55",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.107,
+      "retrieval_latency_ms": 0.734,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-001",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "fc6b4bb8450f338ebe1cb04fa2ce70116671595af19eac0f744a4789aedb1d55",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "37ef24737e511d2fe5edba4d09bc5f2e3377205d65bae2bce750174928a6ffb5",
+      "response_text": "[0,1,6,4,7,8,2,3,5]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1594.0,
+            "input_tokens": 1149,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "model_tcp_connected": 1,
+          "model_direct_tls_connected": 1,
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1594.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1149,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1599.276,
+      "retrieval_latency_ms": 0.734,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-002",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "65aef7fdb2411e960f4344a03ce54d8c7a951cc9695805c2a6b8ff9491b690ae",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "a0be8eb7a1e88b8ecd82e05c75fab102a47bac05945b6254b8f569eb9ef2d10f",
+      "response_text": "[0,1,2,5,4,3,6,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1359.0,
+            "input_tokens": 1145,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1359.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1145,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1376.738,
+      "retrieval_latency_ms": 0.326,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-002",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "65aef7fdb2411e960f4344a03ce54d8c7a951cc9695805c2a6b8ff9491b690ae",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.169,
+      "retrieval_latency_ms": 0.326,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-003",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "2e93d7b055d83c85274088ae8cd1f8cc519c3c8c231371f5e56c6675e5d04a8c",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.059,
+      "retrieval_latency_ms": 0.174,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-003",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "2e93d7b055d83c85274088ae8cd1f8cc519c3c8c231371f5e56c6675e5d04a8c",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "e1964e86159553e6095e09252ea46961836eef4e5e87f19bed9c2a1bd589c7b1",
+      "response_text": "[0,1,2,3,7,8,5,6,4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 718.0,
+            "input_tokens": 1150,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 718.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1150,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 714.373,
+      "retrieval_latency_ms": 0.174,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-004",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "f1bb4ce854085662274b1a71ea855337dc42d9fcb6e1bdf240180fc7ff83e386",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "32a9e165616012ea758f7863ec51cb42c3b9a385b6690aa55adcf95b0529fcd4",
+      "response_text": "[0,1,2,3,7,8,4,5,6]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 969.0,
+            "input_tokens": 1146,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 969.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1146,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 982.728,
+      "retrieval_latency_ms": 0.216,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-004",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "f1bb4ce854085662274b1a71ea855337dc42d9fcb6e1bdf240180fc7ff83e386",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.174,
+      "retrieval_latency_ms": 0.216,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-005",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "ea90921109c435304984bd3f0c270e1e7c3bab39b8f99dc60cdbf7b0f8699b2a",
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.8262346571285599,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.146,
+      "retrieval_latency_ms": 0.357,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-005",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "ea90921109c435304984bd3f0c270e1e7c3bab39b8f99dc60cdbf7b0f8699b2a",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 0.9639404333166532,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.8262346571285599,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "f4b8150162069c221c163a136c5385849964f3c104f3a39003f95b3425038a53",
+      "response_text": "[0, 2, 7, 8, 3, 1, 5, 4, 6]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1437.0,
+            "input_tokens": 1152,
+            "output_tokens": 27,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1437.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1152,
+          "output_tokens": 27,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1428.611,
+      "retrieval_latency_ms": 0.357,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-006",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "c6e663567bf3399deb518ca4be64567b314babc0b581963fe0710a62be58459d",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "2a1c04f339564f04767622b99689db212abd74d5d31cda7aedf6437ed9d4be46",
+      "response_text": "[0,3,1,8,5,2,4,6,7]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1047.0,
+            "input_tokens": 1148,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1047.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1148,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1051.058,
+      "retrieval_latency_ms": 0.171,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-006",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0"
+      ],
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "c6e663567bf3399deb518ca4be64567b314babc0b581963fe0710a62be58459d",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.08,
+      "retrieval_latency_ms": 0.171,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-007",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "candidate_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "4724b5157dc8ac8aa351bc36df00a16844dfa8fa82861039a57ff0cbb3bd0b5d",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.073,
+      "retrieval_latency_ms": 0.148,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-007",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "4724b5157dc8ac8aa351bc36df00a16844dfa8fa82861039a57ff0cbb3bd0b5d",
+      "ranked_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "a43c5efffd34f8364997d74587682fc7a7fa389cde1fde0173d5093c2d8a9847",
+      "response_text": "[0,1,3,7,8,2,4,5,6]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1250.0,
+            "input_tokens": 1145,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1250.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1145,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1248.679,
+      "retrieval_latency_ms": 0.148,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-008",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "850798869be8dc4bc15d79f5574b1b341e31124987549cf855903ac180e16338",
+      "ranked_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "221b9ac62b7e13daf1ba22970c3c0c1930ed87a33a1ca0b15f500b483bd36591",
+      "response_text": "[0,1,2,3,4,5,6,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1234.0,
+            "input_tokens": 1150,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1234.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1150,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1238.113,
+      "retrieval_latency_ms": 0.369,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-008",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "candidate_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "850798869be8dc4bc15d79f5574b1b341e31124987549cf855903ac180e16338",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.087,
+      "retrieval_latency_ms": 0.369,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-009",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "360d4e6aaab4459317a5b6226a9fac73a2c45fa0d3f27198e5746b3a266ddb87",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.07,
+      "retrieval_latency_ms": 0.208,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-009",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "360d4e6aaab4459317a5b6226a9fac73a2c45fa0d3f27198e5746b3a266ddb87",
+      "ranked_ids": [
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "e148f01f11b13be9f1d7a1ae394497034d6239f2af07e87e8f98e8a41cb25d74",
+      "response_text": "[0,1,6,2,3,5,4,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1156.0,
+            "input_tokens": 1144,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1156.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1144,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1157.57,
+      "retrieval_latency_ms": 0.208,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-010",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "542990e959df0b22c143bcb5a723f195eb4ede9d42e5afb6af40b542ba57834c",
+      "ranked_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "09a3784598b2a5242e357947db6645ed7ca5cab17721ac34f193ab7d51d71388",
+      "response_text": "[0, 1, 5, 2, 4, 6, 3, 7, 8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1375.0,
+            "input_tokens": 1148,
+            "output_tokens": 27,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1375.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1148,
+          "output_tokens": 27,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1386.796,
+      "retrieval_latency_ms": 0.176,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-010",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "candidate_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "542990e959df0b22c143bcb5a723f195eb4ede9d42e5afb6af40b542ba57834c",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.078,
+      "retrieval_latency_ms": 0.176,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-011",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "ac31eef55e479711549796524b5a3291e44326a133015209c300431b27c39927",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.069,
+      "retrieval_latency_ms": 0.154,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-011",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "ac31eef55e479711549796524b5a3291e44326a133015209c300431b27c39927",
+      "ranked_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "6fbcd0dd5d3759d5a62ad2803b015b99f77d48b88d4eaee8ee78015404b1c680",
+      "response_text": "[0]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1125.0,
+            "input_tokens": 1151,
+            "output_tokens": 3,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_repaired": 1,
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1125.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1151,
+          "output_tokens": 3,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1111.675,
+      "retrieval_latency_ms": 0.154,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-012",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "3e76c81bac0af503aa5a86ab8dfc3436fd5af4603522f2577b23c59e3fcc6497",
+      "ranked_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "5ba7afce599b637328ca752e882e44b7eab8c326fd1b9990362d95be4492894f",
+      "response_text": "[0,5,2,3,1,6,4,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1219.0,
+            "input_tokens": 1146,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1219.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1146,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1214.903,
+      "retrieval_latency_ms": 0.344,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-012",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_ids": [
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "3e76c81bac0af503aa5a86ab8dfc3436fd5af4603522f2577b23c59e3fcc6497",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.123,
+      "retrieval_latency_ms": 0.344,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-013",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "d8e96dae294c4cad16cf364395e051060c1590490f95986d3b0c21871a0b04bd",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.091,
+      "retrieval_latency_ms": 0.152,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-013",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "d8e96dae294c4cad16cf364395e051060c1590490f95986d3b0c21871a0b04bd",
+      "ranked_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "3e110e773469d16b58bf5e5f0018858bd197c3331b4e57e11b070f2f5f50cabe",
+      "response_text": "[0]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1109.0,
+            "input_tokens": 1149,
+            "output_tokens": 3,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_repaired": 1,
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1109.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1149,
+          "output_tokens": 3,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1106.415,
+      "retrieval_latency_ms": 0.152,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-014",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "9ed95f5dcd8e551c4bd10a5406d294e7f68c4a21ff78d8ba83493c295fb2a702",
+      "ranked_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "17799dfd07afbb7e01f44c7d05f4664fae1c3fe4db9f75c45b6d8e23e6e87522",
+      "response_text": "[0,3,4,5,6,1,2,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1297.0,
+            "input_tokens": 1151,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1297.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1151,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1300.671,
+      "retrieval_latency_ms": 0.185,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-014",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "9ed95f5dcd8e551c4bd10a5406d294e7f68c4a21ff78d8ba83493c295fb2a702",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.085,
+      "retrieval_latency_ms": 0.185,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-015",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "6ec244b189e1bc14f38f456364093beb91ea05d85ae525340d8f12890df54614",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.076,
+      "retrieval_latency_ms": 0.13,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-015",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "6ec244b189e1bc14f38f456364093beb91ea05d85ae525340d8f12890df54614",
+      "ranked_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "4c322cac3c91b519a3b0d7380aa00818c08591ae6e1cb3340ebcacf11e0e6877",
+      "response_text": "[0,1,4,5,3,6,2,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 2203.0,
+            "input_tokens": 1148,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 2203.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1148,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 2200.662,
+      "retrieval_latency_ms": 0.13,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-016",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "aeee2218f5c603cbdb1cdb1cfe05b97ccd8e89c0385dc738124cefd308ef3cc6",
+      "ranked_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "6c25bcf1f80bec9919d74635c7c575f693d874cb4a068254211059fad0648929",
+      "response_text": "[0,5,1,3,4,6,2,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1125.0,
+            "input_tokens": 1149,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1125.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1149,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1115.742,
+      "retrieval_latency_ms": 0.307,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-016",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "aeee2218f5c603cbdb1cdb1cfe05b97ccd8e89c0385dc738124cefd308ef3cc6",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.114,
+      "retrieval_latency_ms": 0.307,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-017",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "4ba97eb164c492fb14f383e0b87928a3d0993740e1ddf3193b1683a140bfd7f3",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.071,
+      "retrieval_latency_ms": 0.207,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-017",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "4ba97eb164c492fb14f383e0b87928a3d0993740e1ddf3193b1683a140bfd7f3",
+      "ranked_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "ae9a417c0a6520b01e2dfd1ee86cdc930796609dfe0bd055ef941e15e9e6ed0d",
+      "response_text": "[0, 5, 1, 3, 4, 6, 2, 7, 8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1172.0,
+            "input_tokens": 1149,
+            "output_tokens": 27,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1172.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1149,
+          "output_tokens": 27,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1186.336,
+      "retrieval_latency_ms": 0.207,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-018",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "7ee162ebacb293d9690c8960e76d9b475ea89bcdbc4b42ee9c44a925b3518cc9",
+      "ranked_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "metrics": null,
+      "prompt_sha256": "b33a2fa8380e9d8a7cedc645ee3950f762c8a62e96718ec936720fbd91774877",
+      "response_text": "[0,1,2,7,8,3,5,6,4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1250.0,
+            "input_tokens": 1151,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1250.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1151,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1256.305,
+      "retrieval_latency_ms": 0.244,
+      "review_decision": "不确定",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-018",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "candidate_ids": [
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "7ee162ebacb293d9690c8960e76d9b475ea89bcdbc4b42ee9c44a925b3518cc9",
+      "metrics": null,
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.161,
+      "retrieval_latency_ms": 0.244,
+      "review_decision": "不确定",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-019",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "26731c27c6d7c5b15f3003157661a8117eef5d7930fa7f2ce6e83b8979202de9",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.1,
+      "retrieval_latency_ms": 0.209,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-019",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "26731c27c6d7c5b15f3003157661a8117eef5d7930fa7f2ce6e83b8979202de9",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "aa903154f9c6787dcba34ad7ab8913e35c9091d243ba5e4098550ad3e59ee654",
+      "response_text": "[0,5,8,1,6,2,3,4,7]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1469.0,
+            "input_tokens": 1148,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1469.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1148,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1493.495,
+      "retrieval_latency_ms": 0.209,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-020",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "1ec926745825c1eaa339df2ea3ce35dca061538169a457d508be644f55cf4cc6",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 0.5,
+        "ndcg": 0.8262346571285599,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "793a265b786aab39c49d3f8905fb7072340340a0acd1422c656d40bb160bec0a",
+      "response_text": "[0,6,1,3,7,2,4,5,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1250.0,
+            "input_tokens": 1143,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1250.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1143,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1248.957,
+      "retrieval_latency_ms": 0.197,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-020",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "1ec926745825c1eaa339df2ea3ce35dca061538169a457d508be644f55cf4cc6",
+      "metrics": {
+        "recall": 0.5,
+        "ndcg": 0.8262346571285599,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.154,
+      "retrieval_latency_ms": 0.197,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-021",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "7fe8c77136af9c73b718fd95cbf5f0528a8b37ba6e5b377296b87104c39ddcde",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.063,
+      "retrieval_latency_ms": 0.207,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-021",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "7fe8c77136af9c73b718fd95cbf5f0528a8b37ba6e5b377296b87104c39ddcde",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "0edf3f9affe539b31241a5504ead427dec7cf5848945b4551b14747514bba4e3",
+      "response_text": "[0,1,2,6,7,4,3,5,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 719.0,
+            "input_tokens": 1143,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 719.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1143,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 724.531,
+      "retrieval_latency_ms": 0.207,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-022",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "candidate_sha256": "b26ed5d5b878c9edf37d0f2f2fe511301f7b642905e337a773530d8135294854",
+      "ranked_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "41e470a2395152d5c550d7218fe5e2a7b51b3a121cfd4d489d067cddd9214dfc",
+      "response_text": "[0,1,8,3,6,2,5,4,7]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1235.0,
+            "input_tokens": 1148,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1235.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1148,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1236.15,
+      "retrieval_latency_ms": 0.215,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-022",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "candidate_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "candidate_sha256": "b26ed5d5b878c9edf37d0f2f2fe511301f7b642905e337a773530d8135294854",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.131,
+      "retrieval_latency_ms": 0.215,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-023",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0"
+      ],
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_sha256": "1705d158d50712b6e81aaf7edf0e253751f28398ccd789117a5a042b406828d3",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 0.6309297535714574,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.135,
+      "retrieval_latency_ms": 0.261,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-023",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_sha256": "1705d158d50712b6e81aaf7edf0e253751f28398ccd789117a5a042b406828d3",
+      "ranked_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 0.6309297535714574,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "74ef353f6c68fe2f5fbaeb8a42bef2a6fe63c9389b96029f2551a49086e762ac",
+      "response_text": "[1,0,3,8,2,6,4,5,7]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1000.0,
+            "input_tokens": 1146,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1000.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1146,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1007.397,
+      "retrieval_latency_ms": 0.261,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-024",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "2e2bc15edcd5a03936df1d359afb4880b83814b918fffff79a749e5a52f266ed",
+      "ranked_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "92ee3204c8a61f9c309742a60a1e4d7e86d85d8a5bddcd6f82ebd3cfacf1afab",
+      "response_text": "[0,2,3,1,6,7,4,5,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1078.0,
+            "input_tokens": 1141,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1078.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1141,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1069.608,
+      "retrieval_latency_ms": 0.447,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-024",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "candidate_ids": [
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "2e2bc15edcd5a03936df1d359afb4880b83814b918fffff79a749e5a52f266ed",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.129,
+      "retrieval_latency_ms": 0.447,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-025",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "7785b1a881532f3163ed63b174e67bde5fe2a3756d4e13822067a48fc035aeee",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.077,
+      "retrieval_latency_ms": 0.184,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-025",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "7785b1a881532f3163ed63b174e67bde5fe2a3756d4e13822067a48fc035aeee",
+      "ranked_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "e184a7297915feb3023432344d4b74db614cf78da7da5c6fb3a2009234b336b9",
+      "response_text": "[0,7,8,1,2,3,5,6,4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1016.0,
+            "input_tokens": 1145,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1016.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1145,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1016.64,
+      "retrieval_latency_ms": 0.184,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-026",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "cecca06fc24b651530e58b3482de7136ef7ea8559ec73f7eb34cc1259e033d47",
+      "ranked_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "retrieval_metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "prompt_sha256": "02b478edb8dc1f7f18d1daaea6d226c825724d0710ef18924c509ee1023d42fe",
+      "response_text": "[0,3,7,8,5,6,1,2,4]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1593.0,
+            "input_tokens": 1142,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1593.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1142,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1582.506,
+      "retrieval_latency_ms": 0.175,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-026",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0"
+      ],
+      "candidate_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_sha256": "cecca06fc24b651530e58b3482de7136ef7ea8559ec73f7eb34cc1259e033d47",
+      "metrics": {
+        "recall": 1.0,
+        "ndcg": 1.0,
+        "unjudged_fraction": 0.0
+      },
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.234,
+      "retrieval_latency_ms": 0.175,
+      "review_decision": "是",
+      "hit": true,
+      "sufficient_hit": true
+    },
+    {
+      "query_id": "DIAN-RAG-027",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_sha256": "35f5f95eec5567d798ba5209d99eb039044502d658f84d803ffd69ab4ba4f4e4",
+      "metrics": null,
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.079,
+      "retrieval_latency_ms": 0.23,
+      "review_decision": "不确定",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-027",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_sha256": "35f5f95eec5567d798ba5209d99eb039044502d658f84d803ffd69ab4ba4f4e4",
+      "ranked_ids": [
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "metrics": null,
+      "prompt_sha256": "011e1569e360e01216197bef5efe679310c496a5609a50498ccdd29b53acd065",
+      "response_text": "[0, 1, 2, 3, 4, 5, 6, 7, 8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1235.0,
+            "input_tokens": 1140,
+            "output_tokens": 27,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1235.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1140,
+          "output_tokens": 27,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1235.103,
+      "retrieval_latency_ms": 0.23,
+      "review_decision": "不确定",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-028",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "162bfe2580c0f769d92e871086c5277072e29517fc4145b503196f0598c92b08",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "metrics": null,
+      "prompt_sha256": "2db1b556a8e4285191a5ea1fa78c22528d5fb0725de8c13dd7393953877aee3f",
+      "response_text": "[0,1,2,6,7,3,4,5,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1218.0,
+            "input_tokens": 1144,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1218.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1144,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1231.595,
+      "retrieval_latency_ms": 0.399,
+      "review_decision": "否",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-028",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "162bfe2580c0f769d92e871086c5277072e29517fc4145b503196f0598c92b08",
+      "metrics": null,
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.092,
+      "retrieval_latency_ms": 0.399,
+      "review_decision": "否",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-029",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0"
+      ],
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "96f10c6bcc2a48be74a16f0c69499e5fcddceb1200901366c7b0d46738702e4d",
+      "metrics": null,
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.068,
+      "retrieval_latency_ms": 0.24,
+      "review_decision": "否",
+      "hit": false,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-029",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0"
+      ],
+      "candidate_sha256": "96f10c6bcc2a48be74a16f0c69499e5fcddceb1200901366c7b0d46738702e4d",
+      "ranked_ids": [
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0"
+      ],
+      "metrics": null,
+      "prompt_sha256": "b711de197b774bcf7620089d7a5ac0dbf02301f0c2174cd843aca18c5825a88a",
+      "response_text": "[6,1,3,2,4,0,5,7,8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 1250.0,
+            "input_tokens": 1140,
+            "output_tokens": 19,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 1250.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1140,
+          "output_tokens": 19,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 1265.882,
+      "retrieval_latency_ms": 0.24,
+      "review_decision": "否",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-030",
+      "arm": "bm25_rerank",
+      "reranked": true,
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_sha256": "ba66175ad470e433de74755cac6c45f36553622adaded9f6120cb298f5c2b782",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "metrics": null,
+      "prompt_sha256": "1cba35a1af99b9ad3d4490fc6104d4a44b35971a76f409cb170b47b8d518268e",
+      "response_text": "[0, 1, 2, 4, 5, 3, 6, 7, 8]",
+      "stop_reason": "end_turn",
+      "performance": {
+        "stages_ms": {},
+        "llm_calls": [
+          {
+            "stage": "rag.rerank",
+            "model": "deepseek-v4-pro",
+            "status": "success",
+            "latency_ms": 906.0,
+            "input_tokens": 1139,
+            "output_tokens": 27,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0
+          }
+        ],
+        "events": {
+          "rag_rerank_accepted": 1
+        },
+        "llm": {
+          "calls": 1,
+          "errors": 0,
+          "latency_ms": 906.0,
+          "usage_reported_calls": 1,
+          "input_tokens": 1139,
+          "output_tokens": 27,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      },
+      "ranking_latency_ms": 916.522,
+      "retrieval_latency_ms": 0.226,
+      "review_decision": "否",
+      "hit": true,
+      "sufficient_hit": false
+    },
+    {
+      "query_id": "DIAN-RAG-030",
+      "arm": "bm25_direct",
+      "ranked_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0"
+      ],
+      "candidate_ids": [
+        "03070ea266c95795e7b523782374ec9f8fcd91092d734ec29593a3edce114d57:0",
+        "8d9a968c3b22b3c2e252afa85403a725a852e83e8e47ca350da5741c2d19d943:0",
+        "2ba389e3c1d9d5743c3cdfdee20f763f9f6e53ac7fa972343e518fba17c9caa2:0",
+        "d3c6ee713c85b16511c75f37c15916f71f789b295900958b1bf2bb76094aa76f:0",
+        "f594d4b3bd077330ab73d7dcfab05f09e3ba6f48cb5c6f66531b68d63d6651f4:0",
+        "df954c9b261171909c4e6318c117edc6a06f63aa2adebb411ed06ec3477f2eab:0",
+        "38aa4d39ecb7ba54837490b12646e4d4035d172db050011e1b2a9c3f7c71568d:0",
+        "4d13d33f9d712a1f525aea57cc63802578b72cf19c82df205ecb0cd2daebdfff:0",
+        "c057b174dab4552d2c4039b83a2b86d732491a4e8ff2cd7e9800dfe208ef48a4:0"
+      ],
+      "candidate_sha256": "ba66175ad470e433de74755cac6c45f36553622adaded9f6120cb298f5c2b782",
+      "metrics": null,
+      "performance": {
+        "llm_calls": [],
+        "events": {}
+      },
+      "ranking_latency_ms": 0.15,
+      "retrieval_latency_ms": 0.226,
+      "review_decision": "否",
+      "hit": true,
+      "sufficient_hit": false
+    }
+  ],
+  "complete": true,
+  "summary": {
+    "answerable": {
+      "bm25_direct": {
+        "queries": 25,
+        "hit_queries": 25,
+        "recall_at_3": 0.96,
+        "ndcg_at_3": 0.971335962713143,
+        "ranking_p95_ms": 0.174,
+        "model_calls": 0,
+        "model_errors": 0,
+        "accepted": 0,
+        "repaired": 0,
+        "usage": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        },
+        "sufficient_hit_queries": 25,
+        "retrieval_plus_ranking_p95_ms": 0.5760000000000001
+      },
+      "bm25_rerank": {
+        "queries": 25,
+        "hit_queries": 25,
+        "recall_at_3": 1.0,
+        "ndcg_at_3": 0.9985576173326661,
+        "ranking_p95_ms": 1599.276,
+        "model_calls": 25,
+        "model_errors": 0,
+        "accepted": 25,
+        "repaired": 2,
+        "usage": {
+          "input_tokens": 28676,
+          "output_tokens": 467,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        },
+        "sufficient_hit_queries": 25,
+        "retrieval_plus_ranking_p95_ms": 1600.01
+      },
+      "gained_hit_queries": [],
+      "lost_hit_queries": [],
+      "ndcg_win_tie_loss": [
+        3,
+        22,
+        0
+      ]
+    },
+    "boundary_query_ids": [
+      "DIAN-RAG-018",
+      "DIAN-RAG-027",
+      "DIAN-RAG-028",
+      "DIAN-RAG-029",
+      "DIAN-RAG-030"
+    ],
+    "total_model_calls": 30,
+    "total_model_errors": 0,
+    "total_usage": {
+      "input_tokens": 34390,
+      "output_tokens": 578,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0
+    }
+  }
+}

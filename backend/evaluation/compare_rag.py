@@ -140,7 +140,10 @@ async def run_arm(kb, query, arm, settings, top_k=3, *, template=None):
         "ranked_ids": ids, "reranked": reranked, "searches": searches,
         "metrics": {str(k): metrics(ids, query["qrels"], k) for k in (1, 3)},
         "model_calls": perf.get("llm_calls", []),
-        "transport_events": perf.get("events", {}),
+        "transport_events": {name: count for name, count in perf.get("events", {}).items()
+                             if name.startswith(("model_tcp_", "model_direct_tls_", "model_proxy_tls_"))},
+        "rerank_events": {name: count for name, count in perf.get("events", {}).items()
+                          if name.startswith("rag_rerank_")},
     }
 
 

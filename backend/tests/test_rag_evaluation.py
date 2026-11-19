@@ -90,6 +90,8 @@ async def test_ablation_uses_production_model_methods_without_sending_gold(monke
         assert len(row["ranked_ids"]) == 3
         assert row["metrics"]["3"]["recall"] == 0
         assert all(call["status"] == "success" for call in row["model_calls"])
+        assert not any(name.startswith("rag_") for name in row["transport_events"])
+        assert row["rerank_events"].get("rag_rerank_accepted", 0) == int(arm in ("rerank", "full", "budget_rerank"))
     assert len(sent) == 5
 
 

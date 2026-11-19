@@ -20,7 +20,7 @@ from core.concurrency import Capacity, KeyedLocks
 from core.skill_loader import SkillManager
 from evaluation.compare_rag import model_settings
 from evaluation.logistics_eval_runner import (
-    SUITE, close_fixture_case, load_cases, report, run_cases, verify_target,
+    SUITE, close_fixture_case, decode_cases, load_cases, report, run_cases, verify_target,
 )
 from evaluation.prepare_rag_data import ROOT, validate, write_json
 from evaluation.provenance import build_identity, git_commit, sha256
@@ -53,14 +53,17 @@ class SynchronousASGIClient:
         return self.request("GET", path, **kwargs)
 
 
-async def replay(output):
-    cases = load_cases("test")
+async def replay(output, cases_file=None):
+    dataset_bytes = (cases_file or SUITE / "test.jsonl").read_bytes()
+    cases = decode_cases(dataset_bytes) if cases_file else load_cases("test")
+    split = "development" if cases_file else "test"
     settings, configuration_source = model_settings()
     _, corpus, _ = validate(ROOT / "evaluation/datasets/dian_rag_v1")
     build = build_identity(ROOT)
     user_token, admin_token = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
     result = {
         "schema": 1, "code_commit": git_commit(ROOT), "model": settings["model"],
+        "case_source": cases_file.name if cases_file else "dian_logistics_v1/test.jsonl",
         "configuration_source": configuration_source, "complete": False,
         "scope": "Live models and actual ASGI /chat, frozen demo logistics, no external business calls",
         "dependencies": {"redis": "fakeredis protocol substitute", "business": "Temporary SQLite",
@@ -117,7 +120,7 @@ async def replay(output):
                             target = {"runtime": before.json()["identity"], "image_id": None}
                             verify_target(target, cases, "full")
                             result["provenance"] = {
-                                "schema": 1, "dataset_sha256": sha256((SUITE / "test.jsonl").read_bytes()),
+                                "schema": 1, "dataset_sha256": sha256(dataset_bytes),
                                 "case_ids": sorted(case["case_id"] for case in cases),
                                 "runner": {**build, "git_commit": git_commit(ROOT)}, "target": target,
                                 "controlled_restart": False, "verification_errors": [],
@@ -133,7 +136,7 @@ async def replay(output):
                             after.raise_for_status()
                             if after.json()["identity"] != target["runtime"]:
                                 result["provenance"]["verification_errors"].append("target_identity_changed")
-                            result.update(report(results, "test", "full"))
+                            result.update(report(results, split, "full"))
                             with api._logistics_service().connect() as connection:
                                 result["total_simulated_tickets"] = connection.execute("SELECT count(*) FROM tickets").fetchone()[0]
     finally:
@@ -146,10 +149,11 @@ async def replay(output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--cases-file", type=Path, help="Explicit development cases; original test split is unchanged")
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(level=logging.ERROR)
-    asyncio.run(replay(args.output))
+    asyncio.run(replay(args.output, args.cases_file))
 
 
 if __name__ == "__main__":

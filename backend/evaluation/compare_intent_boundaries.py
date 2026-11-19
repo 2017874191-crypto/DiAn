@@ -45,6 +45,7 @@ def summarize(rows):
         "by_group": {group: {
             "attempts": sum(row["group"] == group for row in rows),
             "intent_correct": sum(row["group"] == group and row["intent_correct"] for row in rows),
+            "goal_correct": sum(row["group"] == group and row["goal_correct"] for row in rows),
             "joint_correct": sum(row["group"] == group and row["intent_correct"] and row["goal_correct"] for row in rows),
         } for group in sorted({row["group"] for row in rows})},
     }
@@ -100,17 +101,27 @@ async def compare(protocol_path, output):
     non_action_goals = sum(row["variant"] == "candidate" and row["goal"] == "case_action"
                           and "case_action" not in by_id[row["id"]]["allowed_goals"] for row in result["rows"])
     before, after = result["summary"]["baseline"], result["summary"]["candidate"]
-    exposed_before, exposed_after = (item["by_group"]["exposed_wrong_item"]["intent_correct"] for item in (before, after))
     thresholds = protocol["acceptance"]
+    target_group = thresholds.get("target_group", "exposed_wrong_item")
+    target_metric = thresholds.get("target_metric", "intent_correct")
+    control_group = thresholds.get("control_group", "boundary_control")
+    target_before, target_after = (item["by_group"][target_group][target_metric] for item in (before, after))
     result["checks"] = {
         "all_attempts_recorded": len(result["rows"]) == 2 * protocol["rounds"] * len(protocol["cases"]),
         "one_model_call_each": all(row["performance"]["llm"]["calls"] == 1 for row in result["rows"]),
         "no_model_errors": before["model_errors"] + after["model_errors"] == 0,
-        "exposed_type_threshold": exposed_after >= thresholds["exposed_type_correct_at_least"],
-        "exposed_type_improved": exposed_after > exposed_before,
-        "control_joint_no_regression": after["by_group"]["boundary_control"]["joint_correct"] >= before["by_group"]["boundary_control"]["joint_correct"],
+        "target_threshold": target_after >= thresholds.get("target_correct_at_least", thresholds.get("exposed_type_correct_at_least", 0)),
+        "target_improved": target_after > target_before,
+        "control_joint_no_regression": after["by_group"][control_group]["joint_correct"] >= before["by_group"][control_group]["joint_correct"],
         "no_unrequested_action_goal": non_action_goals == 0,
     }
+    if thresholds.get("per_control_case_no_regression"):
+        def correct_count(variant, case_id):
+            return sum(row["variant"] == variant and row["id"] == case_id and row["intent_correct"]
+                       and row["goal_correct"] for row in result["rows"])
+        result["checks"]["per_control_case_no_regression"] = all(
+            correct_count("candidate", case["id"]) >= correct_count("baseline", case["id"])
+            for case in protocol["cases"] if case["group"] == control_group)
     result["non_action_controls_classified_as_case_action"] = non_action_goals
     result["complete"] = True
     write_json(output, result)

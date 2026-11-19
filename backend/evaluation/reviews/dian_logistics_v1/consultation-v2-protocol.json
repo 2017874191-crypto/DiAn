@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "contract_version": "consultation-v2",
+  "baseline_commit": "cead3f7",
+  "rounds": 5,
+  "pair_concurrency": 2,
+  "model_retries": 0,
+  "label_source": "Codex-authored exposed development cases, no independent human review or blind generalization claim",
+  "contract_revision": {
+    "old": "Incident plus how-to defaults to uncertain unless explicitly asking for rules.",
+    "new": "Clear-topic how-to, query-method and incident guidance default to policy_question; unclear topic stays uncertain; explicit application and existing-case continuation stay case_action.",
+    "reason": "Give sourced general help without a redundant clarification; only actual business handling requires explicit application and confirmation.",
+    "original_gold_files_changed": false,
+    "historical_GOAL_howto_uncertain_counterexample_retained": true
+  },
+  "variable": "Goal wording in the existing intent call; case taxonomy, fusion, confirmation and tool permissions unchanged",
+  "cases": [
+    {
+      "id": "GOAL-howto",
+      "group": "consultation_targets",
+      "message": "订单号 DEMO1003 的货发错了，应该怎么处理？",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "policy_question"
+      ]
+    },
+    {
+      "id": "GOAL-statement",
+      "group": "consultation_targets",
+      "message": "订单号 DEMO1003 我订的是红色，收到的是绿色。",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "policy_question"
+      ]
+    },
+    {
+      "id": "GOAL-where",
+      "group": "consultation_targets",
+      "message": "订单号 DEMO1001 的预计送达时间到哪里查看？",
+      "allowed_intents": [
+        "logistics",
+        "order_status",
+        "query"
+      ],
+      "allowed_goals": [
+        "policy_question"
+      ]
+    },
+    {
+      "id": "GOAL-direct",
+      "group": "boundary_control",
+      "message": "请直接查订单号 DEMO1001 现在运到哪里了。",
+      "allowed_intents": [
+        "logistics",
+        "order_status"
+      ],
+      "allowed_goals": [
+        "status_lookup"
+      ]
+    },
+    {
+      "id": "GOAL-apply",
+      "group": "boundary_control",
+      "message": "订单号 DEMO1003 商品型号不对，请帮我登记错发核查。",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "case_action"
+      ]
+    },
+    {
+      "id": "GOAL-unclear",
+      "group": "boundary_control",
+      "message": "我没收到，现在该怎么办？",
+      "allowed_intents": [
+        "logistics",
+        "logistics_lost",
+        "query",
+        "other"
+      ],
+      "allowed_goals": [
+        "uncertain"
+      ]
+    },
+    {
+      "id": "GOAL-refund",
+      "group": "boundary_control",
+      "message": "我的退款申请现在审核通过了吗？",
+      "allowed_intents": [
+        "refund"
+      ],
+      "allowed_goals": [
+        "status_lookup"
+      ]
+    },
+    {
+      "id": "GOAL-signed",
+      "group": "boundary_control",
+      "message": "已签收就说明本人收到吗？我只是问这个规则。",
+      "allowed_intents": [
+        "logistics",
+        "logistics_dispute"
+      ],
+      "allowed_goals": [
+        "policy_question"
+      ]
+    }
+  ],
+  "acceptance": {
+    "target_group": "consultation_targets",
+    "target_metric": "goal_correct",
+    "target_correct_at_least": 12,
+    "target_attempts": 15,
+    "control_group": "boundary_control",
+    "per_control_case_no_regression": true,
+    "non_action_controls_classified_as_case_action": 0,
+    "model_errors": 0
+  },
+  "api_ablation": {
+    "groups": [
+      "baseline",
+      "goal_only",
+      "full"
+    ],
+    "repetitions": 1,
+    "baseline": "Restore committed old intent method, General system prompt and General skill in an otherwise current runtime.",
+    "goal_only": "Current intent method; restore old General system prompt and skill.",
+    "full": "Current goal, General prompt and General skill.",
+    "semantic_acceptance": [
+      "Use retrieved sources for known policy; state missing cancellation/after-dispatch policy explicitly.",
+      "No invented buttons, interception/rejection rules or after-dispatch eligibility.",
+      "Explain lookup methods without claiming a live result.",
+      "Unclear request clarifies; explicit case keeps materials and confirmation; refund status does not collect unusable fields."
+    ]
+  },
+  "stop": "Five paired intent rounds and one eight-case API ablation per group; retain failures and do not retune these samples after results."
+}

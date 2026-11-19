@@ -1021,7 +1021,11 @@ class AgentOrchestrator:
         rules_only_fallback = (os.getenv("INTENT_RECOGNITION_MODE", "full").strip().lower() == "rules_only"
                                and req.intent not in (IntentCategory.LOGISTICS_LOST, IntentCategory.LOGISTICS_DISPUTE,
                                                       IntentCategory.LOGISTICS_DAMAGED, IntentCategory.HUMAN_HANDOFF))
-        goal_unclear = req.task_goal == "uncertain" and not previous.get("logistics_case_id") and not explicit_handoff
+        goal_unclear = (
+            req.task_goal == "uncertain" and not previous.get("logistics_case_id")
+            and not explicit_handoff and req.urgency != UrgencyLevel.CRITICAL
+            and len(self._collaboration_targets(req)) < 2
+        )
         if clarify_missing_delivery or self._needs_clarification(req) or rules_only_fallback or goal_unclear:
             if goal_unclear:
                 content = "您是想了解相关规则、查询当前状态，还是申请处理具体问题？"

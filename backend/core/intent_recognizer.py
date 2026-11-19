@@ -334,6 +334,11 @@ status_lookup：查询某笔订单、物流或退款的当前真实状态，例�
 case_action：申请或继续处理具体案件，包括明确申请核查、补订单号、补材料、确认、重试和跟进已建案件。
 uncertain：无法确定用户要咨询规则、查询状态还是申请处理。
 “没收到”不自动表示申请核查，结合完整问法和历史判断。混合技术问题和规则咨询仍保留原意图主题。
+case_action需要用户明确提出申请、提交核查或继续已有案件；只有情况陈述和“怎么办”、尚未表达办理意愿时标uncertain。
+例如新会话“我没收到，现在该怎么办”标uncertain；“我想申请未收到货的核查”标case_action。
+明确只是了解处理规则且暂不申请核查时标policy_question。
+一般技术排障和规则说明属于policy_question；“登录401，同时想知道退款审核多久”也属于policy_question，
+多个业务主题不等于目标不确定，已明确的子问题应分别处理。
 
 可选意图: {", ".join(c.value for c in IntentCategory)}"""
         prompt = self._clean_text(prompt)

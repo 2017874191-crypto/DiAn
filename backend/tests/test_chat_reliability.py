@@ -107,6 +107,18 @@ async def test_unavailable_status_query_and_uncertain_goal_do_not_collect_fields
 
 
 @pytest.mark.asyncio
+async def test_uncertain_overall_goal_preserves_explicit_multi_role_subquestions(services):
+    _, orch, _, http = services
+    orch.recognize_intent.side_effect = None
+    orch.recognize_intent.return_value = IntentResult(
+        IntentCategory.TECHNICAL_LOGIN, .95, UrgencyLevel.LOW, "technical", {}, "", 0,
+        task_goal="uncertain")
+    response = await http.post("/chat", json=body("登录401，同时想知道退款申请审核多久"))
+    assert response.status_code == 200
+    assert set(response.json()["agent_types"]) == {"technical", "billing"}
+
+
+@pytest.mark.asyncio
 async def test_declared_status_capability_allows_real_tool_execution(services):
     _, orch, model, http = services
     seen = []

@@ -39,6 +39,7 @@ CASES = [
     ("lookup-tracking", "请查订单DEMO1001当前物流位置。"),
     ("request-investigation", "订单DEMO1002显示签收但我没有收到，我要申请签收争议核查。"),
     ("unclear-task", "我没收到，现在该怎么办？"),
+    ("policy-not-action", "我只是想了解没拿到货一般怎么办，暂时不申请核查。"),
 ]
 
 

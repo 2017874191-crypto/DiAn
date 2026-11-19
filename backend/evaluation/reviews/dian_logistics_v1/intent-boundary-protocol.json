@@ -1,0 +1,190 @@
+{
+  "schema": 1,
+  "baseline_commit": "f7571ce",
+  "rounds": 5,
+  "pair_concurrency": 2,
+  "model_retries": 0,
+  "cases": [
+    {
+      "id": "DIAN-007",
+      "group": "exposed_wrong_item",
+      "message": "我订的颜色和实际收到的不一样，订单号 DEMO1003。",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "policy_question",
+        "case_action",
+        "uncertain"
+      ],
+      "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+    },
+    {
+      "id": "DIAN-008",
+      "group": "exposed_wrong_item",
+      "message": "包裹里的商品不是我下单的那件，订单号 DEMO1003。",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "policy_question",
+        "case_action",
+        "uncertain"
+      ],
+      "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+    },
+    {
+      "id": "DIAN-011",
+      "group": "exposed_wrong_item",
+      "message": "配送来的商品不符，我要报告这个问题，订单号 DEMO1003。",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "policy_question",
+        "case_action",
+        "uncertain"
+      ],
+      "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+    },
+    {
+      "id": "DIAN-012",
+      "group": "exposed_wrong_item",
+      "message": "订单号 DEMO1003 的物品发错了，需要我提供什么材料？",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "policy_question",
+        "case_action",
+        "uncertain"
+      ],
+      "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+    },
+    {
+      "id": "DIAN-033",
+      "group": "exposed_wrong_item",
+      "message": "订单号 DEMO1003 收到的衣服颜色不符合订单，应该是发错了。",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "policy_question",
+        "case_action",
+        "uncertain"
+      ],
+      "reason": "错发主题必须正确；已有目标歧义不强制变成案件申请。"
+    },
+    {
+      "id": "DEV-dispute-a",
+      "group": "boundary_control",
+      "message": "物流页面说已签收，我实际没拿到，想申请签收争议核查。",
+      "allowed_intents": [
+        "logistics_dispute"
+      ],
+      "allowed_goals": [
+        "case_action"
+      ],
+      "reason": "明确签收但未收件的申请"
+    },
+    {
+      "id": "DEV-dispute-b",
+      "group": "boundary_control",
+      "message": "快递被代签后一直没到我手里，请登记核查。",
+      "allowed_intents": [
+        "logistics_dispute"
+      ],
+      "allowed_goals": [
+        "case_action"
+      ],
+      "reason": "代签与实际未收件，要求核查"
+    },
+    {
+      "id": "DEV-wrong-item",
+      "group": "boundary_control",
+      "message": "订的是玻璃杯，拆开发现一把勺子，我要登记错寄。",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "case_action"
+      ],
+      "reason": "隐含错发，明确申请"
+    },
+    {
+      "id": "DEV-negation",
+      "group": "boundary_control",
+      "message": "货没发错也没破损，只是想查一下物流状态。",
+      "allowed_intents": [
+        "logistics",
+        "order_status",
+        "query"
+      ],
+      "allowed_goals": [
+        "status_lookup"
+      ],
+      "reason": "否认异常，仅查物流"
+    },
+    {
+      "id": "DEV-policy",
+      "group": "boundary_control",
+      "message": "只是想了解签收争议需要怎么处理，暂时不申请核查。",
+      "allowed_intents": [
+        "logistics_dispute",
+        "logistics"
+      ],
+      "allowed_goals": [
+        "policy_question"
+      ],
+      "reason": "咨询主题不能成为案件申请"
+    },
+    {
+      "id": "DIAN-010-goal",
+      "group": "boundary_control",
+      "message": "订单号 DEMO1003 发错货了，应该怎么处理？",
+      "allowed_intents": [
+        "logistics_damaged"
+      ],
+      "allowed_goals": [
+        "uncertain"
+      ],
+      "reason": "按既有任务目标约定先澄清；不沿用原强制建案期望"
+    },
+    {
+      "id": "DEV-refund",
+      "group": "boundary_control",
+      "message": "退款申请现在处理到哪一步了？",
+      "allowed_intents": [
+        "refund"
+      ],
+      "allowed_goals": [
+        "status_lookup"
+      ],
+      "reason": "保留退款实时状态目标，不引入物流案件"
+    }
+  ],
+  "label_source": "Codex-authored development and exposed regression cases; not independently reviewed or blind",
+  "variable": "Only logistics intent definitions and three contrastive examples in existing LLM prompt",
+  "unchanged": [
+    "task-goal rules",
+    "fusion weights",
+    "deterministic logistics issue rules",
+    "confirmation authorization",
+    "tool permissions",
+    "per-request model-call structure"
+  ],
+  "configuration": {
+    "intent_mode": "full",
+    "embedding_provider": "local",
+    "logistics_embedding": false
+  },
+  "acceptance": {
+    "exposed_type_correct_at_least": 20,
+    "exposed_type_attempts": 25,
+    "exposed_type_better_than_baseline": true,
+    "control_joint_correct_at_least_baseline": true,
+    "non_action_controls_classified_as_case_action": 0,
+    "model_errors": 0
+  },
+  "stop": "Five paired rounds, retain every attempt; no retries or tuning on this set after inspecting results. Then one actual ASGI logistics regression. No generalization claim."
+}

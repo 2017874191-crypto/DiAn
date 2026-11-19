@@ -328,6 +328,7 @@ class ChatResponse(BaseModel):
     intent:      str
     intent_group: str = "other"
     task_goal: Optional[str] = None
+    tracking_query: Optional[Dict[str, Any]] = None
     agent_type:  str
     agent_types: List[str] = Field(default_factory=list)
     primary_agent: str = ""
@@ -507,6 +508,7 @@ async def _run_chat(req, started):
                 intent=result.intent.value if result.intent else "other",
                 intent_group=orch_req.intent_group,
                 task_goal=orch_req.task_goal,
+                tracking_query=orch_req.tracking_query,
                 agent_type=result.agent_type.value,
                 agent_types=[agent_type.value for agent_type in result.agent_types],
                 primary_agent=result.primary_agent.value if result.primary_agent else result.agent_type.value,

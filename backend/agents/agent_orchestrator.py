@@ -205,6 +205,7 @@ class Request:
     intent_model_failed: bool = False
     context_loader: Optional[Callable[[], Awaitable[str]]] = field(default=None, repr=False, compare=False)
     task_goal: Optional[str] = None
+    tracking_query: Optional[Dict[str, Any]] = field(default=None, repr=False)
 
     async def prepare_model_context(self) -> None:
         if self.context_loader is not None:

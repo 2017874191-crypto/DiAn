@@ -21,7 +21,9 @@ class KdniaoTrackingProvider:
     def query_logistics(self, user_id, order_id):
         order = next((o for o in self.orders if o["user_id"] == user_id and o["order_id"] == order_id), None)
         if order is None:
-            return {"success": False, "source": "kdniao", "error": "订单不存在或当前用户无权查询"}
+            return {"success": False, "source": "local_order_binding", "query_performed": False,
+                    "error_code": "order_not_authorized",
+                    "error": "订单不存在或当前用户无权查询。尚未调用外部物流接口，不能据此判断物流轨迹。"}
         params = {"LogisticCode": order["tracking_no"], "CustomerName": order.get("customer_name", ""),
                   "Sort": 1}
         if order.get("shipper_code"):
@@ -50,6 +52,7 @@ class KdniaoTrackingProvider:
                    "location": t.get("Location"), "state": t.get("Action")} for t in traces]
         return {
             "success": True, "source": "kdniao", "order_id": order_id,
+            "query_performed": True,
             "queried_at": datetime.now(timezone.utc).isoformat(),
             "has_traces": bool(events), "status": "tracking_found" if events else "no_tracking",
             "message": ("查询到物流轨迹，系统签收记录不证明用户实际收到。"

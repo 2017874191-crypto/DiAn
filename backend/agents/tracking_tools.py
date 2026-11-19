@@ -14,11 +14,14 @@ def build_tracking_tools(provider=None):
             return {"success": False, "source": "kdniao", "error": "该工具只用于用户请求的物流实时状态查询"}
         if sum(t["tool_name"] == "query_authorized_tracking" for t in req.tool_attempts) > 1:
             return {"success": False, "source": "kdniao", "error": "本轮已尝试物流查询，请依据已有结果回复，稍后再主动查询"}
-        return await finish_blocking_call(provider.query_logistics, req.user_id, args["order_id"])
+        result = await finish_blocking_call(provider.query_logistics, req.user_id, args["order_id"])
+        req.tracking_query = result
+        return result
 
     return {"query_authorized_tracking": AgentToolSpec(
         name="query_authorized_tracking",
-        description="只读查询当前用户已绑定订单的外部物流轨迹；输入订单号。不能查询退款、账户状态或执行业务操作。",
+        description="只读查询当前用户已绑定订单的外部物流轨迹；输入订单号。回复注明来源和查询时间。"
+                    "归属拒绝时尚未查询外部接口，不能推断物流状态。不能查询退款、账户状态或执行业务操作。",
         input_schema={"type": "object", "properties": {"order_id": {"type": "string", "minLength": 1}},
                       "required": ["order_id"], "additionalProperties": False},
         handler=lookup, allowed_agents=("general",), capabilities=("status_lookup:logistics",),

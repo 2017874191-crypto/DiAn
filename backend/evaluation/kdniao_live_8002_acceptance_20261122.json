@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "scope": "Live KDniao 8002 through authenticated ASGI chat; server-local order binding, fakeredis and temporary SQLite",
+  "code_commit": "63d80536f16a6f656b9c0905b8c028bcc956c99f",
+  "build": {
+    "source_sha256": "358222ba4aafb1bcb21266d73b03357b4c26e52883becec2491aca0d9771986f",
+    "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+    "python": "3.11.9",
+    "system": "Windows",
+    "architecture": "AMD64",
+    "sqlite": "3.45.1"
+  },
+  "model": "deepseek-v4-pro",
+  "raw_report_sha256": "c424180cb33eda7b75e04a6d91a4d3f21ababe06bc0376d1b6a2f37d0a4cb3af",
+  "authorized_result": {
+    "order_alias": "LIVE1002",
+    "source": "kdniao",
+    "query_performed": true,
+    "queried_at_utc": "2026-11-22T11:37:20.796921+00:00",
+    "has_traces": true,
+    "event_count": 16,
+    "city": "成都市",
+    "state": "3",
+    "state_ex": "302",
+    "latest_event_time_as_returned": "2026-11-16 18:09:02",
+    "latest_event_summary": "领取成功",
+    "chronology_verified": true
+  },
+  "scenarios": [
+    {
+      "scenario": "authorized",
+      "http_status": 200,
+      "external_calls": 1,
+      "provider_calls": 1,
+      "elapsed_ms": 10531.0
+    },
+    {
+      "scenario": "same_request_replay",
+      "http_status": 200,
+      "external_calls": 0,
+      "provider_calls": 0,
+      "elapsed_ms": 0.0
+    },
+    {
+      "scenario": "unbound_subject",
+      "http_status": 200,
+      "external_calls": 0,
+      "provider_calls": 0,
+      "elapsed_ms": 4344.0
+    }
+  ],
+  "checks": {
+    "http_ok": true,
+    "one_authorized_provider_attempt": true,
+    "identical_receipt_replay": true,
+    "unbound_subject_rejected_locally": true,
+    "no_tickets": true
+  },
+  "external_calls": 1,
+  "ticket_count": 0,
+  "reply_observation": "Developer inspected: reply identifies KDniao, query time, latest event, and distinguishes a signoff record from personal receipt. No independent human review.",
+  "boundaries": [
+    "Identity authorization is a server-local binding, not an OMS integration.",
+    "Actual FastAPI ASGI handler and live models; no deployed HTTP server or real Redis claimed.",
+    "Carrier read only; no liability decision, real ticket, compensation or refund.",
+    "Replayed receipt retains original query metadata; external_calls=0 for replay.",
+    "Credentials, verification digits, shipment number, staff identity, full addresses and raw replies omitted."
+  ]
+}

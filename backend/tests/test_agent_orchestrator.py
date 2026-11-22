@@ -71,11 +71,14 @@ def test_domain_agents_build_different_role_packets():
 
 
 def test_policy_field_check_does_not_collect_transaction_information():
-    from agents.tools import check_billing_fields
+    from agents.tools import check_billing_fields, suggest_required_fields
     req = make_request(message="退款审核需要几天", intent=IntentCategory.REFUND, entities={}, task_goal="policy_question")
     assert check_billing_fields(req, {})["missing_fields"] == []
+    req.intent = IntentCategory.ACCOUNT
+    assert suggest_required_fields(req, {})["required_fields"] == []
     req.task_goal = "case_action"
     assert "order_id" in check_billing_fields(req, {})["missing_fields"]
+    assert suggest_required_fields(req, {})["required_fields"]
 
 
 def test_account_consultation_uses_general_and_financial_questions_stay_billing(monkeypatch, tmp_path):

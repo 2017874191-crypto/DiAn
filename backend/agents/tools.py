@@ -79,7 +79,9 @@ def suggest_required_fields(req: Request, args: Dict[str, Any]) -> Dict[str, Any
     """通用客服工具：按业务类型计算下一轮只需询问的字段。"""
     intent = req.intent.value if req.intent else "other"
     fields: List[str] = []
-    if intent in {"order_status", "logistics"}:
+    if req.task_goal == "policy_question":
+        fields = []
+    elif intent in {"order_status", "logistics"}:
         fields = ["订单号或下单时间"]
     elif intent in {"account", "account_security"}:
         fields = ["登录方式或账号标识", "问题发生时间"]

@@ -88,6 +88,11 @@ async def test_policy_goal_bypasses_logistics_issue_intake(services):
     assert response.json()["agent_type"] == "general"
     assert response.json()["task_goal"] == "policy_question"
     assert model.messages.create.await_count == 1
+    supplied = model.messages.create.call_args.kwargs["messages"]
+    packet = json.loads(next(m["content"].split("\n", 1)[1] for m in supplied
+                             if isinstance(m.get("content"), str) and m["content"].startswith("[角色输入契约]")))
+    assert packet["task_goal"] == "policy_question"
+    assert "triage_targets" not in packet and "verification_fields" not in packet
 
 
 @pytest.mark.asyncio

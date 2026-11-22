@@ -498,17 +498,21 @@ class LogisticsService:
                     reply = found["error"]
                 else:
                     case["order_id"] = found["order"]["order_id"]
-                    case["tracking_no"] = found["order"]["tracking_no"]
-                    facts = call("query_logistics", {"order_id": case["order_id"]}, self.query_logistics(req.user_id, case["order_id"]))
+                    case["tracking_no"] = found["order"].get("tracking_no")
+                    # Submitting damage evidence for manual review does not establish transport liability.
+                    # Keep carrier verification mandatory for loss and signature-dispute cases.
+                    if issue == "logistics_damaged":
+                        facts = {"query_performed": False, "reason": "not_required_for_damage_review"}
+                    else:
+                        facts = call("query_logistics", {"order_id": case["order_id"]}, self.query_logistics(req.user_id, case["order_id"]))
                     case["facts"] = facts
                     case["policy"] = policy
                     call("lookup_logistics_policy", {"issue": issue}, {"success": True, "version": RULE_VERSION, "policy": policy})
-                    if not facts["success"]:
+                    if issue != "logistics_damaged" and not facts["success"]:
                         case["state"] = "manual_review"
                         reply = "模拟物流查询失败，已保存案件，尚未创建工单。可稍后重试核验或转人工。"
                     else:
-                        tracking = facts["tracking"]
-                        conflict = issue == "logistics_dispute" and tracking["status"] != "delivered"
+                        conflict = issue == "logistics_dispute" and facts["tracking"]["status"] != "delivered"
                         case["evidence_declared"] = self.evidence_provider.declared(req.message, case.get("evidence_declared", False))
                         if conflict:
                             case["state"] = "manual_review"
@@ -522,7 +526,9 @@ class LogisticsService:
                         elif (not is_confirmed(req.message) or not previously_confirmable
                               or prior_target != (case["order_id"], case["tracking_no"])):
                             case["state"] = "awaiting_confirmation"
-                            reply = "已按模拟轨迹核验。" + policy["action"] + "如同意创建模拟核查工单，请回复“确认建单”。"
+                            verification = ("已核验订单归属并记录材料提交声明，未验证图片真实性、未查询物流。"
+                                            if issue == "logistics_damaged" else "已按模拟轨迹核验。")
+                            reply = verification + policy["action"] + "如同意创建模拟核查工单，请回复“确认建单”。"
                         else:
                             if self.http_ticket_provider is not None:
                                 self._prepare_ticket_operation(db, req, case)
@@ -556,6 +562,8 @@ class LogisticsService:
                 reply = "已创建模拟核查工单：" + ticket_id + "。未联系真实承运商，未执行退款或赔偿。"
             else:
                 reply = "模拟工单结果暂未确定，已记录待核对；请稍后查询，不要另建工单。"
+        if issue == "logistics_damaged" and case["state"] == "ticket_created":
+            reply += "当前仅记录材料提交声明，未验证图片真实性、未判定责任。"
         req.conversation_state = dict(state, logistics_case_id=case_id, logistics_case_state=case["state"], logistics_issue=issue)
         return {"success": True, "source": "mock", "case": case, "run_id": run_id, "reply": reply, "calls": calls, "escalate": case["state"] == "manual_review"}
 
@@ -578,6 +586,10 @@ def case_view(case):
     }
     if case.get("closed_at"):
         actions["ticket_created"] = "本案件已结案。如需再次申请，请说明是新的问题并提供订单号。"
+    if case["issue"] == "logistics_damaged":
+        actions["verifying"] = "正在核验订单归属和材料提交声明。"
+        actions["awaiting_confirmation"] = "仅记录材料提交声明，未验证图片真实性；可确认创建模拟人工审核工单。"
+        actions["ticket_created"] += "仅记录材料提交声明，未验证图片真实性、未判定责任。"
     return {"case_id": case["case_id"], "issue": case["issue"], "state": state,
         "run_id": case.get("last_run_id"),
         "order_id": case.get("order_id"), "tracking_no": case.get("tracking_no"),

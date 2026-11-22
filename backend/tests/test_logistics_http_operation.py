@@ -616,7 +616,12 @@ def test_temporal_two_distinct_confirmations_one_remote_ticket(tmp_path):
     asyncio.run(_temporal_concurrent_confirmations(tmp_path))
 
 
-async def _chat_case(tmp_path):
+async def _chat_case(tmp_path, damage=False):
+    from unittest.mock import Mock
+    issue = IntentCategory.LOGISTICS_DAMAGED if damage else IntentCategory.LOGISTICS_LOST
+    order_id = "DEMO1003" if damage else "DEMO1001"
+    initial_message = ("包裹破损，已上传外包装、面单和商品照片，订单号 DEMO1003" if damage
+                       else "包裹疑似丢件，订单号 DEMO1001")
     remote_db = tmp_path / "remote.sqlite3"
     process, url = start_server(remote_db, drop=True)
 
@@ -650,11 +655,14 @@ async def _chat_case(tmp_path):
         def __init__(self):
             self.agent = object.__new__(LogisticsAgent)
             self.agent.service = LogisticsService()
+            if damage:
+                self.agent.service.tracking_provider.query_logistics = Mock(
+                    side_effect=AssertionError("Damage review must not query tracking"))
             self._pool = {AgentType.LOGISTICS: [self.agent]}
 
         async def recognize_intent(self, *_args, **_kwargs):
-            return SimpleNamespace(intent=IntentCategory.LOGISTICS_LOST, intent_group="logistics",
-                                   urgency=None, entities={"order_id": ["DEMO1001"]}, confidence=1.0,
+            return SimpleNamespace(intent=issue, intent_group="logistics",
+                                   urgency=None, entities={"order_id": [order_id]}, confidence=1.0,
                                    source_scores={}, embedding_source="rules")
 
         async def run(self, req):
@@ -675,7 +683,7 @@ async def _chat_case(tmp_path):
             with patch.object(api, "_memory", memory), patch.object(api, "_orchestrator", orchestrator), patch.object(api, "_profile_updater", None):
                 async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as client:
                     states = []
-                    for message, client_id in [("包裹疑似丢件，订单号 DEMO1001", "first"),
+                    for message, client_id in [(initial_message, "first"),
                                                ("确认建单", "confirm"), ("继续", "reconcile")]:
                         response = await client.post("/chat", json={"message": message,
                             "user_id": "demo-user", "conv_id": "http-chat", "client_request_id": client_id})
@@ -684,13 +692,17 @@ async def _chat_case(tmp_path):
                     assert states == ["awaiting_confirmation", "ticket_unknown", "ticket_created"]
                     assert memory.unsafe_markers == 0
                     assert remote_count(remote_db) == 1
+                    if damage:
+                        orchestrator.agent.service.tracking_provider.query_logistics.assert_not_called()
+                        assert "未验证图片真实性" in response.json()["response"]
         finally:
             process.terminate(); process.join(5)
 
 
-def test_chat_route_reconciles_http_ticket(tmp_path):
+@pytest.mark.parametrize("damage", [False, True])
+def test_chat_route_reconciles_http_ticket(tmp_path, damage):
     import asyncio
-    asyncio.run(_chat_case(tmp_path))
+    asyncio.run(_chat_case(tmp_path, damage))
 
 
 async def _run_api_scope(tmp_path):

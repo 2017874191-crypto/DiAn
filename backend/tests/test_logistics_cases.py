@@ -100,6 +100,60 @@ def test_damage_needs_evidence_and_confirmation(service):
     req.message = "确认建单"
     assert service.process(req)["case"]["state"] == "ticket_created"
 
+
+def test_damage_review_without_tracking_preserves_confirmation_and_deduplication(service):
+    from unittest.mock import Mock
+    service.tracking_provider.query_logistics = Mock(side_effect=AssertionError("Tracking is not a damage-review prerequisite"))
+    original_query = service.order_provider.query_order
+    def owned_order_without_tracking(*args, **kwargs):
+        result = original_query(*args, **kwargs)
+        result.get("order", {}).pop("tracking_no", None)
+        return result
+    service.order_provider.query_order = owned_order_without_tracking
+    req = request("包裹破损", "logistics_damaged", "DEMO1003")
+    assert service.process(req)["case"]["state"] == "awaiting_evidence"
+    req.message = "没有上传照片，确认建单"
+    assert service.process(req)["case"]["state"] == "awaiting_evidence"
+    req.message = "已上传外包装、面单和破损照片，确认建单"
+    offered = service.process(req)
+    assert offered["case"]["state"] == "awaiting_confirmation"
+    assert "未查询物流" in offered["reply"] and "已按模拟轨迹核验" not in offered["reply"]
+    assert offered["case"]["facts"] == {"query_performed": False, "reason": "not_required_for_damage_review"}
+    assert "query_logistics" not in [c["tool_name"] for c in offered["calls"]]
+    with service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 0
+    req.message = "确认建单"
+    created = service.process(req)
+    assert created["case"]["state"] == "ticket_created"
+    assert "未验证图片真实性" in created["reply"] and "未执行退款或赔偿" in created["reply"]
+    restarted = LogisticsService(service.path)
+    restarted.tracking_provider = service.tracking_provider
+    restarted.order_provider = service.order_provider
+    duplicate = restarted.process(req)
+    assert duplicate["case"]["ticket_id"] == created["case"]["ticket_id"]
+    other = request("已上传外包装、面单和破损照片", "logistics_damaged", "DEMO1003")
+    other.conv_id = "another-damage-conversation"
+    assert restarted.process(other)["case"]["state"] == "ticket_already_open"
+    with restarted.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 1
+    service.tracking_provider.query_logistics.assert_not_called()
+
+
+@pytest.mark.parametrize("issue", ["logistics_damaged", "logistics_lost", "logistics_dispute"])
+def test_tracking_change_does_not_bypass_ownership_or_other_issue_verification(service, issue):
+    from unittest.mock import Mock
+    tracking = Mock(return_value={"success": False, "error": "tracking unavailable", "source": "mock"})
+    service.tracking_provider.query_logistics = tracking
+    denied = service.process(request("已上传商品照片，确认建单", issue, "DEMO1003", user="other-user"))
+    assert denied["case"]["state"] == "awaiting_info"
+    tracking.assert_not_called()
+    if issue != "logistics_damaged":
+        failed = service.process(request("确认建单", issue, "DEMO1003"))
+        assert failed["case"]["state"] == "manual_review"
+        tracking.assert_called_once()
+    with service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 0
+
 def test_dispute_conflict(service):
     result = service.process(request("显示签收但没收到", "logistics_dispute"))
     assert result["case"]["state"] == "manual_review"

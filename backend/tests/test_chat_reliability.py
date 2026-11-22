@@ -184,6 +184,13 @@ async def test_damage_chat_reaches_ticket_and_preserves_refusal_ownership_and_re
     agent = LogisticsAgent(model, "test-model")
     orch._pool[AgentType.LOGISTICS] = [agent]
     async def recognize(message, history=None):
+        if message == "我同意提交工单":
+            # A model/vector fallback misclassification must not abandon the active case.
+            return IntentResult(IntentCategory.HUMAN_HANDOFF, .95, UrgencyLevel.HIGH, "escalation",
+                                {}, "fallback", 0, task_goal="case_action")
+        if message == "面单照片已经上传":
+            return IntentResult(IntentCategory.OTHER, 0, UrgencyLevel.LOW, "other", {}, "fallback", 0,
+                                task_goal="uncertain")
         return IntentResult(IntentCategory.LOGISTICS_DAMAGED, .95, UrgencyLevel.LOW, "logistics",
                             IntentRecognizer.__new__(IntentRecognizer)._extract_entities(message), "test", 0,
                             task_goal="case_action")
@@ -194,7 +201,18 @@ async def test_damage_chat_reaches_ticket_and_preserves_refusal_ownership_and_re
             "message": message, "client_request_id": key})
         assert response.status_code == 200, response.text
         return response.json()
-    offered = await send("demo-user", "damage-positive", statement, "open")
+    partial = await send("demo-user", "damage-positive", "订单 DEMO1003 商品破损，已提供外包装照片", "open")
+    assert partial["logistics_case"]["state"] == "awaiting_evidence"
+    assert not partial["logistics_case"]["can_confirm"]
+    premature = await send("demo-user", "damage-positive", "我同意提交工单", "premature")
+    assert premature["logistics_case"]["state"] == "awaiting_evidence"
+    with agent.service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 0
+    supplemented = await send("demo-user", "damage-positive", "面单照片已经上传", "supplement")
+    assert supplemented["agent_type"] == "logistics"
+    assert supplemented["logistics_case"]["declared_materials"] == ["外包装照片", "面单照片"]
+    assert supplemented["logistics_case"]["state"] == "awaiting_evidence"
+    offered = await send("demo-user", "damage-positive", statement, "materials")
     assert offered["logistics_case"]["state"] == "awaiting_confirmation"
     assert offered["logistics_case"]["declared_materials"] == ["外包装照片", "面单照片", "商品问题照片"]
     created = await send("demo-user", "damage-positive", "我确认提交这一笔破损模拟审核。", "confirm")

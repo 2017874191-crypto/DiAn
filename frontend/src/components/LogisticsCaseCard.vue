@@ -12,7 +12,7 @@
     <p class="case-next">{{ caseData.next_step }}</p>
     <div class="case-actions">
       <button v-if="caseData.can_confirm && caseData.state === 'awaiting_confirmation'" :disabled="busy" @click="$emit('action', '确认建单')">{{ busy ? '正在处理…' : '确认创建模拟工单' }}</button>
-      <button v-if="caseData.state === 'awaiting_evidence'" :disabled="busy" class="case-secondary" @click="$emit('action', '已上传外包装、面单和破损照片')">登记已提交材料声明</button>
+      <button v-if="caseData.state === 'awaiting_evidence'" :disabled="busy" class="case-secondary" @click="$emit('action', '已上传外包装、面单和破损照片')">声明三类材料均已提供</button>
       <button v-if="['ticket_pending', 'ticket_unknown'].includes(caseData.state)" :disabled="busy" class="case-secondary" @click="$emit('action', '继续')">核对模拟工单结果</button>
       <button v-if="caseData.state === 'ticket_already_open'" :disabled="busy" class="case-secondary" @click="$emit('action', '继续')">重新核验</button>
       <button v-if="['awaiting_info', 'awaiting_evidence', 'awaiting_confirmation'].includes(caseData.state)" :disabled="busy" class="case-secondary" @click="$emit('action', '转人工')">转人工核查</button>

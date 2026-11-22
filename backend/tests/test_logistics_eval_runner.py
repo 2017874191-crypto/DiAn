@@ -49,6 +49,35 @@ def test_ticket_count_is_conversation_scoped(tmp_path):
     assert ticket_count(db, "other", "one") == 0
 
 
+def test_manual_review_v2_accepts_damage_without_tracking_but_rejects_partial_materials():
+    expected = {**EXPECTED, "case_issue": "logistics_damaged",
+                "required_tools": ["query_order", "query_logistics", "lookup_logistics_policy", "create_logistics_case"]}
+    view = {"case_id": "LC-D", "order_id": "DEMO1003", "state": "ticket_created", "issue": "logistics_damaged",
+            "evidence_declared": True, "declared_materials": ["外包装照片", "面单照片", "商品问题照片"]}
+    response = {"status": "success", "request_id": "rd", "agent_type": "logistics", "logistics_case": view}
+    # Policy and ownership may use any order, but both must succeed before the write.
+    calls = [{"tool_name": name, "success": True, "result_success": True} for name in
+             ("lookup_logistics_policy", "query_order", "create_logistics_case")]
+    trace = {"found": True, "trace": {"request_id": "rd", "tool_calls": calls}}
+    context = {"message": "确认建单", "previous_case": {**view, "state": "awaiting_confirmation"},
+               "contract": "manual-review-v2"}
+    assert evaluate_turn(expected, response, view, trace, 1, **context) == []
+    assert "required_tool_missing: query_logistics" in evaluate_turn(expected, response, view, trace, 1,
+                                                                     message="确认建单", previous_case=context["previous_case"])
+    partial = {**view, "declared_materials": ["外包装照片"]}
+    assert "damage_materials_incomplete" in evaluate_turn(expected, {**response, "logistics_case": partial}, partial,
+                                                          trace, 1, **context)
+    assert "damage_offer_without_complete_materials" in evaluate_turn(expected, response, view, trace, 1,
+        **{**context, "previous_case": {**partial, "state": "awaiting_confirmation"}})
+    bad_trace = {"found": True, "trace": {"request_id": "rd", "tool_calls": [calls[-1], *calls[:-1]]}}
+    assert "ticket_creation_before_successful_verification" in evaluate_turn(expected, response, view, bad_trace, 1, **context)
+    lost = {**view, "issue": "logistics_lost"}
+    assert "ticket_creation_before_successful_verification" in evaluate_turn(EXPECTED,
+        {**response, "logistics_case": lost}, lost, trace, 1,
+        **{**context, "previous_case": {**lost, "state": "awaiting_confirmation"}})
+    assert report([], "dev", contract="manual-review-v2")["evaluation_contract"] == "manual-review-v2"
+
+
 def test_restart_without_hook_is_reported_unsupported():
     case = next(item for item in load_cases("all") if item["case_id"] == "DIAN-046")
     result = run_cases([case], None, Path("unused"))

@@ -70,3 +70,46 @@
 
 - `policy-consultation-development-run.json`：5案7轮，SHA-256 `8b20fa176477afa22de15faddc40f9fad1a74fd4c1791d82148940681c4f51e8`。
 - `policy-consultation-factual-check-run.json`：最后3案，SHA-256 `922afeaaa6bcb7a4501f93e615ef36d62ddc8dfd2ad09d7d253fa740443df71d`。
+
+## 2026-11-22 冻结后的材料完整性修复
+
+原正向演示只证明三类材料齐全时可以建单。后续对抗检查复现：仅声明外包装照片也进入待确认，下一轮可以创建模拟工单。根因是领域门槛只检查evidence_declared布尔值，没有使用已经保存的declared_materials。此前“材料门槛完整”的理解不成立；本节修复以既有三类必需材料规则为标准，不改变政策、不改变历史结果，也不移动`interview-2026-11-22`标签。
+
+本轮变更：
+
+- 待确认和提交前按既有required_evidence检查三类具名声明，回复及页面只提示缺项；泛指“照片都提供了”不补齐名称。分轮声明持久化累积，撤回声明后清空，不能继续确认。
+- 对旧版保存的待确认案件也检查此前材料是否完整；后来补齐时重新展示事项，不能把旧确认资格直接用于建单。已创建的历史工单保留，不自动撤销或伪造补齐记录。
+- 页面按钮明确写成“声明三类材料均已提供”，避免用户把一次点击理解为文件上传。仍无真实文件接收、图片审核或责任判定。
+- 浏览器验证发现确认句在分类错误时会被转人工，后置提交语序又可能落入OTHER澄清。路由现在复用现有声明解析来接续持久案件，不再单独维护前置语序；接续只决定去哪处理，材料、事项、确认和副作用数量仍由领域服务检查。明确转人工与CRITICAL升级保持优先。
+
+### 验收结果及证据等级
+
+| 检查 | 结果 | 证据范围 |
+| --- | --- | --- |
+| 领域、路由、实际ASGI API、评测版本回归 | 最后一次98项通过 | 模型替身、临时库；覆盖部分材料、提前确认、累计、撤回、旧待确认与去重；不是模型效果分数 |
+| 前端既有检查及构建 | 17项通过，构建成功 | 不等同于浏览器流程；下行单列浏览器证据 |
+| 浏览器→Vue/Vite代理→FastAPI→真实隔离Redis/Chroma→SQLite | 外包装声明→提前确认仍缺材料→面单声明仍缺商品照片→商品问题声明后待确认→点击确认创建1张模拟工单；刷新恢复原工单 | 实际页面、服务、快照、工具轨迹及SQL数量相互核对；物流读取0，真实业务写入0 |
+| 一条既有开发题DIAN-001，manual-review-v2，实际HTTP回放 | 失败：model_or_service_failure/agent_failed | 意图和General调用出现APIConnectionError；保留失败，不计通过，不改金标，不重跑追分 |
+
+浏览器首轮进程继承旧ANTHROPIC_BASE_URL，覆盖本地项目配置，模型连接失败；记录保留。随后测试启动明确选用项目.env的三个模型字段，其余业务使用隔离测试配置。后续确实有成功模型请求，但仍出现连接错误及供应商`402 Insufficient Balance`，最终建单部分走了可用的规则/案件降级路径。因此本轮证明工程门槛和降级接续，不能声称全程真实模型正常、50案通过或自然语言质量已获独立验证。模型配置的优先级未被全局改写，生产部署仍须明确提供正确环境变量。
+
+评测版本详见[数据包判分契约](../evaluation/datasets/dian_logistics_v1/README.md)。默认legacy-v1保留历史逻辑；当前manual-review-v2不强制破损查物流，但仍要求归属与政策成功先于建单、当前及此前展示轮的三类材料完整。必要前置步骤之间不限定顺序；丢件/签收争议继续要求物流。确认解析仍复用生产帮助函数，不能视为完全独立的语义判定。旧题中咨询/申报的预期冲突不在本轮改金标。
+
+本轮只新增3个集中测试，另扩展现有API主链路测试；没有扩建故障矩阵、加Judge或继续优化已曝光题的提示词。98与前文108/93等历史分母存在重叠，不可相加。独立人工语义复核仍为0。
+
+可复现的代码验证（backend目录）：
+
+```powershell
+python -m pytest -q tests/test_logistics_cases.py tests/test_logistics_eval_runner.py tests/test_agent_orchestrator.py tests/test_chat_reliability.py
+```
+
+完整原始证据与截图保存在Git忽略的`backend/data/acceptance/materials-20261122/`，没有上传会话正文、运行日志或凭据：
+
+| 文件 | SHA-256 |
+| --- | --- |
+| browser-evidence.json | b41c5ed0b58bcadfc8f25b4a445fd0e08f6a5a30b49c927b7a0565dc96473559 |
+| current-contract.json（保留失败） | 2cc82b0471732a1a70fb0497e66d48f0ac50ed24c33e4bd708b3c7cea6f23e34 |
+| first-browser-failure.json | cf3aaf91689be7457b708b05f6df0eb9c003984ffbfe934a4a89d6cd2f611eba |
+| restored-ticket.jpg | 3dc0fe5f67964b2606acfed03450e3897872afc929fc50f0d7923ef44ecf1cd0 |
+
+运行源码摘要：`338f2ad7cbd0c9547b493879385a7bb1675312dfbda6cef5b177b55e8a82e28b`。页面及服务仅绑定本机，使用新Redis/Chroma实例、独立端口与测试SQLite，没有重启其他项目。未访问快递鸟，不消耗运单查询额度；不把该开发模式部署当作公网鉴权验收。

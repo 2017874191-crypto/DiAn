@@ -1006,11 +1006,15 @@ class AgentOrchestrator:
 
         # 明确异常表达优先；短回复如单号、举证、确认，接续持久化案件。
         from core.logistics import ISSUES, detect_issue, needs_missing_delivery_clarification, is_confirmation_reply
+        from core.logistics_providers import DeclarationEvidenceProvider
         issue = detect_issue(req.message)
         previous = req.conversation_state or {}
         continuation = bool(re.fullmatch(r"\s*(?:确认建单|确认创建工单|确认提交工单|重试|继续|(?:订单号?|运单号?|快递单号)\s*[:：#]?\s*[A-Za-z0-9_-]{4,32}|已(?:上传|提供|提交).{0,30}(?:照片|图片|视频)[。！!]?)\s*", req.message))
-        if previous.get("logistics_case_id") and is_confirmation_reply(req.message):
-            continuation = True  # 接续不等于授权；领域服务仍检查确认与已展示事项。
+        if previous.get("logistics_case_id"):
+            evidence = DeclarationEvidenceProvider()
+            if (is_confirmation_reply(req.message) or evidence.declared(req.message, False)
+                    or not evidence.declared(req.message, True)):
+                continuation = True  # 接续不等于授权；领域服务仍检查材料、确认与已展示事项。
         if continuation and previous.get("logistics_case_id"):
             req.task_goal = "case_action"
         informational = req.task_goal in ("policy_question", "status_lookup")
@@ -1021,7 +1025,12 @@ class AgentOrchestrator:
             req.intent = IntentCategory.HUMAN_HANDOFF
             req.intent_group = "escalation"
             req.intent_confidence = max(req.intent_confidence, 0.9)
-        explicit_handoff = req.intent in (IntentCategory.ESCALATION, IntentCategory.HUMAN_HANDOFF)
+        # An anchored case reply is not a handoff request just because a classifier
+        # (including a vector fallback) assigned that label. Explicit requests and
+        # critical urgency retain their priority; the domain still checks all gates.
+        anchored_reply = continuation and previous.get("logistics_case_id") and req.urgency != UrgencyLevel.CRITICAL
+        explicit_handoff = wants_handoff or (req.intent in (IntentCategory.ESCALATION, IntentCategory.HUMAN_HANDOFF)
+                                            and not anchored_reply)
         negated_issue = re.search(r"(?:不是|并非|没有|没发生)(?:要查询|包裹|快递|物流|商品|发生|出现|的)?(?:丢件|丢失|破损|损坏|错发|发错货)", req.message)
         if not explicit_handoff and not issue and negated_issue and not previous.get("logistics_case_id"):
             req.intent = IntentCategory.BILLING if re.search(r"运费|配送费用|费用|退款|退费", req.message) else IntentCategory.LOGISTICS

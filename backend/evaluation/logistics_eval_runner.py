@@ -25,6 +25,9 @@ from evaluation.provenance import MODES, SCHEMA, build_identity, git_commit, ins
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "evaluation/datasets/dian_logistics_v1"
+CONTRACTS = ("legacy-v1", "manual-review-v2")
+# Evaluation contract, not inferred from candidate output or imported business rules.
+DAMAGE_MATERIALS = {"外包装照片", "面单照片", "商品问题照片"}
 
 
 def load_cases(split):
@@ -52,7 +55,11 @@ def ticket_count(db_path, user_id, conv_id):
                           "WHERE c.user_id=? AND c.conv_id=?", (user_id, conv_id)).fetchone()[0]
 
 
-def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None, *, message="", previous_case=None):
+def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None, *, message="", previous_case=None,
+                  contract="legacy-v1"):
+    if contract not in CONTRACTS:
+        raise ValueError("unsupported evaluation contract")
+    current_contract = contract == "manual-review-v2"
     failures = []
     if response.get("status") != "success":
         return ["model_or_service_failure: " + str(response.get("error_code") or response.get("status"))]
@@ -61,6 +68,9 @@ def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None, *,
         failures.append("case_snapshot_mismatch")
     state = (view or {}).get("state")
     issue = (view or {}).get("issue")
+    if current_contract and issue == "logistics_damaged" and state in ("awaiting_confirmation", "ticket_created"):
+        if not (view or {}).get("evidence_declared") or not DAMAGE_MATERIALS.issubset((view or {}).get("declared_materials", [])):
+            failures.append("damage_materials_incomplete")
     if state != expected["case_state"]:
         failures.append(f"case_state: {state!r} != {expected['case_state']!r}")
     if issue != expected["case_issue"]:
@@ -79,6 +89,9 @@ def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None, *,
             failures.append("replay_receipt_changed")
     else:
         for name in expected["required_tools"]:
+            # Explicit v2 contract change: carrier lookup does not establish damage liability.
+            if current_contract and expected["case_issue"] == "logistics_damaged" and name == "query_logistics":
+                continue
             if name not in names:
                 failures.append("required_tool_missing: " + name)
         for name in expected["forbidden_tools"]:
@@ -87,17 +100,21 @@ def evaluate_turn(expected, response, snapshot, trace, count, replay_id=None, *,
         if "create_logistics_case" in names:
             previous_case = previous_case or {}
             current_case = view or {}
-            if (not is_confirmed(message) or previous_case.get("state") != "awaiting_confirmation"
+            if (not is_confirmed(message, issue if current_contract else None) or previous_case.get("state") != "awaiting_confirmation"
                     or not current_case.get("case_id")
                     or any(previous_case.get(key) != current_case.get(key)
                            for key in ("case_id", "order_id", "issue"))):
                 failures.append("ticket_creation_without_confirmation")
             prerequisites = ("query_order", "query_logistics", "lookup_logistics_policy")
+            if current_contract and issue == "logistics_damaged":
+                prerequisites = ("query_order", "lookup_logistics_policy")
+                if not previous_case.get("evidence_declared") or not DAMAGE_MATERIALS.issubset(previous_case.get("declared_materials", [])):
+                    failures.append("damage_offer_without_complete_materials")
             verified = []
             for call in calls:
                 name = call.get("tool_name")
                 if name == "create_logistics_case":
-                    if tuple(verified) != prerequisites:
+                    if (not set(prerequisites).issubset(verified) if current_contract else tuple(verified) != prerequisites):
                         failures.append("ticket_creation_before_successful_verification")
                     break
                 if name in prerequisites and call.get("success") is True and call.get("result_success") is True:
@@ -140,7 +157,9 @@ def close_fixture_case(client, case_id, user_id, conv_id):
     return {"status": "transport_failure", "attempts": 2, "transport_errors": transport_errors}
 
 
-def run_cases(cases, client, db_path, restart=None, close_case=None, trace_client=None):
+def run_cases(cases, client, db_path, restart=None, close_case=None, trace_client=None, *, contract="legacy-v1"):
+    if contract not in CONTRACTS:
+        raise ValueError("unsupported evaluation contract")
     results = []
     for case in cases:
         conv_id = "eval-" + uuid.uuid4().hex
@@ -210,7 +229,7 @@ def run_cases(cases, client, db_path, restart=None, close_case=None, trace_clien
                 previous = prior[replay] if replay is not None else (prior[-1] if prior else None)
                 previous_view = (previous or {}).get("snapshot") or {}
                 failures = evaluate_turn(turn["expected"], response, snapshot, trace, count, replay_id,
-                                         message=turn["message"], previous_case=previous_view)
+                                         message=turn["message"], previous_case=previous_view, contract=contract)
                 same_case = replay is not None or turn.get("before_event") == "restart_services"
                 if not same_case and previous_view and snapshot:
                     same_case = (previous_view.get("issue") == snapshot.get("issue")
@@ -266,7 +285,7 @@ def run_cases(cases, client, db_path, restart=None, close_case=None, trace_clien
     return results
 
 
-def report(results, split, variant=None):
+def report(results, split, variant=None, *, contract="legacy-v1"):
     by_family = defaultdict(Counter)
     observations = [turn["observed"] for item in results for turn in item["turns"] if turn.get("observed")]
     latencies = sorted(float(o["wall_latency_ms"]) for o in observations if isinstance(o.get("wall_latency_ms"), (int, float)))
@@ -277,7 +296,7 @@ def report(results, split, variant=None):
     for item in results:
         by_family[item["family_id"]][item["status"]] += 1
     return {"suite": "dian_logistics_v1", "split": split, "generated_at": datetime.now(timezone.utc).isoformat(),
-            "variant": variant,
+            "variant": variant, "evaluation_contract": contract,
             "summary": dict(Counter(item["status"] for item in results)),
             "metrics": {"cases_total": len(results),
                         "flow_pass_cases": sum(item["status"] == "flow_pass_semantic_pending" for item in results),
@@ -321,6 +340,8 @@ def verify_target(target, cases, variant):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--contract", choices=CONTRACTS, default="legacy-v1",
+                        help="explicit scoring version; v2 uses the damage manual-review contract, not historical scores")
     parser.add_argument("--split", choices=("dev", "test", "all"), default="dev")
     parser.add_argument("--case-id", action="append", help="run only this case ID (repeatable)")
     parser.add_argument("--base-url", required=True, help="isolated DiAn API URL")
@@ -390,9 +411,9 @@ def main():
         def close_case(case_id, user_id, conv_id):
             return close_fixture_case(admin, case_id, user_id, conv_id)
         results = run_cases(cases, client, args.db, restart=restart if args.restart_command else None,
-                            close_case=close_case, trace_client=admin)
+                            close_case=close_case, trace_client=admin, contract=args.contract)
         verify_checkpoint("after_replay")
-    data = report(results, args.split, args.variant)
+    data = report(results, args.split, args.variant, contract=args.contract)
     if provenance is not None:
         data["provenance"] = provenance
     output = json.dumps(data, ensure_ascii=False, indent=2)

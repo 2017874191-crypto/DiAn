@@ -504,6 +504,10 @@ class LogisticsService:
             case["order_id"] = order_id or case.get("order_id")
             case["tracking_no"] = tracking_no or case.get("tracking_no")
             policy = self.rules[issue]
+            if issue == "logistics_damaged":
+                # Old pending cases may have passed the former boolean-only gate.
+                previously_confirmable = previously_confirmable and bool(case.get("evidence_declared")) and set(
+                    policy["required_evidence"]).issubset(case.get("declared_materials", []))
             if case["state"] not in ("ticket_pending", "ticket_unknown"):
                 case["policy_version"] = RULE_VERSION
             case["source"] = "mock"
@@ -556,9 +560,11 @@ class LogisticsService:
                         if conflict:
                             case["state"] = "manual_review"
                             reply = "模拟轨迹尚未签收，与签收争议描述存在冲突，需要人工核查；未认定任何一方责任。"
-                        elif issue == "logistics_damaged" and not case["evidence_declared"]:
+                        elif issue == "logistics_damaged" and (not case["evidence_declared"] or not set(
+                                policy["required_evidence"]).issubset(case["declared_materials"])):
                             case["state"] = "awaiting_evidence"
-                            reply = "请提供外包装、面单和商品破损或错发情况的照片。演示版仅记录您声明已提交材料，不验证图片。"
+                            missing = [name for name in policy["required_evidence"] if name not in case["declared_materials"]]
+                            reply = "尚缺材料提交声明：" + "、".join(missing) + "。请补充。演示版仅记录您声明已提交材料，不验证图片。"
                         elif self._has_other_open_ticket(db, req.user_id, case):
                             case["state"] = "ticket_already_open"
                             reply = "这笔订单的同类问题已有工单或正在核对建单结果。请回原会话查看进展，结案后可重新申请。"
@@ -626,6 +632,9 @@ def case_view(case):
     if case.get("closed_at"):
         actions["ticket_created"] = "本案件已结案。如需再次申请，请说明是新的问题并提供订单号。"
     if case["issue"] == "logistics_damaged":
+        missing = [name for name in case.get("policy", {}).get("required_evidence", [])
+                   if name not in case.get("declared_materials", [])]
+        actions["awaiting_evidence"] = "尚缺材料提交声明：" + "、".join(missing) + "；当前不验证图片。"
         actions["verifying"] = "正在核验订单归属和材料提交声明。"
         actions["awaiting_confirmation"] = "仅记录材料提交声明，未验证图片真实性；可确认创建模拟人工审核工单。"
         actions["ticket_created"] += "仅记录材料提交声明，未验证图片真实性、未判定责任。"

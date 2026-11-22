@@ -171,6 +171,52 @@ def test_material_declarations_accept_both_word_orders_and_preserve_denials():
     assert provider.declared("我同意提交工单", True)
 
 
+def test_damage_partial_materials_accumulate_and_retraction_blocks_creation(service):
+    from core.logistics import case_view
+    req = request("商品破损，已提供外包装照片", "logistics_damaged", "DEMO1003")
+    first = service.process(req)
+    assert first["case"]["state"] == "awaiting_evidence"
+    assert first["case"]["declared_materials"] == ["外包装照片"]
+    assert "面单照片、商品问题照片" in first["reply"]
+    assert "面单照片、商品问题照片" in case_view(first["case"])["next_step"]
+    req.message = "我同意提交工单"
+    assert service.process(req)["case"]["state"] == "awaiting_evidence"
+    req.message = "照片都提供了"
+    assert service.process(req)["case"]["declared_materials"] == ["外包装照片"]
+    req.message = "面单照片已经上传"
+    assert service.process(req)["case"]["state"] == "awaiting_evidence"
+    # The accumulated names survive a service restart.
+    service = LogisticsService(service.path)
+    req.message = "商品问题照片已经提供"
+    assert service.process(req)["case"]["state"] == "awaiting_confirmation"
+    req.message = "其实还没上传"
+    retracted = service.process(req)
+    assert retracted["case"]["state"] == "awaiting_evidence"
+    assert retracted["case"]["declared_materials"] == []
+    req.message = "确认建单"
+    assert service.process(req)["case"]["state"] == "awaiting_evidence"
+    with service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 0
+    req.message = "外包装照片、面单照片、商品照片我都已经提供了"
+    assert service.process(req)["case"]["state"] == "awaiting_confirmation"
+    req.message = "确认建单"
+    assert service.process(req)["case"]["state"] == "ticket_created"
+
+
+def test_old_pending_damage_case_must_show_complete_offer_again(service):
+    req = request("已上传外包装照片", "logistics_damaged", "DEMO1003")
+    case = service.process(req)["case"]
+    case["state"] = "awaiting_confirmation"  # Persisted by the old boolean-only gate.
+    with service.connect() as db:
+        db.execute("UPDATE cases SET payload=? WHERE id=?", (json.dumps(case), case["case_id"]))
+    req.message = "已上传面单和商品问题照片，确认建单"
+    assert service.process(req)["case"]["state"] == "awaiting_confirmation"
+    with service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 0
+    req.message = "确认建单"
+    assert service.process(req)["case"]["state"] == "ticket_created"
+
+
 def test_damage_review_without_tracking_preserves_confirmation_and_deduplication(service):
     from unittest.mock import Mock
     service.tracking_provider.query_logistics = Mock(side_effect=AssertionError("Tracking is not a damage-review prerequisite"))

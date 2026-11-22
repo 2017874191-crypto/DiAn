@@ -20,7 +20,7 @@ from core.concurrency import Capacity, KeyedLocks
 from core.skill_loader import SkillManager
 from evaluation.compare_rag import model_settings
 from evaluation.logistics_eval_runner import (
-    SUITE, close_fixture_case, decode_cases, load_cases, report, run_cases, verify_target,
+    CONTRACTS, SUITE, close_fixture_case, decode_cases, load_cases, report, run_cases, verify_target,
 )
 from evaluation.prepare_rag_data import ROOT, validate, write_json
 from evaluation.provenance import build_identity, git_commit, sha256
@@ -53,7 +53,7 @@ class SynchronousASGIClient:
         return self.request("GET", path, **kwargs)
 
 
-async def replay(output, cases_file=None):
+async def replay(output, cases_file=None, contract="legacy-v1"):
     dataset_bytes = (cases_file or SUITE / "test.jsonl").read_bytes()
     cases = decode_cases(dataset_bytes) if cases_file else load_cases("test")
     split = "development" if cases_file else "test"
@@ -131,12 +131,12 @@ async def replay(output, cases_file=None):
                             results = await asyncio.to_thread(
                                 run_cases, cases, sync_user, db,
                                 close_case=lambda case_id, user_id, conv_id: close_fixture_case(
-                                    sync_admin, case_id, user_id, conv_id), trace_client=sync_admin)
+                                    sync_admin, case_id, user_id, conv_id), trace_client=sync_admin, contract=contract)
                             after = await admin.get("/eval/runtime")
                             after.raise_for_status()
                             if after.json()["identity"] != target["runtime"]:
                                 result["provenance"]["verification_errors"].append("target_identity_changed")
-                            result.update(report(results, split, "full"))
+                            result.update(report(results, split, "full", contract=contract))
                             with api._logistics_service().connect() as connection:
                                 result["total_simulated_tickets"] = connection.execute("SELECT count(*) FROM tickets").fetchone()[0]
     finally:
@@ -150,10 +150,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--cases-file", type=Path, help="Explicit development cases; original test split is unchanged")
+    parser.add_argument("--contract", choices=CONTRACTS, default="legacy-v1")
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(level=logging.ERROR)
-    asyncio.run(replay(args.output, args.cases_file))
+    asyncio.run(replay(args.output, args.cases_file, args.contract))
 
 
 if __name__ == "__main__":

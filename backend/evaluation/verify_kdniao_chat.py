@@ -95,14 +95,18 @@ class TimeoutTrackingProvider(KdniaoTrackingProvider):
         return result
 
 
-async def verify(output, response_fixture=None, simulate_timeout=False):
+async def verify(output, response_fixture=None, simulate_timeout=False, selected_order_id=None):
     cfg = dotenv_values(ROOT / ".env")
     fixture = json.loads(response_fixture.read_text(encoding="utf-8")) if response_fixture else None
     orders = ([{"user_id": "recorded-owner", "order_id": "LIVE1001",
                 "tracking_no": fixture["response"]["LogisticCode"] if fixture else "fixture-number"}]
               if fixture or simulate_timeout
               else json.loads(Path(cfg["KDNIAO_ORDER_BINDINGS"]).read_text(encoding="utf-8")))
-    owner, order_id = orders[0]["user_id"], orders[0]["order_id"]
+    selected = (next((order for order in orders if order["order_id"] == selected_order_id), None)
+                if selected_order_id else orders[0])
+    if selected is None:
+        raise ValueError("Selected order is not present in the local binding configuration")
+    owner, order_id = selected["user_id"], selected["order_id"]
     settings, model_source = model_settings()
     transport = (TimeoutTransport() if simulate_timeout else
                  RecordedTransport(fixture["response"]) if fixture else CountedTransport())
@@ -205,13 +209,14 @@ async def verify(output, response_fixture=None, simulate_timeout=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--order-id", help="Select an existing local order binding; defaults to the first binding")
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--response-fixture", type=Path, help="Replay an explicitly sourced saved response, no carrier calls")
     modes.add_argument("--simulate-timeout", action="store_true", help="Inject a carrier read timeout, no carrier calls")
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(level=logging.ERROR)
-    asyncio.run(verify(args.output, args.response_fixture, args.simulate_timeout))
+    asyncio.run(verify(args.output, args.response_fixture, args.simulate_timeout, args.order_id))
 
 
 if __name__ == "__main__":

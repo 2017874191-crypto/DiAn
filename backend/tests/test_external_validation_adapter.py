@@ -58,7 +58,7 @@ def test_logical_schema_keeps_ownership_material_and_script_guards():
     reply = {"response": "请确认模拟审核", "logistics_case": {"state": "awaiting_confirmation"}}
     trigger = {"event": "after_agent_has_verified_order_ownership_and_recorded_three_material_declarations_then_explains_proposed_ticket_and_asks_separate_confirmation"}
     assert not next_turn_allowed(0, reply, 0, trigger, ports.events)
-    assert ports.declared("已提供照片", False)
+    assert ports.declared("已提供外包装、面单和商品照片", False)
     assert next_turn_allowed(0, reply, 0, trigger, ports.events)
     assert not next_turn_allowed(0, reply, 0, {"event": "unknown"}, ports.events)
 

@@ -194,7 +194,10 @@ class LogicalFixturePorts(FixturePorts):
         parsed = self.evidence.declared(message, previous)
         raw = self.results.get("record_material_declaration", {}).get("on_call_result", {})
         recorded = self.enabled("material_declaration_record") and parsed and raw.get("recorded") is True
-        self.event("material_declaration_record", {**(raw if parsed and self.enabled("material_declaration_record") else {}), "recorded": bool(recorded)})
+        result = {**(raw if parsed and self.enabled("material_declaration_record") else {}), "recorded": bool(recorded)}
+        if recorded:
+            result["material_names"] = self.evidence.material_names(message)
+        self.event("material_declaration_record", result)
         return bool(recorded)
 
     def create_ticket(self, db, case_id, idempotency_key):

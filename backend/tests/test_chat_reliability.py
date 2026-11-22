@@ -191,6 +191,7 @@ async def test_damage_chat_reaches_ticket_and_preserves_refusal_ownership_and_re
         return response.json()
     offered = await send("demo-user", "damage-positive", statement, "open")
     assert offered["logistics_case"]["state"] == "awaiting_confirmation"
+    assert offered["logistics_case"]["declared_materials"] == ["外包装照片", "面单照片", "商品问题照片"]
     created = await send("demo-user", "damage-positive", "我确认提交这一笔破损模拟审核。", "confirm")
     assert created["logistics_case"]["state"] == "ticket_created"
     replay = await send("demo-user", "damage-positive", "我确认提交这一笔破损模拟审核。", "confirm")

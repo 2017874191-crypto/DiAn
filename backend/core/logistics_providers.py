@@ -85,6 +85,17 @@ class HttpTicketProvider:
 
 
 class DeclarationEvidenceProvider:
+    @staticmethod
+    def material_names(message):
+        """Names explicitly covered by a submission claim, never verified attachments."""
+        patterns = {"外包装照片": r"外包装", "面单照片": r"面单",
+                    "商品问题照片": r"(?:商品|货物|破损|错发|问题).{0,8}(?:照片|图片|视频)"}
+        names = set()
+        for clause in re.split(r"[，,。；;\n]", message):
+            if DeclarationEvidenceProvider().declared(clause, False):
+                names.update(name for name, pattern in patterns.items() if re.search(pattern, clause))
+        return [name for name in patterns if name in names]
+
     def declared(self, message, previous):
         # A submission claim may precede or follow the material names; it is not image verification.
         stated = False

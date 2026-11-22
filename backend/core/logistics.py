@@ -549,6 +549,10 @@ class LogisticsService:
                     else:
                         conflict = issue == "logistics_dispute" and facts["tracking"]["status"] != "delivered"
                         case["evidence_declared"] = self.evidence_provider.declared(req.message, case.get("evidence_declared", False))
+                        if issue == "logistics_damaged":
+                            names = DeclarationEvidenceProvider.material_names(req.message)
+                            case["declared_materials"] = (list(dict.fromkeys(case.get("declared_materials", []) + names))
+                                                          if case["evidence_declared"] else [])
                         if conflict:
                             case["state"] = "manual_review"
                             reply = "模拟轨迹尚未签收，与签收争议描述存在冲突，需要人工核查；未认定任何一方责任。"
@@ -632,5 +636,6 @@ def case_view(case):
         "source": "mock", "next_step": actions[state],
         "required_evidence": case.get("policy", {}).get("required_evidence", []),
         "evidence_declared": case.get("evidence_declared", False),
+        "declared_materials": case.get("declared_materials", []),
             "can_confirm": state == "awaiting_confirmation",
             **({"closed_at": case["closed_at"]} if case.get("closed_at") else {})}

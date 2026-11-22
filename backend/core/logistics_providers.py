@@ -86,6 +86,18 @@ class HttpTicketProvider:
 
 class DeclarationEvidenceProvider:
     def declared(self, message, previous):
-        stated = bool(re.search(r"(?:已上传|已提供|已提交).{0,12}(?:照片|图片|视频)", message))
-        denied = bool(re.search(r"未|没有|没上传|没提供", message))
-        return bool(previous or (stated and not denied))
+        # A submission claim may precede or follow the material names; it is not image verification.
+        stated = False
+        for clause in re.split(r"[，,。；;\n]", message):
+            if re.search(r"如果|假如|是否|[？?]|吗", clause):
+                continue
+            material = bool(re.search(r"照片|图片|视频|材料|面单|外包装", clause))
+            denial = bool(re.search(r"(?:未|没有|没)(?:全部|都)?(?:上传|提供|提交)", clause))
+            retraction = bool(previous and re.fullmatch(
+                r"\s*(?:我)?(?:其实)?(?:还|仍)?(?:未|没有|没)(?:全部|都)?(?:上传|提供|提交)(?:过|好|完|齐|了)?\s*", clause))
+            if (material and denial) or retraction:
+                return False
+            completed = bool(re.search(
+                r"(?:已经|已)(?:全部|都)?(?:上传|提供|提交)|(?:都|全部)(?:上传|提供|提交)了|(?:上传|提供|提交)(?:完|好|齐)了", clause))
+            stated = stated or (material and completed)
+        return bool(previous or stated)

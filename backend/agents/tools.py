@@ -135,6 +135,9 @@ def build_diagnostic_plan(req: Request, args: Dict[str, Any]) -> Dict[str, Any]:
 
 def check_billing_fields(req: Request, args: Dict[str, Any]) -> Dict[str, Any]:
     """账单工具：检查必要核验字段是否齐全。"""
+    if req.task_goal == "policy_question":
+        return {"fields": {}, "missing_fields": [], "can_confirm_refund": False,
+                "reason": "当前是规则咨询，不收集交易核验字段；请依据知识库回答"}
     fields = {
         "order_id": bool(req.entities.get("order_id")),
         "amount": bool(req.entities.get("amount")),

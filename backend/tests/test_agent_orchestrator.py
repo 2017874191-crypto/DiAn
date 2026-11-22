@@ -70,6 +70,26 @@ def test_domain_agents_build_different_role_packets():
     assert general_packet != technical_packet != billing_packet
 
 
+def test_policy_field_check_does_not_collect_transaction_information():
+    from agents.tools import check_billing_fields
+    req = make_request(message="退款审核需要几天", intent=IntentCategory.REFUND, entities={}, task_goal="policy_question")
+    assert check_billing_fields(req, {})["missing_fields"] == []
+    req.task_goal = "case_action"
+    assert "order_id" in check_billing_fields(req, {})["missing_fields"]
+
+
+def test_account_consultation_uses_general_and_financial_questions_stay_billing(monkeypatch, tmp_path):
+    monkeypatch.setenv("DIAN_LOGISTICS_DB", str(tmp_path / "routing.sqlite3"))
+    orch = AgentOrchestrator("test-key")
+    req = make_request(message="我想了解收货地址修改的规则", intent=IntentCategory.ACCOUNT,
+                       urgency=UrgencyLevel.LOW, entities={}, task_goal="policy_question")
+    decision = orch._route_decision(req)
+    assert decision.primary_agent == AgentType.GENERAL and not decision.supporting_agents
+    req = make_request(message="退款审核规则是什么", intent=IntentCategory.REFUND,
+                       urgency=UrgencyLevel.LOW, entities={}, task_goal="policy_question")
+    assert orch._route_decision(req).primary_agent == AgentType.BILLING
+
+
 def test_escalation_agent_is_a_real_non_llm_handoff_node():
     client = FakeClient()
     agent = EscalationAgent(client, "test-model")

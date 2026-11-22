@@ -171,6 +171,45 @@ async def test_existing_case_confirmation_preserves_write_gate_when_goal_is_misc
 
 
 @pytest.mark.asyncio
+async def test_damage_chat_reaches_ticket_and_preserves_refusal_ownership_and_replay(services, tmp_path, monkeypatch):
+    _, orch, model, http = services
+    monkeypatch.setenv("DIAN_LOGISTICS_DB", str(tmp_path / "damage-main-path.sqlite3"))
+    monkeypatch.setenv("DIAN_TICKET_PROVIDER", "sqlite")
+    monkeypatch.setenv("DIAN_TEMPORAL_LOGISTICS", "false")
+    agent = LogisticsAgent(model, "test-model")
+    orch._pool[AgentType.LOGISTICS] = [agent]
+    async def recognize(message, history=None):
+        return IntentResult(IntentCategory.LOGISTICS_DAMAGED, .95, UrgencyLevel.LOW, "logistics",
+                            IntentRecognizer.__new__(IntentRecognizer)._extract_entities(message), "test", 0,
+                            task_goal="case_action")
+    orch.recognize_intent.side_effect = recognize
+    statement = "订单 DEMO1003 商品破损，外包装、面单和商品照片我都已经提供了，请申请人工审核"
+    async def send(user, conv, message, key):
+        response = await http.post("/chat", json={"user_id": user, "conv_id": conv,
+            "message": message, "client_request_id": key})
+        assert response.status_code == 200, response.text
+        return response.json()
+    offered = await send("demo-user", "damage-positive", statement, "open")
+    assert offered["logistics_case"]["state"] == "awaiting_confirmation"
+    created = await send("demo-user", "damage-positive", "我确认提交这一笔破损模拟审核。", "confirm")
+    assert created["logistics_case"]["state"] == "ticket_created"
+    replay = await send("demo-user", "damage-positive", "我确认提交这一笔破损模拟审核。", "confirm")
+    repeated = await send("demo-user", "damage-positive", "同一件事情，再提交一次", "repeat")
+    assert replay["request_id"] == created["request_id"]
+    assert repeated["logistics_case"]["ticket_id"] == created["logistics_case"]["ticket_id"]
+    denied = await send("another-user", "damage-denied", statement, "open")
+    assert denied["logistics_case"]["state"] == "awaiting_info"
+    # A separate order keeps this refusal independent of the positive case's deduplication.
+    refused_offer = await send("demo-user", "damage-refusal", statement.replace("DEMO1003", "DEMO1002"), "open")
+    assert refused_offer["logistics_case"]["state"] == "awaiting_confirmation"
+    refused = await send("demo-user", "damage-refusal", "先别提交，我不确认这个申请。", "refuse")
+    assert refused["logistics_case"]["state"] == "awaiting_confirmation"
+    with agent.service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 1
+    model.messages.create.assert_not_awaited()
+
+
+@pytest.mark.asyncio
 async def test_receipt_transaction_rejects_takeover_after_ownership_check(services, monkeypatch):
     memory, _, _, _ = services
     async with memory.conversation("u", "c") as lease:

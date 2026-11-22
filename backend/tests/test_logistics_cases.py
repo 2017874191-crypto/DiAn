@@ -100,6 +100,8 @@ def test_confirmation_language_accepts_explicit_actions_but_not_refusal_or_quest
         assert not is_confirmed(text), text
     assert is_confirmed("我确认申请这个订单的签收争议核查。", "logistics_dispute")
     assert not is_confirmed("我确认申请这个订单的签收争议核查。", "logistics_lost")
+    assert is_confirmed("我确认提交刚才说的这单错发人工审核。", "logistics_damaged")
+    assert is_confirmed("确认提交这一笔破损模拟审核。", "logistics_damaged")
 
 
 def test_natural_confirmation_needs_prior_offer_and_same_order(service):
@@ -129,7 +131,7 @@ def test_natural_confirmation_continues_pending_case_and_marks_side_effect(monke
     first = request()
     asyncio.run(orch.run(first))
     state = first.conversation_state
-    for message in ("不同意", "我同意提交工单吗？", "我同意提交工单。"):
+    for message in ("不同意", "先别提交，我不确认这个申请", "我同意提交工单吗？", "我同意提交工单。"):
         follow = request(message, issue="other", order=None, state=state)
         follow.task_goal = "status_lookup"  # A pending reply must not be diverted by model goal classification.
         follow.intent_group = "other"
@@ -153,6 +155,20 @@ def test_damage_needs_evidence_and_confirmation(service):
     assert service.process(req)["case"]["state"] == "awaiting_confirmation"
     req.message = "确认建单"
     assert service.process(req)["case"]["state"] == "ticket_created"
+
+
+def test_material_declarations_accept_both_word_orders_and_preserve_denials():
+    from core.logistics_providers import DeclarationEvidenceProvider
+    provider = DeclarationEvidenceProvider()
+    for text in ("已上传外包装、面单和破损照片", "外包装照片、面单照片、商品照片我都已经提供了",
+                 "照片都提供了", "材料已经提交", "还未退款，照片已经上传"):
+        assert provider.declared(text, False), text
+    for text in ("照片还没有上传", "如果照片已上传怎么办？", "照片已经上传了吗？", "准备提供照片",
+                 "外包装照片已上传，面单照片没有上传"):
+        assert not provider.declared(text, False), text
+    assert not provider.declared("照片其实还没上传", True)
+    assert not provider.declared("其实还没上传", True)
+    assert provider.declared("我同意提交工单", True)
 
 
 def test_damage_review_without_tracking_preserves_confirmation_and_deduplication(service):

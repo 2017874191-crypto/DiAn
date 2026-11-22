@@ -48,14 +48,13 @@ def detect_issue(message):
     return None
 
 _CONFIRMATION_TARGETS = {
-    "签收争议核查": "logistics_dispute", "丢件核查": "logistics_lost",
-    "破损审核": "logistics_damaged", "错发审核": "logistics_damaged",
-    "破损错发审核": "logistics_damaged",
+    "dispute": "logistics_dispute", "lost": "logistics_lost", "damage": "logistics_damaged",
 }
 _CONFIRMATION_ACTION = re.compile(
-    r"建单|(?:创建|提交|申请)(?:(?:这个|该|当前)订单的)?"
-    r"(?:(?:这|该|当前)(?:个|张)?)?(?:模拟)?"
-    r"(?:(?:人工审核|核查)?工单|(?P<target>签收争议核查|丢件核查|破损审核|错发审核|破损错发审核))"
+    r"建单|(?:创建|提交|申请)(?:(?:刚才|上述|前面)(?:说的|说明的)?)?"
+    r"(?:(?:这|该|当前)(?:一)?(?:个|张|笔|单)?(?:订单)?的?)?(?:模拟)?"
+    r"(?:(?:人工审核|核查)?工单|(?:(?P<dispute>签收争议)|(?P<lost>丢件)|(?P<damage>破损错发|破损|错发))"
+    r"(?:模拟)?(?:人工)?(?:核查|审核))"
 )
 
 
@@ -76,15 +75,15 @@ def is_confirmed(message, issue=None):
         text = text[reference.end():]
     text = text.removeprefix("请")
     action = _CONFIRMATION_ACTION.fullmatch(text)
-    return bool(action and (not issue or not action.group("target")
-                            or _CONFIRMATION_TARGETS[action.group("target")] == issue))
+    target = next((value for group, value in _CONFIRMATION_TARGETS.items() if action and action.group(group)), None)
+    return bool(action and (not issue or not target or target == issue))
 
 
 def is_confirmation_reply(message):
     """Route assent, refusal and questions to the current case without authorizing them."""
     return (is_confirmed(message)
             or bool(re.fullmatch(r"\s*(?:不同意|不确认|暂不确认|暂缓|取消)[。！!]?\s*", message))
-            or bool(re.search(r"确认建单|创建工单|提交工单|(?:确认|同意).*(?:建单|工单|核查|审核)", message)))
+            or bool(re.search(r"确认建单|创建工单|提交工单|(?:确认|同意).*(?:建单|工单|核查|审核|申请)", message)))
 
 class LogisticsService:
     def __init__(self, db_path=None, fixtures=None, *, order_provider=None,

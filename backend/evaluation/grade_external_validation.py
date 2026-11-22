@@ -20,6 +20,19 @@ COUNT_FIELDS = {"mock_ticket_count", "mock_damage_review_ticket_count_for_operat
                 "mock_signature_dispute_ticket_count_for_operation"}
 
 
+def validate_replay(replay, labels, allow_checkpointed=False):
+    if set(labels) != {r["case_id"] for r in replay["cases"]} or len(replay["cases"]) != len(labels):
+        raise ValueError("Private labels and executed cases differ")
+    if not replay["complete"]:
+        if not allow_checkpointed:
+            raise ValueError("Run incomplete; explicit checkpoint grading required")
+        for case in replay["cases"]:
+            if (not case.get("turns") or "ticket_count" not in case or
+                    "rule_checks" not in case or "fixture_events" not in case or
+                    "skipped_script_turns" not in case):
+                raise ValueError("Checkpoint lacks a finalized case; do not infer missing results")
+
+
 async def grade(args):
     if args.output.exists():
         raise FileExistsError("Keep original grading output; do not overwrite")
@@ -28,16 +41,15 @@ async def grade(args):
     if (intake["source_files"][args.labels.name]["sha256"] != digest(args.labels) or
             intake["candidate_commit"] != replay["candidate_commit"]):
         raise ValueError("Labels or candidate identity differs from frozen intake")
-    if not replay["complete"]:
-        raise ValueError("Only grade a completed fixed-candidate run")
     labels = {r["case_id"]: r for r in read_rows(args.labels)}
-    if set(labels) != {r["case_id"] for r in replay["cases"]}:
-        raise ValueError("Private labels and executed cases differ")
+    validate_replay(replay, labels, args.allow_checkpointed_run)
     settings, _ = model_settings()
     result = {"schema": 1, "report_sha256": digest(args.report), "labels_sha256": digest(args.labels),
               "candidate_commit": replay["candidate_commit"], "judge_model": settings["model"],
               "same_model_family_as_candidate": settings["model"] == replay["model"],
               "human_reviewed": False, "scope": "Program-only label handling and post-run exploratory LLM Judge; no accuracy or generalization claim",
+              "replay_complete_marker": replay["complete"],
+              "checkpoint_grading": not replay["complete"],
               "private_label_contents_saved": False, "cases": [], "complete": False}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("x", encoding="utf-8") as handle:
@@ -96,6 +108,8 @@ def main():
     parser.add_argument("--labels", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--allow-checkpointed-run", action="store_true",
+                        help="Grade finalized cases from an interrupted run; retain its incomplete status")
     args = parser.parse_args()
     logging.basicConfig(level=logging.ERROR)
     asyncio.run(grade(args))

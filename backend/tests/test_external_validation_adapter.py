@@ -1,4 +1,6 @@
 from evaluation.run_external_validation import FixturePorts, chat_payload, next_turn_allowed
+from evaluation.grade_external_validation import validate_replay
+import pytest
 
 
 def test_runtime_payload_keeps_authored_confirmation_and_excludes_author_metadata():
@@ -24,3 +26,16 @@ def test_conditional_turns_require_observed_confirmation_or_ticket_state():
         "state": "awaiting_confirmation"}}, 0)
     assert not next_turn_allowed(1, {"logistics_case": {"state": "ticket_created"}}, 0)
     assert next_turn_allowed(1, {"logistics_case": {"state": "ticket_created"}}, 1)
+
+
+def test_checkpoint_grading_preserves_interruption_and_rejects_unfinished_cases():
+    case = {"case_id": "opaque", "turns": [{}], "ticket_count": 0,
+            "rule_checks": {}, "fixture_events": [], "skipped_script_turns": []}
+    replay = {"complete": False, "cases": [case]}
+    with pytest.raises(ValueError):
+        validate_replay(replay, {"opaque": {}}, False)
+    validate_replay(replay, {"opaque": {}}, True)
+    assert replay["complete"] is False
+    del case["ticket_count"]
+    with pytest.raises(ValueError):
+        validate_replay(replay, {"opaque": {}}, True)

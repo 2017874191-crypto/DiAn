@@ -27,7 +27,6 @@ from core.skill_loader import SkillManager
 from evaluation.compare_rag import model_settings
 from evaluation.prepare_rag_data import ROOT, write_json
 from evaluation.provenance import build_identity, git_commit
-from evaluation.replay_business_answers import EvaluationBM25
 from memory.conversation_memory import MemoryManager
 
 PINNED = "edfd318583399cae4f2a061e43d56ce4e0602027"
@@ -159,6 +158,9 @@ def chat_payload(message, user, conversation):
 
 
 async def run(args):
+    # Retrieval is an optional live-evaluation dependency, not needed by adapter tests.
+    from evaluation.replay_business_answers import EvaluationBM25
+
     check_runtime()
     intake = json.loads(args.manifest.read_text(encoding="utf-8"))
     if (intake["candidate_commit"] != PINNED or

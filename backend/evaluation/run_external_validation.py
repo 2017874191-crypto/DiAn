@@ -42,7 +42,9 @@ def digest(path):
 
 
 def check_runtime(candidate=PINNED):
-    diff = subprocess.check_output(["git", "diff", candidate, "--", *RUNTIME_DIRS], cwd=ROOT)
+    # Windows putenv can drop an empty GIT_CONFIG_VALUE during patch.dict restoration.
+    # Pass the Python mapping explicitly, preserving all configured keys and empty values.
+    diff = subprocess.check_output(["git", "diff", candidate, "--", *RUNTIME_DIRS], cwd=ROOT, env=dict(os.environ))
     if diff.strip():
         raise RuntimeError("Pinned production source changed; do not run external validation")
 

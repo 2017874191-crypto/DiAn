@@ -61,3 +61,14 @@ def test_logical_schema_keeps_ownership_material_and_script_guards():
     assert ports.declared("已提供照片", False)
     assert next_turn_allowed(0, reply, 0, trigger, ports.events)
     assert not next_turn_allowed(0, reply, 0, {"event": "unknown"}, ports.events)
+
+
+def test_runtime_check_preserves_empty_git_config_value(monkeypatch):
+    from unittest.mock import Mock
+    from evaluation.run_external_validation import check_runtime
+    monkeypatch.setenv("GIT_CONFIG_VALUE_0", "")
+    command = Mock(return_value=b"")
+    monkeypatch.setattr("evaluation.run_external_validation.subprocess.check_output", command)
+    check_runtime("frozen-candidate")
+    assert command.call_args.kwargs["env"]["GIT_CONFIG_VALUE_0"] == ""
+    assert command.call_args.args[0][2] == "frozen-candidate"

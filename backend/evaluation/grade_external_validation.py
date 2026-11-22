@@ -17,7 +17,7 @@ from evaluation.prepare_rag_data import write_json
 from evaluation.run_external_validation import digest, read_rows
 
 COUNT_FIELDS = {"mock_ticket_count", "mock_damage_review_ticket_count_for_operation",
-                "mock_signature_dispute_ticket_count_for_operation"}
+                "mock_signature_dispute_ticket_count_for_operation", "simulated_ticket_count", "simulated_tickets_created"}
 
 
 def validate_replay(replay, labels, allow_checkpointed=False):
@@ -61,7 +61,9 @@ async def grade(args):
             label = labels[case["case_id"]]
             expected = label["required_final_business_state"]
             count_targets = [v for k, v in expected.items() if k in COUNT_FIELDS and type(v) is int]
-            if len(count_targets) != 1:
+            if "simulated_review_tickets" in expected and isinstance(expected["simulated_review_tickets"], list):
+                count_targets.append(len(expected["simulated_review_tickets"]))
+            if not count_targets or len(set(count_targets)) != 1:
                 raise ValueError("Ticket-count schema requires review")
             transcript = [{"user": t["user_message"], "assistant": t["response"].get("response", ""),
                            "http_status": t["http_status"]} for t in case["turns"]]

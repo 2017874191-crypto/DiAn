@@ -141,7 +141,90 @@ class FixturePorts:
         return self.event("mock_ticket_create", {"success": True, "source": "mock", "ticket_id": raw["ticket_id"]})
 
 
-def next_turn_allowed(script_index, reply, ticket_count):
+class LogicalFixturePorts(FixturePorts):
+    """Second package's named capability schema; never read private scoring fields."""
+    NAMES = {"order_ownership_verify": "readonly_order_ownership_check",
+             "order_logistics_read": "readonly_logistics_lookup",
+             "material_declaration_record": "record_material_declaration",
+             "mock_ticket_create": "create_simulated_review_ticket"}
+
+    def __init__(self, task, fixture, user):
+        self.caps = task["available_capabilities"]
+        self.world, self.user = fixture["initial_world_state"], user
+        self.results = {item["logical_capability"]: item
+                        for item in fixture["authoritative_tool_results"]["entries"]}
+        self.events = []
+        self.evidence = DeclarationEvidenceProvider()
+
+    def enabled(self, name):
+        value = self.caps.get(self.NAMES.get(name, name), "not_configured")
+        return isinstance(value, str) and (value == "enabled" or value.startswith("enabled;"))
+
+    def owned(self, user, order):
+        return (user == self.user and order == self.world.get("order_id")
+                and self.world.get("order_owner_id") == user)
+
+    def query_order(self, user_id, order_id=None, tracking_no=None):
+        raw = self.results.get("order_ownership_check", {}).get("on_call_result", {})
+        allowed = (self.enabled("order_ownership_verify") and self.owned(user_id, order_id)
+                   and raw.get("is_owner") is True and raw.get("order_id") == order_id)
+        result = ({"success": True, "source": "mock", "order": {"order_id": order_id}}
+                  if allowed else {"success": False, "source": "mock", "error": "订单归属未通过或本案未开放该核验能力"})
+        return self.event("order_ownership_verify", result)
+
+    def query_logistics(self, user_id, order_id):
+        if not self.query_order(user_id, order_id)["success"]:
+            return self.event("tracking_denied", {"success": False, "source": "mock", "error": "归属核验未通过，未读取轨迹"})
+        if not self.enabled("order_logistics_read"):
+            return self.event("tracking_capability_unavailable", {"success": False, "source": "mock", "error": "本案未开放物流读取"})
+        raw = self.results["logistics_lookup"]["on_call_result"]
+        if raw.get("no_record_returned") is True or raw.get("error_code"):
+            return self.event("order_logistics_read", {**raw, "success": False, "source": "mock",
+                "error": raw.get("message", "模拟工具未返回记录"), "query_mode": "simulated_snapshot"})
+        tracking = {**raw, "status": "delivered" if raw.get("signed") is True else raw["status"],
+                    "events": [{"at": raw["last_scan_at"], "description": raw["last_event"]}]}
+        tracking["latest"] = tracking["events"][0]
+        return self.event("order_logistics_read", {"success": True, "source": "mock", "tracking": tracking,
+            "query_mode": "simulated_snapshot", "query_performed": False, "queried_at": None,
+            "message": "模拟接口固定记录，非本次真实供应商查询。"})
+
+    def declared(self, message, previous):
+        parsed = self.evidence.declared(message, previous)
+        raw = self.results.get("record_material_declaration", {}).get("on_call_result", {})
+        recorded = self.enabled("material_declaration_record") and parsed and raw.get("recorded") is True
+        self.event("material_declaration_record", {**(raw if parsed and self.enabled("material_declaration_record") else {}), "recorded": bool(recorded)})
+        return bool(recorded)
+
+    def create_ticket(self, db, case_id, idempotency_key):
+        row = db.execute("SELECT payload FROM cases WHERE id=?", (case_id,)).fetchone()
+        prior = json.loads(row[0]) if row else {}
+        allowed = (self.enabled("mock_ticket_create") and idempotency_key == case_id
+                   and self.owned(self.user, prior.get("order_id"))
+                   and prior.get("state") == "awaiting_confirmation" and prior.get("evidence_declared") is True)
+        spec = self.results.get("create_simulated_review_ticket", {})
+        raw = spec.get("if_authorized_result", spec.get("on_call_result"))
+        if not allowed or not isinstance(raw, dict) or raw.get("created") is not True or not raw.get("ticket_id"):
+            return self.event("mock_ticket_create", {"success": False, "source": "mock", "error": "模拟工具未确认获授权的建单结果"})
+        db.execute("INSERT OR IGNORE INTO tickets VALUES (?,?)", (case_id, raw["ticket_id"]))
+        ticket_id = db.execute("SELECT ticket_id FROM tickets WHERE case_id=?", (case_id,)).fetchone()[0]
+        return self.event("mock_ticket_create", {"success": True, "source": "mock", "ticket_id": ticket_id})
+
+
+def next_turn_allowed(script_index, reply, ticket_count, trigger=None, events=()):
+    if trigger is not None:
+        event = trigger.get("event") if isinstance(trigger, dict) else None
+        supported = {
+            "after_agent_explains_exact_proposed_simulated_review_submission_and_requests_separate_confirmation": 0,
+            "after_first_successful_simulated_ticket_creation_and_agent_notifies_user": 1,
+            "after_agent_has_verified_order_ownership_and_recorded_three_material_declarations_then_explains_proposed_ticket_and_asks_separate_confirmation": 0,
+        }
+        if event not in supported or supported[event] != script_index:
+            return False
+        if event.startswith("after_agent_has_verified"):
+            if not (any(e["operation"] == "order_ownership_verify" and e["result"].get("success") is True for e in events)
+                    and any(e["operation"] == "material_declaration_record" and e["result"].get("recorded") is True
+                            and len(e["result"].get("material_names", [])) == 3 for e in events)):
+                return False
     if script_index == 0:
         case = reply.get("logistics_case") or {}
         text = reply.get("response", "")
@@ -191,8 +274,9 @@ async def run(args):
         http_client=httpx.AsyncClient(trust_env=False, timeout=httpx.Timeout(30, connect=5))) as client:
         for task in tasks:
             opaque = uuid.uuid4().hex
-            user = task["observable_context"].get("simulated_session_account", "validation-" + opaque)
-            ports = FixturePorts(task, fixtures[task["case_id"]], user)
+            user = task["observable_context"].get("session_actor_id", task["observable_context"].get("simulated_session_account", "validation-" + opaque))
+            logical = intake.get("fixture_schema") == "logical-capabilities-v2"
+            ports = (LogicalFixturePorts if logical else FixturePorts)(task, fixtures[task["case_id"]], user)
             token = secrets.token_urlsafe(32)
             memory = MemoryManager.__new__(MemoryManager)
             memory._redis = fakeredis.aioredis.FakeRedis(decode_responses=True)
@@ -229,7 +313,8 @@ async def run(args):
                                 messages = [task["initial_user_input"]] + [s["user_input"] for s in task["conversation_script"]]
                                 count, reply = 0, {}
                                 for index, message in enumerate(messages):
-                                    if index and not next_turn_allowed(index - 1, reply, count):
+                                    trigger = task["conversation_script"][index - 1]["trigger"] if index and logical else None
+                                    if index and not next_turn_allowed(index - 1, reply, count, trigger, ports.events):
                                         row["skipped_script_turns"] = list(range(index, len(messages)))
                                         break
                                     response = await http.post("/chat", json=chat_payload(message, user, opaque))

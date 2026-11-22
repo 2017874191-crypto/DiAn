@@ -991,12 +991,12 @@ class AgentOrchestrator:
             req.task_goal = getattr(intent_result, "task_goal", None)
 
         # 明确异常表达优先；短回复如单号、举证、确认，接续持久化案件。
-        from core.logistics import ISSUES, detect_issue, needs_missing_delivery_clarification
+        from core.logistics import ISSUES, detect_issue, needs_missing_delivery_clarification, is_confirmation_reply
         issue = detect_issue(req.message)
         previous = req.conversation_state or {}
         continuation = bool(re.fullmatch(r"\s*(?:确认建单|确认创建工单|确认提交工单|重试|继续|(?:订单号?|运单号?|快递单号)\s*[:：#]?\s*[A-Za-z0-9_-]{4,32}|已(?:上传|提供|提交).{0,30}(?:照片|图片|视频)[。！!]?)\s*", req.message))
-        if previous.get("logistics_case_id") and re.search(r"确认建单|创建工单|提交工单", req.message):
-            continuation = True  # 疑问和否定仍由原案件解释，但不会通过 is_confirmed 授权写操作。
+        if previous.get("logistics_case_id") and is_confirmation_reply(req.message):
+            continuation = True  # 接续不等于授权；领域服务仍检查确认与已展示事项。
         if continuation and previous.get("logistics_case_id"):
             req.task_goal = "case_action"
         informational = req.task_goal in ("policy_question", "status_lookup")

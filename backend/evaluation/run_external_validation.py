@@ -41,8 +41,8 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def check_runtime():
-    diff = subprocess.check_output(["git", "diff", PINNED, "--", *RUNTIME_DIRS], cwd=ROOT)
+def check_runtime(candidate=PINNED):
+    diff = subprocess.check_output(["git", "diff", candidate, "--", *RUNTIME_DIRS], cwd=ROOT)
     if diff.strip():
         raise RuntimeError("Pinned production source changed; do not run external validation")
 
@@ -161,9 +161,10 @@ async def run(args):
     # Retrieval is an optional live-evaluation dependency, not needed by adapter tests.
     from evaluation.replay_business_answers import EvaluationBM25
 
-    check_runtime()
+    candidate = args.candidate_commit
+    check_runtime(candidate)
     intake = json.loads(args.manifest.read_text(encoding="utf-8"))
-    if (intake["candidate_commit"] != PINNED or
+    if (intake["candidate_commit"] != candidate or
             intake["source_files"][args.inputs.name]["sha256"] != digest(args.inputs) or
             intake["extracted_tool_fixtures"]["sha256"] != digest(args.fixtures)):
         raise ValueError("Input, fixture or candidate identity differs from intake")
@@ -171,10 +172,10 @@ async def run(args):
         raise FileExistsError("Report already exists; preserve the original run")
     tasks = read_rows(args.inputs)
     fixtures = {row["case_id"]: row for row in read_rows(args.fixtures)}
-    assert len(tasks) == len(fixtures) == 10 and {t["case_id"] for t in tasks} == set(fixtures)
+    assert len(tasks) == len(fixtures) == intake.get("case_count", 10) and {t["case_id"] for t in tasks} == set(fixtures)
     settings, model_source = model_settings()
     corpus = public_corpus()
-    report = {"schema": 1, "candidate_commit": PINNED, "runner_commit": git_commit(ROOT),
+    report = {"schema": 1, "candidate_commit": candidate, "runner_commit": git_commit(ROOT),
               "build": build_identity(ROOT), "model": settings["model"], "model_source": model_source,
               "inputs_sha256": digest(args.inputs), "fixtures_sha256": digest(args.fixtures),
               "public_corpus": corpus, "scope": "Context-isolated model-authored validation draft, actual ASGI chat, simulated business",
@@ -257,7 +258,7 @@ async def run(args):
                 await memory._redis.aclose()
             write_json(args.output, report)
             print("executed case", len(report["cases"]), "turns", len(row["turns"]), flush=True)
-    check_runtime()
+    check_runtime(candidate)
     report["complete"] = True
     write_json(args.output, report)
 
@@ -268,6 +269,8 @@ def main():
     parser.add_argument("--fixtures", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--candidate-commit", default=PINNED,
+                        help="Explicit frozen candidate, matching the intake manifest; original batch default preserved")
     args = parser.parse_args()
     logging.basicConfig(level=logging.ERROR)
     asyncio.run(run(args))

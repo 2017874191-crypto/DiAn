@@ -47,8 +47,44 @@ def detect_issue(message):
         return "logistics_lost"
     return None
 
-def is_confirmed(message):
-    return bool(re.fullmatch(r"\s*确认(?:建单|创建工单|提交工单)[。！!]?\s*", message))
+_CONFIRMATION_TARGETS = {
+    "签收争议核查": "logistics_dispute", "丢件核查": "logistics_lost",
+    "破损审核": "logistics_damaged", "错发审核": "logistics_damaged",
+    "破损错发审核": "logistics_damaged",
+}
+_CONFIRMATION_ACTION = re.compile(
+    r"建单|(?:创建|提交|申请)(?:(?:这个|该|当前)订单的)?"
+    r"(?:(?:这|该|当前)(?:个|张)?)?(?:模拟)?"
+    r"(?:(?:人工审核|核查)?工单|(?P<target>签收争议核查|丢件核查|破损审核|错发审核|破损错发审核))"
+)
+
+
+def is_confirmed(message, issue=None):
+    """Recognize a bounded explicit assent; the persisted offer still authorizes the action."""
+    text = re.sub(r"\s+", "", message).rstrip("。！!")
+    assent = re.match(r"(?:我|本人)?(?:确认|同意)[，,]?", text)
+    if assent:
+        text = text[assent.end():]
+        if not text:
+            return True  # Only usable with the existing prior-offer and target checks.
+    elif text.startswith("请"):
+        text = text[1:]
+    else:
+        return False
+    reference = re.match(r"(?:就)?按(?:你)?(?:刚才|上述|前面)(?:说明的)?(?:事项|方案)", text)
+    if reference:
+        text = text[reference.end():]
+    text = text.removeprefix("请")
+    action = _CONFIRMATION_ACTION.fullmatch(text)
+    return bool(action and (not issue or not action.group("target")
+                            or _CONFIRMATION_TARGETS[action.group("target")] == issue))
+
+
+def is_confirmation_reply(message):
+    """Route assent, refusal and questions to the current case without authorizing them."""
+    return (is_confirmed(message)
+            or bool(re.fullmatch(r"\s*(?:不同意|不确认|暂不确认|暂缓|取消)[。！!]?\s*", message))
+            or bool(re.search(r"确认建单|创建工单|提交工单|(?:确认|同意).*(?:建单|工单|核查|审核)", message)))
 
 class LogisticsService:
     def __init__(self, db_path=None, fixtures=None, *, order_provider=None,
@@ -485,7 +521,7 @@ class LogisticsService:
             elif case["state"] in ("ticket_pending", "ticket_unknown"):
                 needs_http_ticket = self.http_ticket_provider is not None
                 reply = "模拟工单结果待核对，请稍后查询；不要重复提交新的建单操作。"
-            elif case["state"] == "manual_review" and is_confirmed(req.message):
+            elif case["state"] == "manual_review" and is_confirmed(req.message, issue):
                 reply = "案件待人工核查，不能直接确认建单。当前尚未通知真实客服。"
             elif not case["order_id"] and not case["tracking_no"]:
                 case["state"] = "awaiting_info"
@@ -523,12 +559,12 @@ class LogisticsService:
                         elif self._has_other_open_ticket(db, req.user_id, case):
                             case["state"] = "ticket_already_open"
                             reply = "这笔订单的同类问题已有工单或正在核对建单结果。请回原会话查看进展，结案后可重新申请。"
-                        elif (not is_confirmed(req.message) or not previously_confirmable
+                        elif (not is_confirmed(req.message, issue) or not previously_confirmable
                               or prior_target != (case["order_id"], case["tracking_no"])):
                             case["state"] = "awaiting_confirmation"
                             verification = ("已核验订单归属并记录材料提交声明，未验证图片真实性、未查询物流。"
                                             if issue == "logistics_damaged" else "已按模拟轨迹核验。")
-                            reply = verification + policy["action"] + "如同意创建模拟核查工单，请回复“确认建单”。"
+                            reply = verification + policy["action"] + "如同意提交，可回复“我同意提交工单”或“确认建单”。"
                         else:
                             if self.http_ticket_provider is not None:
                                 self._prepare_ticket_operation(db, req, case)

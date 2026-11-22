@@ -684,7 +684,7 @@ async def _chat_case(tmp_path, damage=False):
                 async with httpx.AsyncClient(transport=httpx.ASGITransport(app=api.app), base_url="http://test") as client:
                     states = []
                     for message, client_id in [(initial_message, "first"),
-                                               ("确认建单", "confirm"), ("继续", "reconcile")]:
+                                               ("我同意提交工单。", "confirm"), ("继续", "reconcile")]:
                         response = await client.post("/chat", json={"message": message,
                             "user_id": "demo-user", "conv_id": "http-chat", "client_request_id": client_id})
                         assert response.status_code == 200, response.text

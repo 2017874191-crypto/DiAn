@@ -7,7 +7,7 @@ from threading import Barrier
 
 import pytest
 
-from core.logistics import LogisticsService, detect_issue
+from core.logistics import LogisticsService, detect_issue, is_confirmed
 from core.conversation_state import merge_state
 from core.intent_recognizer import IntentCategory, IntentRecognizer, UrgencyLevel
 from agents.agent_orchestrator import AgentOrchestrator, AgentType, LogisticsAgent, Request
@@ -89,6 +89,60 @@ def test_first_turn_confirmation_requires_prior_verified_offer(service):
     assert all(call["tool_name"] != "create_logistics_case" for call in first["calls"])
     second = service.process(request("确认建单", state=req.conversation_state))
     assert second["case"]["state"] == "ticket_created"
+
+
+def test_confirmation_language_accepts_explicit_actions_but_not_refusal_or_questions():
+    for text in ("确认建单", "我同意提交工单。", "请提交工单", "我确认", "同意，按上述方案提交模拟核查工单。",
+                 "我确认申请这个订单的签收争议核查。"):
+        assert is_confirmed(text), text
+    for text in ("不同意提交工单", "暂不确认，先不要提交工单。", "如果我确认提交工单会怎样？",
+                 "我同意提交工单吗？", "我同意提交工单，但先别提交", "我同意退款", "好的"):
+        assert not is_confirmed(text), text
+    assert is_confirmed("我确认申请这个订单的签收争议核查。", "logistics_dispute")
+    assert not is_confirmed("我确认申请这个订单的签收争议核查。", "logistics_lost")
+
+
+def test_natural_confirmation_needs_prior_offer_and_same_order(service):
+    req = request("我同意提交工单。")
+    assert service.process(req)["case"]["state"] == "awaiting_confirmation"
+    req.message = "我确认申请这个订单的签收争议核查。"
+    assert service.process(req)["case"]["state"] == "awaiting_confirmation"
+    req.message = "暂不确认，先不要提交工单。"
+    assert service.process(req)["case"]["state"] == "awaiting_confirmation"
+    req.message = "我同意提交工单。"
+    req.entities = {"order_id": ["DEMO1002"]}
+    offered = service.process(req)
+    assert offered["case"]["state"] == "awaiting_confirmation"
+    with service.connect() as db:
+        assert db.execute("SELECT count(*) FROM tickets").fetchone()[0] == 0
+    req.entities = {}
+    created = service.process(req)
+    assert created["case"]["state"] == "ticket_created"
+    assert created["case"]["order_id"] == "DEMO1002"
+    assert LogisticsService(service.path).process(req)["case"]["ticket_id"] == created["case"]["ticket_id"]
+
+
+def test_natural_confirmation_continues_pending_case_and_marks_side_effect(monkeypatch, tmp_path):
+    from unittest.mock import AsyncMock
+    monkeypatch.setenv("DIAN_LOGISTICS_DB", str(tmp_path / "natural-confirmation.sqlite3"))
+    orch = AgentOrchestrator("test-key")
+    first = request()
+    asyncio.run(orch.run(first))
+    state = first.conversation_state
+    for message in ("不同意", "我同意提交工单吗？", "我同意提交工单。"):
+        follow = request(message, issue="other", order=None, state=state)
+        follow.task_goal = "status_lookup"  # A pending reply must not be diverted by model goal classification.
+        follow.intent_group = "other"
+        follow.before_unsafe_tool = AsyncMock()
+        result = asyncio.run(orch.run(follow))
+        assert result.primary_agent == AgentType.LOGISTICS
+        if message.endswith("。"):
+            assert follow.conversation_state["logistics_case_state"] == "ticket_created"
+            follow.before_unsafe_tool.assert_awaited_once_with("create_logistics_case")
+        else:
+            assert follow.conversation_state["logistics_case_state"] == "awaiting_confirmation"
+            follow.before_unsafe_tool.assert_not_awaited()
+        state = follow.conversation_state
 
 def test_damage_needs_evidence_and_confirmation(service):
     req = request("包裹破损", "logistics_damaged", "DEMO1003")

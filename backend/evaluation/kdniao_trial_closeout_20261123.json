@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "purpose": "Trial closeout: one authorized supplier read and supplier-offline captured-response replay; not broader carrier coverage",
+  "business_code_commit": "45e754fa7e2ef602ee86b83f588ad7799b1d297e",
+  "fixture": "evaluation/fixtures/kdniao_live_captured_redacted_20261123.json",
+  "fixture_sha256": "cb4bed26c0a90eba57fb2cc7072ce16ad28a1387a0f13d1136f85b9177f23c18",
+  "runs": [
+    {
+      "mode": "live",
+      "scope": "Live KDniao 8002 and live models via actual ASGI chat, local ownership binding",
+      "source": "kdniao",
+      "query_performed": true,
+      "queried_at": "2026-11-23T05:37:40.417755+00:00",
+      "replayed_at": null,
+      "event_count": 16,
+      "chronology_verified": true,
+      "latest_event_time": "2026-11-16 18:09:02",
+      "state": "3",
+      "state_ex": "302",
+      "external_calls": 1,
+      "provider_calls": 1,
+      "ticket_count": 0,
+      "checks": {
+        "http_ok": true,
+        "one_authorized_provider_attempt": true,
+        "identical_receipt_replay": true,
+        "unbound_subject_rejected_locally": true,
+        "no_tickets": true
+      },
+      "online_model_usage_excluding_receipt_replay": {
+        "calls": 5,
+        "errors": 0
+      },
+      "scenarios": [
+        {
+          "scenario": "authorized",
+          "http_status": 200,
+          "external_calls": 1,
+          "provider_calls": 1
+        },
+        {
+          "scenario": "same_request_replay",
+          "http_status": 200,
+          "external_calls": 0,
+          "provider_calls": 0
+        },
+        {
+          "scenario": "unbound_subject",
+          "http_status": 200,
+          "external_calls": 0,
+          "provider_calls": 0
+        }
+      ],
+      "private_report_sha256": "1f579855529e4b87a9f1fa882c9684a6acda50d5bdbf2962bb45bea64d4f25b9"
+    },
+    {
+      "mode": "captured_response_replay",
+      "scope": "Captured redacted KDniao response replay with live models through ASGI chat",
+      "source": "captured_kdniao_response",
+      "query_performed": false,
+      "queried_at": null,
+      "replayed_at": "2026-11-23T05:38:36.587574+00:00",
+      "event_count": 16,
+      "chronology_verified": true,
+      "latest_event_time": "2026-11-16 18:09:02",
+      "state": "3",
+      "state_ex": "302",
+      "external_calls": 0,
+      "provider_calls": 1,
+      "ticket_count": 0,
+      "checks": {
+        "http_ok": true,
+        "one_authorized_provider_attempt": true,
+        "identical_receipt_replay": true,
+        "unbound_subject_rejected_locally": true,
+        "no_tickets": true
+      },
+      "online_model_usage_excluding_receipt_replay": {
+        "calls": 5,
+        "errors": 0
+      },
+      "scenarios": [
+        {
+          "scenario": "authorized",
+          "http_status": 200,
+          "external_calls": 0,
+          "provider_calls": 1
+        },
+        {
+          "scenario": "same_request_replay",
+          "http_status": 200,
+          "external_calls": 0,
+          "provider_calls": 0
+        },
+        {
+          "scenario": "unbound_subject",
+          "http_status": 200,
+          "external_calls": 0,
+          "provider_calls": 0
+        }
+      ],
+      "private_report_sha256": "bf46315b4bfc1c9635c6e4d0f827317e213f4d89eb395489acfe7956b159e732"
+    }
+  ],
+  "boundaries": [
+    "Local server ownership binding, not OMS authorization",
+    "Actual ASGI handlers and live model; fakeredis and temporary SQLite, no deployed Redis claim",
+    "Read only; no liability determination, real ticket, refund or compensation",
+    "Only one previously authorized shipment; not multiple carriers or in-transit coverage",
+    "Captured response has free-text and locations removed; not real-time tracking; live model replay still requires network and may incur model charges",
+    "Private raw responses and account/verification data remain Git-ignored; no independent semantic review"
+  ]
+}

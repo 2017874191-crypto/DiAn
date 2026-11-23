@@ -16,6 +16,21 @@ from core.kdniao_tracking import KdniaoTrackingProvider
 ORDERS = [{"user_id": "owner", "order_id": "TEST1001", "tracking_no": "fixture-number"}]
 
 
+@pytest.mark.parametrize("captured,source", [(True, "captured_kdniao_response"), (False, "user_supplied_kdniao_response")])
+def test_recorded_response_preserves_origin_and_never_claims_live_query(captured, source):
+    from evaluation.verify_kdniao_chat import RecordedTrackingProvider
+    fixture = Path(__file__).resolve().parents[1] / "evaluation/fixtures/kdniao_live_captured_redacted_20261123.json"
+    saved = json.loads(fixture.read_text(encoding="utf-8"))
+    assert saved["provenance"]["origin_kind"] == "live_capture_redacted"
+    provider = RecordedTrackingProvider("fixture-id", "fixture-key", ORDERS, live_capture=captured,
+        transport=httpx.MockTransport(lambda request: httpx.Response(200, json=saved["response"])))
+    result = provider.query_logistics("owner", "TEST1001")
+    assert result["success"] and result["source"] == source
+    assert result["query_performed"] is False and result["queried_at"] is None
+    assert result["query_mode"] == "response_replay" and result["replayed_at"]
+    assert len(result["tracking"]["events"]) == 16 and result["tracking"]["chronology_verified"]
+
+
 def test_user_supplied_ascending_and_descending_traces_choose_the_same_latest_event():
     fixture = Path(__file__).resolve().parents[1] / "evaluation/fixtures/kdniao_signed_redacted.json"
     reply = json.loads(fixture.read_text(encoding="utf-8"))["response"]

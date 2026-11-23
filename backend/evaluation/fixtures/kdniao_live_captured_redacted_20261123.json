@@ -1,0 +1,101 @@
+{
+  "provenance": {
+    "origin_kind": "live_capture_redacted",
+    "origin": "One authorized KDniao 8002 query through actual DiAn ASGI chat",
+    "captured_at_utc": "2026-11-23T05:37:40.417755+00:00",
+    "raw_response_sha256": "472c2ba11edaacc0fc55e47008d7000baf0a1211b5e6fd56e42fa6613f9e719e",
+    "code_commit": "45e754fa7e2ef602ee86b83f588ad7799b1d297e",
+    "redactions": "Merchant and tracking identifiers replaced; all free-text descriptions, locations, names, phones and addresses omitted; credentials and verification digits absent",
+    "preserved": "Provider success, carrier, state codes, event count, event order, action codes and timestamps; not proof of personal receipt"
+  },
+  "response": {
+    "EBusinessID": "fixture-merchant",
+    "ShipperCode": "SF",
+    "LogisticCode": "SF_REDACTED",
+    "State": "3",
+    "StateEx": "302",
+    "Success": true,
+    "Traces": [
+      {
+        "Action": "302",
+        "AcceptTime": "2026-11-16 18:09:02",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "211",
+        "AcceptTime": "2026-11-16 08:42:51",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "202",
+        "AcceptTime": "2026-11-16 08:13:14",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-16 07:28:39",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-16 05:07:21",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "204",
+        "AcceptTime": "2026-11-16 05:05:14",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "204",
+        "AcceptTime": "2026-11-15 23:09:41",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-15 15:20:20",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-15 09:20:21",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-15 03:19:05",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-15 03:19:04",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "204",
+        "AcceptTime": "2026-11-15 01:00:29",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "204",
+        "AcceptTime": "2026-11-15 00:00:46",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-14 19:45:45",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "2",
+        "AcceptTime": "2026-11-14 19:18:17",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      },
+      {
+        "Action": "1",
+        "AcceptTime": "2026-11-14 17:58:14",
+        "AcceptStation": "物流节点（原始描述已移除）"
+      }
+    ]
+  }
+}

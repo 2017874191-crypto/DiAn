@@ -65,13 +65,19 @@ class RecordedTransport(CountedTransport):
 
 
 class RecordedTrackingProvider(KdniaoTrackingProvider):
+    def __init__(self, *args, live_capture=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.live_capture = live_capture
+
     def query_logistics(self, user_id, order_id):
         result = super().query_logistics(user_id, order_id)
         if result["success"]:
-            result.update(source="user_supplied_kdniao_response", query_mode="response_replay",
+            result.update(source="captured_kdniao_response" if self.live_capture else "user_supplied_kdniao_response", query_mode="response_replay",
                           query_performed=False, queried_at=None,
                           replayed_at=datetime.now(timezone.utc).isoformat(),
-                          message="以下为用户提供的历史物流响应回放，非本次实时查询。签收记录不能证明本人实际收到。")
+                          message=("以下为项目实际查询后保存的脱敏历史响应回放，非本次实时查询。"
+                                   if self.live_capture else "以下为用户提供的历史物流响应回放，非本次实时查询。")
+                                  + "签收记录不能证明本人实际收到。")
         return result
 
 
@@ -98,6 +104,7 @@ class TimeoutTrackingProvider(KdniaoTrackingProvider):
 async def verify(output, response_fixture=None, simulate_timeout=False, selected_order_id=None):
     cfg = dotenv_values(ROOT / ".env")
     fixture = json.loads(response_fixture.read_text(encoding="utf-8")) if response_fixture else None
+    live_capture = bool(fixture and fixture.get("provenance", {}).get("origin_kind") == "live_capture_redacted")
     orders = ([{"user_id": "recorded-owner", "order_id": "LIVE1001",
                 "tracking_no": fixture["response"]["LogisticCode"] if fixture else "fixture-number"}]
               if fixture or simulate_timeout
@@ -111,7 +118,8 @@ async def verify(output, response_fixture=None, simulate_timeout=False, selected
     transport = (TimeoutTransport() if simulate_timeout else
                  RecordedTransport(fixture["response"]) if fixture else CountedTransport())
     provider = (TimeoutTrackingProvider("fixture-id", "fixture-key", orders, transport=transport)
-                if simulate_timeout else RecordedTrackingProvider("fixture-id", "fixture-key", orders, transport=transport)
+                if simulate_timeout else RecordedTrackingProvider("fixture-id", "fixture-key", orders, transport=transport,
+                                                                  live_capture=live_capture)
                 if fixture else KdniaoTrackingProvider(cfg["KDNIAO_EBUSINESS_ID"], cfg["KDNIAO_API_KEY"], orders,
                                                        transport=transport))
     _, corpus, _ = validate(ROOT / "evaluation/datasets/dian_rag_v1")
@@ -123,6 +131,7 @@ async def verify(output, response_fixture=None, simulate_timeout=False, selected
     memory._get_profile = AsyncMock(return_value={})
     result = {"schema": 1, "code_commit": git_commit(ROOT), "build": build_identity(ROOT),
               "scope": ("Simulated carrier read timeout with live models through ASGI chat" if simulate_timeout else
+                        "Captured redacted KDniao response replay with live models through ASGI chat" if live_capture else
                         "User-supplied KDniao response replay with live models through ASGI chat" if fixture
                         else "Live KDniao 8002 and live models via actual ASGI chat, local ownership binding"),
               "model": settings["model"], "model_configuration_source": model_source,

@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "generated_at": "2026-11-23T12:53:03.261175+00:00",
+  "business_source_baseline": "1f1d04fec6d4f829d24a2d3a0026b670dfef24b1",
+  "build_identity": {
+    "source_sha256": "93f857664061d14569d68911b7a12fd43e1052c05ec00131ca6c7769536d7bdf",
+    "dependencies_sha256": "ac7d019daf59d86a4e0fbc2fc72a617e24ab579285eb90c81bb3787d1810ea8b",
+    "python": "3.11.9",
+    "system": "Windows",
+    "architecture": "AMD64",
+    "sqlite": "3.45.1"
+  },
+  "scope": "Selected engineering checks only; no new tests, model calls, carrier requests, Docker or Temporal service; no browser/deployment acceptance",
+  "backend": {
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "junit_sha256": "1ba52224570209a40b67da6f0f8985ec6d80edd56c1b0527b67b3950c877a8a1",
+    "cases": [
+      {
+        "class": "tests.test_chat_reliability",
+        "name": "test_damage_chat_reaches_ticket_and_preserves_refusal_ownership_and_replay"
+      },
+      {
+        "class": "tests.test_logistics_http_operation",
+        "name": "test_response_lost_reconciles_without_duplicate"
+      },
+      {
+        "class": "tests.test_logistics_http_operation",
+        "name": "test_process_crash_after_remote_commit_recovers"
+      },
+      {
+        "class": "tests.test_logistics_http_operation",
+        "name": "test_ablation_unstable_key_creates_second_remote_ticket"
+      },
+      {
+        "class": "tests.test_logistics_backup",
+        "name": "test_wal_backup_and_restored_completed_case_keep_one_ticket"
+      },
+      {
+        "class": "tests.test_logistics_backup",
+        "name": "test_restored_unknown_operation_reconciles_existing_remote_ticket"
+      },
+      {
+        "class": "tests.test_logistics_backup",
+        "name": "test_backup_rejects_existing_target_and_wrong_database"
+      },
+      {
+        "class": "tests.test_logistics_schema",
+        "name": "test_legacy_upgrade_preserves_business_identity_and_backup_version"
+      },
+      {
+        "class": "tests.test_logistics_schema",
+        "name": "test_repeated_start_does_not_repeat_migration"
+      },
+      {
+        "class": "tests.test_logistics_schema",
+        "name": "test_failed_migration_rolls_back_ddl_data_and_version_then_can_retry"
+      },
+      {
+        "class": "tests.test_logistics_schema",
+        "name": "test_unknown_higher_version_is_rejected_without_mutation"
+      },
+      {
+        "class": "tests.test_kdniao_tracking",
+        "name": "test_recorded_response_preserves_origin_and_never_claims_live_query[True-captured_kdniao_response]"
+      },
+      {
+        "class": "tests.test_kdniao_tracking",
+        "name": "test_recorded_response_preserves_origin_and_never_claims_live_query[False-user_supplied_kdniao_response]"
+      },
+      {
+        "class": "tests.test_kdniao_tracking",
+        "name": "test_user_supplied_ascending_and_descending_traces_choose_the_same_latest_event"
+      },
+      {
+        "class": "tests.test_kdniao_tracking",
+        "name": "test_signature_ownership_and_accepted_empty_tracking"
+      },
+      {
+        "class": "tests.test_kdniao_tracking",
+        "name": "test_tracking_and_failure_outcomes_preserve_source_without_mock_fallback"
+      },
+      {
+        "class": "tests.test_kdniao_tracking",
+        "name": "test_tracking_capability_does_not_enable_refund_queries_or_policy_calls"
+      }
+    ]
+  },
+  "frontend": {
+    "node": "v24.14.0",
+    "test_command": "npm test",
+    "test_passed": 17,
+    "test_failed": 0,
+    "build_command": "npm run build",
+    "build_exit_code": 0,
+    "assets": {
+      "index.html": "fd8ac8e995985c261f2b3c652ae5768462df0ad388003ee0986b571fed590744",
+      "runtime-config.js": "007af7fef438359bd60510ba331f583ed7c3f18bc5ac15643e32e8a2642a5072",
+      "assets/index-B6ezXH2w.js": "a68db7b4ef243d22122eb4461aa96a019a6b604437f9cd51f77f55fa7a639d0c",
+      "assets/index-nozgDPgR.css": "127dd8515f286644ea958668379bf2189a9430e0a5c5a992ef6e004057196618"
+    }
+  },
+  "evidence_separation": {
+    "current_selected_checks": "this report",
+    "historical_real_model": "wiki/DiAn-破损主链路与咨询收敛验收.md",
+    "historical_real_carrier": "evaluation/kdniao_trial_closeout_20261123.json",
+    "historical_browser": "2026-11-22 only; not rerun here"
+  },
+  "release_state": "Checklist prepared; no new freeze tag created; old tags unchanged",
+  "boundaries": [
+    "Test counts are not task success rates and frontend/backend counts are not combined",
+    "No full 50-case replay or independent semantic review",
+    "Temporary SQLite, fakeredis or independent local mock HTTP according to each test; not production services",
+    "No real credentials, shipment details, raw conversations or database rows published"
+  ]
+}

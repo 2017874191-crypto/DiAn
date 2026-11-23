@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "tag": "interview-2026-11-23-rc1",
+  "candidate_input_commit": "993948fdaa6238b30a4cd55e889fec5973f79d38",
+  "tag_commit_resolution": "Resolve the annotated Git tag after its commit passes CI; the manifest does not contain a self-referential commit hash",
+  "kind": "Controlled interview demo candidate, not a production release",
+  "checked_business_baseline": "1f1d04fec6d4f829d24a2d3a0026b670dfef24b1",
+  "normalized_python_source_sha256": "93f857664061d14569d68911b7a12fd43e1052c05ec00131ca6c7769536d7bdf",
+  "unchanged_git_trees_since_selected_checks": {
+    "frontend/src": "abae535cd02d2a35b3a0b35ec99b740c3c1b3ea7",
+    "frontend/public": "2ada0d1ea1e2b4811c3b1d5351ea43eb260f58c3",
+    "backend/tests": "280fbb8322acde8880aa6bd9f522f2d7fd17f870",
+    "backend/config": "6ba1ac23ea4d569d3967bb9d349cfd7435bd5d62",
+    "backend/skills": "aa74551f7b18ca8b153b2ed6ecb1e08c0dc53307"
+  },
+  "files_sha256_git_blob_bytes": {
+    "backend/requirements.txt": "e208273ee680cc0e60a96d70fec994fb5cb712374fb253f2c8236e06a137e6b6",
+    "backend/requirements-dev.txt": "2fb7a41da9dcfea686e2b9d4622c4e93d510f291f04465d813a4dd6294916473",
+    "backend/requirements-dev-lock-linux-py312.txt": "1405681d5acd5e55da6a1bf5e7fd2cdcaea8ee8727d74f5b37cef22481d69c1c",
+    "backend/requirements-ci-linux-py312.txt": "24eb8ae2f6a55912b787696d609a883dd5d752ad9121647ad6ecf5d8330216e9",
+    "backend/requirements-rag-eval.txt": "edaae8ef7db527542b1fa0263511bad53cc4ae27f6d6faf53cc7f10a3b2a2293",
+    "frontend/package-lock.json": "8f742e4337daa00ce906ff6aa052482699d239bb0b7db13e7054fc6d91d3dff9",
+    "backend/.env.example": "1e20e8bfeefdd75c21eca3da4341f4bcbf34fc5149ea65171ca79b9dc5ec07a2",
+    ".github/workflows/ci.yml": "a7465968a2c0af9dd8328b4aa6fd55759bf5f34cc130a4ed7d0733bbbcf61596",
+    "backend/evaluation/candidate_checklist_acceptance_20261123.json": "15a7278d4aa6121fdf4658a81c18d2a7a19277d2adca2dfa48547b969f27b79c",
+    "backend/evaluation/sqlite_backup_restore_acceptance_20261123.json": "b55dc29657f2a1ee512933f2cf52c06d1021bd7b511273afe979b35ff6e155b5",
+    "backend/evaluation/sqlite_schema_acceptance_20261123.json": "d8d78fcf4bba3248e18651d74c1db575abf7d89ae99934a76559d3a89aaf1606",
+    "backend/evaluation/kdniao_trial_closeout_20261123.json": "add69967c6cea44ae581c1c924f8fad7f36e0c6590d919309f638d6d3bd1f547",
+    "backend/evaluation/fixtures/kdniao_live_captured_redacted_20261123.json": "570eebb69f333a21f1bdd5854b8186380b18ddf715c1ff9339d38ced79ff1d1a",
+    "NOTICE.md": "6dca5c1a6161cefa8c2eb05a09857edc8d1081c2e7667d68398caaed4c925e3c"
+  },
+  "checks": {
+    "existing_selected_backend": 17,
+    "existing_frontend": 17,
+    "frontend_build": "passed; see checklist evidence",
+    "new_model_calls": 0,
+    "new_carrier_queries": 0,
+    "no_new_behavior_changes": true
+  },
+  "defaults": {
+    "intent_mode": "full",
+    "logistics_embedding": true,
+    "temporal_logistics": false,
+    "ticket_provider": "sqlite",
+    "tracking_provider": "mock",
+    "app_mode": "development",
+    "external_mcp": true
+  },
+  "dependency_scope": "Declarations, Linux CI lock files and frontend npm lock are frozen; no built container or supplier model snapshot is pinned",
+  "old_tags_preserved": {
+    "interview-2026-11-22": "052620f5dde3c8c9482ba18bb293cb445491d4ee",
+    "v0.1.0-interview": "59bca6bb258551885ff5248a046ba78e88db4c5f"
+  },
+  "excluded": [
+    "Private .env and credentials, shipment bindings, actual business databases and logs",
+    "Raw private reports and labels",
+    "Generated frontend build and container images"
+  ],
+  "unresolved": [
+    "Real OMS identity and write-provider contracts",
+    "Independent semantic review and generalization evidence",
+    "Production HA, off-host backup and RPO/RTO",
+    "Current full deployment/browser acceptance; historical records remain separately scoped",
+    "Overall net benefit of three-way intent, multi-agent collaboration and complex RAG"
+  ]
+}

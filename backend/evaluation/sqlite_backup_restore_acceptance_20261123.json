@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "generated_at": "2026-11-23T05:51:22.878217+00:00",
+  "base_commit": "860623a936f97cc55c6e4a07cd50638abc43cf71",
+  "backup_module_sha256": "8af629469141ba23a33b088632d0f17098775fd49013c98fba2647cb9ac7a65e",
+  "scope": "Isolated SQLite and independent local mock HTTP ticket server; no models, Redis, carrier or live business data",
+  "tests": {
+    "passed": 3,
+    "failed": 0,
+    "junit_sha256": "c342d330b25d2469c821d5cc2fdde414c5e75c3985937ca6cd1671686d229dfd"
+  },
+  "wal_control": {
+    "main_file_only_ticket_count": 0,
+    "snapshot_ticket_count": 1,
+    "restored_after_repeat_ticket_count": 1
+  },
+  "unknown_operation_restore": {
+    "source_operation_state": "unknown",
+    "restored_operation_state": "succeeded",
+    "operation_identity_unchanged": true,
+    "remote_ticket_count": 1,
+    "new_remote_create_prohibited_by_test": true
+  },
+  "cli": [
+    {
+      "integrity_check": "ok",
+      "rows": {
+        "cases": 1,
+        "tickets": 1,
+        "ticket_operations": 0,
+        "operation_reviews": 0,
+        "ticket_reconcile_schedule": 0,
+        "ticket_reconcile_status": 0,
+        "logistics_runs": 2,
+        "logistics_steps": 3,
+        "active_cases": 1,
+        "logistics_conversation_revisions": 1
+      },
+      "elapsed_seconds": 0.015,
+      "sha256": "612346d8c1a4716ca229156b211c33ffe087f1fa35301fa2bcefa81f7d091e19"
+    },
+    {
+      "integrity_check": "ok",
+      "rows": {
+        "cases": 1,
+        "tickets": 1,
+        "ticket_operations": 0,
+        "operation_reviews": 0,
+        "ticket_reconcile_schedule": 0,
+        "ticket_reconcile_status": 0,
+        "logistics_runs": 2,
+        "logistics_steps": 3,
+        "active_cases": 1,
+        "logistics_conversation_revisions": 1
+      },
+      "elapsed_seconds": 0.031,
+      "sha256": "612346d8c1a4716ca229156b211c33ffe087f1fa35301fa2bcefa81f7d091e19"
+    }
+  ],
+  "boundaries": [
+    "Backup is a consistent snapshot, not zero-RPO or continuous replication",
+    "Only restore into new stopped targets; existing files are never overwritten",
+    "Redis receipts are not included; recovered deployment must not reuse a stale Redis namespace/database",
+    "External results require independent lookup with an operation key already present in snapshot",
+    "Writes after snapshot and missing operation keys require manual external audit before opening writes",
+    "No migration rollout, encryption, off-host durability, automatic failover or generic workflow recovery claimed"
+  ]
+}

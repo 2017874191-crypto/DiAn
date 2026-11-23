@@ -1,5 +1,40 @@
 # DiAn：Agent Infra 面试项目工程能力审查与优化方案
 
+## 2026-11-23 SQLite备份与恢复演练完成
+
+在隔离数据库和独立本地HTTP工单模拟服务上完成3项集中检查，未调用模型、Redis、快递鸟或真实业务接口，没有读取或改动当前业务库。[验收汇总](../evaluation/sqlite_backup_restore_acceptance_20261123.json)保留实现摘要、结果、CLI完整性检查及原始测试报告哈希；原始数据库和报告在本机Git忽略目录`backend/data/acceptance/sqlite-restore-20261123/fa1e28d3c56f40de81087678b24c1ffc/`。
+
+| 验收 | 结果及意义 |
+| --- | --- |
+| WAL下只复制主文件的对照 | 主文件副本工单0；SQLite备份接口生成的快照工单1，复现普通文件复制遗漏已提交WAL数据的风险 |
+| 完整快照与本地工单恢复 | 备份及恢复前逐行核对10张持久表：案件、工单、Operation、审核、核对调度/状态、Run、Step、会话关联及revision均一致；恢复后重复确认返回原工单，总数1；同订单跨会话被去重，非本人不能找回案件 |
+| 远端成功但本地unknown的恢复 | 快照保留原操作键、参数哈希及确认关联；恢复后按原键查询已有远端单，unknown→succeeded，原Run完成，远端工单始终1；测试禁止新的create调用 |
+| CLI及文件保护 | backup和restore两个命令均实际运行，integrity_check=ok；恢复只允许新文件，已有目标不被覆盖；非DiAn数据库被拒绝 |
+
+新增`core.logistics_backup`，使用标准SQLite Connection.backup，不复制业务表数据或重写案件规则。源库以只读连接打开，目的文件必须不存在；复制后做完整性及当前10张表检查，输出行数、SHA-256和耗时，不输出业务行内容。30秒为本项目小库默认复制期限，可用--timeout调整；实际单案耗时只说明本次环境，不能充当生产RTO。备份和恢复共用同一个快照复制实现，没有引入迁移框架、调度平台或自动切换服务。
+
+### 操作方法与恢复开放条件
+
+从backend目录执行，目标文件名每次应不同，不复制覆盖现有数据：
+
+```powershell
+python -m core.logistics_backup backup --source data/logistics/cases.sqlite3 --target data/backups/cases-20261123.sqlite3
+python -m core.logistics_backup restore --source data/backups/cases-20261123.sqlite3 --target data/recovery/cases-20261123.sqlite3
+python -m pytest -q tests/test_logistics_backup.py
+```
+
+这些是命令示例，本次实际执行使用隔离演练库，未对示例中的当前业务库执行操作。CLI的backup允许读取在线库的已提交状态；restore只创建新库，不自动停止服务、更改DIAN_LOGISTICS_DB或重启worker。操作顺序：
+
+1. 停止恢复目标对应的API、后台核对器及可选worker，保留旧库和原配置；不要停止其他项目。核对备份来源、预期SHA-256及命令完整性结果。SHA-256用于校验文件一致性，不是来源真实性认证。
+2. 恢复到新路径，先核对案件、工单、Operation、Run/Step与会话关联。设置恢复实例的DIAN_LOGISTICS_DB指向新库；先做本地查询核验，不直接开放业务写入。
+3. Redis回执、历史工具轨迹不在SQLite快照内。恢复部署应使用单独的Redis实例或空的逻辑数据库，不复用原来可能领先于快照的回执；不要执行全局FLUSHDB/FLUSHALL。持久案件通过恢复库的active_cases找回，不能把旧回执当成已恢复的交易事实。
+4. 对快照已有的未知Operation，先通过独立远端结果查询核对原操作键。快照后若还有操作产生、或者无法确认是否有遗失的操作键，先人工核对远端账本再开放写入。不能直接扫描旧库并假设它列出了全部远端副作用。
+5. 验证完成后再启用业务写入；出现问题时停止恢复实例并保留两份库供核对，不盲目来回切换写库。备份文件包含业务数据，应放在受控且不进入Git的位置；同盘副本不代表已经具备异地灾备。
+
+当前完成的是一致性快照和指定恢复窗口的业务验收，不是零RPO、跨库原子恢复或任意时间点exactly-once。特别是“备份之后新操作已成功，但操作键尚未进入快照”的窗口，本轮没有自动恢复机制；不能据此保证不丢失或不重复。Schema版本化升级/回滚、异地备份及实际运维RPO/RTO仍待验证，不能把M1整体标成完成。
+
+首次演练中，一条新增断言错误地假设Operation键等于case_id，已改为从源库读取实际操作键并验证恢复前后保持一致，没有修改业务键算法。最终3项通过；没有增加通用故障矩阵或再次调用供应商。
+
 ## 2026-11-23 执行更新
 
 充值后已完成上一轮安排的有限复验，业务代码保持`e99ef05`：原失败DIAN-001通过流程检查，破损主链路8轮也通过，覆盖缺材料、提前确认、分轮补齐、拒绝、建单、回执重放及再次确认。排除回执重放后，两组在线模型共8次、错误0；实际HTTP、真实隔离Redis/Chroma及SQLite，业务为模拟。详见[充值后复验](DiAn-破损主链路与咨询收敛验收.md)。

@@ -26,7 +26,6 @@ from core.skill_loader import SkillManager
 from evaluation.compare_rag import model_settings
 from evaluation.prepare_rag_data import ROOT, validate, write_json
 from evaluation.provenance import build_identity, git_commit, sha256
-from evaluation.replay_business_answers import EvaluationBM25
 from memory.conversation_memory import MemoryManager
 from dotenv import dotenv_values
 
@@ -102,6 +101,8 @@ class TimeoutTrackingProvider(KdniaoTrackingProvider):
 
 
 async def verify(output, response_fixture=None, simulate_timeout=False, selected_order_id=None):
+    from evaluation.replay_business_answers import EvaluationBM25
+
     cfg = dotenv_values(ROOT / ".env")
     fixture = json.loads(response_fixture.read_text(encoding="utf-8")) if response_fixture else None
     live_capture = bool(fixture and fixture.get("provenance", {}).get("origin_kind") == "live_capture_redacted")

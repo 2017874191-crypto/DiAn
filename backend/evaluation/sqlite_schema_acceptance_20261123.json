@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "base_commit": "8a93ce1a052354805b1af80f4ef584dabebf46ba",
+  "implementation_sha256": "61d0a003ff6a25cad38bbdaec870688bb8cb49599ba6e5ff2069690594482e9d",
+  "scope": "Isolated SQLite only; no model, carrier, Redis or live business data",
+  "version_protocol": {
+    "unversioned": 0,
+    "supported": 1,
+    "higher_version_policy": "reject without mutation"
+  },
+  "targeted_checks": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "junit_sha256": "39bc830705a1cd28edb131dbd00f4bd0595d643545aff06a96b2f919842f0bc5"
+  },
+  "invariants": [
+    "Legacy case/ticket/run/step rows unchanged; operation key, hash and confirmation preserved",
+    "Missing operation created_at populated from previous updated_at; missing owned active pointer backfilled",
+    "Same-version restart skips migration",
+    "Injected failure after DDL, backfill and user_version write rolls entire transaction back; retry succeeds",
+    "Unknown version 2 rejected with identical schema/data/version",
+    "Backup and restore preserve schema version and row contents"
+  ],
+  "previous_code_rollback": {
+    "commit": "8a93ce1",
+    "tested_on": "copy of upgraded v1 database; original source executed with application config location",
+    "schema_version_after": 1,
+    "ticket_count_after_repeat": 1,
+    "same_ticket": true
+  },
+  "boundaries": [
+    "Only legacy adoption into current schema v1 is implemented; no invented v2 changes",
+    "No live database upgraded during this exercise",
+    "No automatic downgrade, removed columns, zero-RPO restore or arbitrary historical binary compatibility",
+    "Missing or corrupt tables in an already versioned v1 database are not silently rebuilt; use recovery process",
+    "Backup still excludes Redis receipts and external writes after snapshot"
+  ]
+}

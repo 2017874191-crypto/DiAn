@@ -49,6 +49,7 @@ def copy_database(source, target, *, timeout_seconds=30):
             with closing(sqlite3.connect(target)) as dst:
                 src.backup(dst, pages=256, progress=progress, sleep=.05)
                 counts = inspect_database(dst)
+                schema_version = dst.execute("PRAGMA user_version").fetchone()[0]
         except BaseException:
             target.unlink(missing_ok=True)
             raise
@@ -57,7 +58,7 @@ def copy_database(source, target, *, timeout_seconds=30):
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return {"source": str(source), "target": str(target), "sha256": digest.hexdigest(),
-            "integrity_check": "ok", "rows": counts,
+            "integrity_check": "ok", "schema_version": schema_version, "rows": counts,
             "elapsed_seconds": round(time.monotonic() - started, 4)}
 
 
